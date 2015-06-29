@@ -403,6 +403,14 @@ class BootStrap {
             user.role = userRole
             user.save()
             
+            new User(
+                dateCreated: new Date(),
+                name: 'Mohar',
+                login: 'mohar',
+                passw: '1234',
+                role: userRole
+            ).save()
+            
             println "User ${user?.name} created"
         }
         
