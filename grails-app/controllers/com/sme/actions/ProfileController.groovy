@@ -38,6 +38,8 @@ class ProfileController {
         
         def operations = []
         
+        operations = profile?.operations.asList()
+        
         if(opCount > 0) {
             if(params.sort == 'accountType') {
                 operations = profile?.operations.asList().sort{
