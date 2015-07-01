@@ -46,16 +46,14 @@ class MobileSessionService {
     User authentication and validation done in controller
      */
     def addUser(User user) {
-        MobileUser mUser
         
         if(!loggedUsers.containsKey(user?.id)) {
-            mUser = new MobileUser(
-                loggedTime: new Date(),
-                lastOperation: new Date(),
-                user: user
+            loggedUsers.put(user?.id, new MobileUser(
+                    loggedTime: new Date(),
+                    lastOperation: new Date(),
+                    user: user
+                )
             )
-            
-            loggedUsers.put(user?.id, mUser)
         }
         
         return user?.id
@@ -65,7 +63,7 @@ class MobileSessionService {
         loggedUsers.remove(key)
     }
     
-    def getUser(Long key, Object value) {
-        
+    def getUser(Long key) {
+        return loggedUsers[key]?.user
     }
 }
