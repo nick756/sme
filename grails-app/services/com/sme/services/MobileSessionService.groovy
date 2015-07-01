@@ -6,6 +6,9 @@ import com.sme.entities.*
 import com.sme.util.MobileUser
 import groovy.time.*
 
+/**
+ *  Managing mobile Sessions, standard HTTP sessions do not work here
+ */ 
 @Transactional
 class MobileSessionService {
     
@@ -41,7 +44,7 @@ class MobileSessionService {
             return false
         }
     }
-    
+   
     /**
     User authentication and validation done in controller
      */
