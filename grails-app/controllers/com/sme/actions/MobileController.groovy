@@ -6,16 +6,17 @@ import groovy.xml.MarkupBuilder
 
 class MobileController {
     def mobileSessionService
-    def opStatus = 0;
+  
     
     def index() { }
     
     def login() {
-
+        def opStatus = 0;
+        def user
+        def userID  
         def login = params?.name
         def passw = params?.passw
-        def user
-        def userID
+
         boolean failure = false
         def descr
         
@@ -25,39 +26,51 @@ class MobileController {
         if(login) {
             user = User.findByLogin(login)
             
-            if(user && user?.passw == passw) {
+            if(user && user?.passw == passw&&user?.role?.code == 2) {
                 userID = mobileSessionService.addUser(user)
-                descr = 'Successful Login'
-                
-                println ''
-                println "Detected User ID: ${userID}"
-                println "Result: ${descr}"
-                
+                opStatus = 0
             }
             else {
-                failure = true
+                if(user && user?.role?.code != 2) {
+                    userID = 0
+                    opStatus = 1
+                }
+                else {
+                    userID = 0
+                    opStatus = 2
+                }
             }
         }
-        
-        println 'Before XML Builder:'
-        println "Status: ${opStatus}"
-        println "User ID: ${userID}"
-        println "Last Operation: " + mobileSessionService.getLastOperationTime(userID)
-        println ''
-        
-        builder.authenticationResult {
-            status {
-                code (this.opStatus)
-                description ("${descr}")
-                id ("${userID}")
-            }
-            userDetails {
-                name ("${user?.name}")
-                role ("${user?.role?.name}")
-                company ("${user?.company?.name}")
+       
+        render(contentType: 'text/xml') {
+            result(code: opStatus, id: userID) {
+                originator(request.getRemoteAddr())
+                
+                if(opStatus == 0) {
+                    description("Successful Login")
+                }
+                else if(opStatus == 1) {
+                    description("User Role is not supported for Mobile Interface")
+                }
+                else if(opStatus == 2) {
+                    description("Authentification failed")
+                }
+                else if(opStatus == 3) {
+                    description("Session expired")
+                }
+                
+                if(opStatus == 0) {
+                    operator {
+                        name(user?.name)
+                        role(user?.role?.name)
+                        company(user?.company?.name)
+                        companyID(user?.company?.id)
+                    }
+                }
+                else {
+                    operator{}
+                }
             }
         }
-        
-        render contentType: 'text/xml', encoding: 'UTF-8', writer.toString()
     }
 }
