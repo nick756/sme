@@ -56,7 +56,7 @@ class MobileController {
                     description("User Role is not supported for Mobile Interface")
                 }
                 else if(opStatus == 2) {
-                    description("Authentification failed")
+                    description("Authentication failed")
                 }
                 else if(opStatus == 3) {
                     description("Session expired")
