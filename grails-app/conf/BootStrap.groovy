@@ -390,7 +390,6 @@ class BootStrap {
         
         if(com.sme.entities.User.list().size() == 0) {
             userRole = UserRole.findByCode(1)
-            roleOperator = UserRole.findByCode(2)
             
             println "\nUser Role selected: " + userRole
             
