@@ -10,7 +10,11 @@ class MobileController {
     
     def index() { }
     
-    def login() {
+    //  Somehow, does not work correctly when converted
+    //  to method (internal attributes are not available
+    //  for XML rendering
+    
+    def login = {
         def opStatus = 0;
         def user
         def userID  
