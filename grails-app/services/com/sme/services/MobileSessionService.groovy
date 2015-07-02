@@ -46,7 +46,7 @@ class MobileSessionService {
     }
    
     /**
-    User authentication and validation done in controller
+     *  User authentication and validation done in controller
      */
     def addUser(User user) {
         
@@ -57,6 +57,9 @@ class MobileSessionService {
                     user: user
                 )
             )
+        }
+        else {
+            loggedUsers[user?.id].lastOperation = new Date()
         }
         
         return user?.id
