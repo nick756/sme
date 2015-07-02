@@ -30,7 +30,7 @@ class MobileController {
         if(login) {
             user = User.findByLogin(login)
             
-            if(user && user?.passw == passw&&user?.role?.code == 2) {
+            if(user && user?.passw == passw && user?.role?.code == 2) {
                 userID = mobileSessionService.addUser(user)
                 opStatus = 0
             }
@@ -44,6 +44,10 @@ class MobileController {
                     opStatus = 2
                 }
             }
+        }
+        else {
+            userID = 0
+            opStatus = 2
         }
        
         render(contentType: 'text/xml') {
