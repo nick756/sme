@@ -2,19 +2,17 @@ package com.sme.actions
 
 import com.sme.entities.*
 import com.sme.services.*
-import groovy.xml.MarkupBuilder
 
+/**
+ *  Support for full range of Mobile Operations
+ */
 class MobileController {
+    
     def mobileSessionService
-  
-    
+
     def index() { }
-    
-    //  Somehow, does not work correctly when converted
-    //  to method (internal attributes are not available
-    //  for XML rendering
-    
-    def login = {
+
+    def login() {
         def opStatus = 0;
         def user
         def userID  
@@ -23,9 +21,6 @@ class MobileController {
 
         boolean failure = false
         def descr
-        
-        def writer = new StringWriter()
-        def builder = new MarkupBuilder(writer)
         
         if(login) {
             user = User.findByLogin(login)
