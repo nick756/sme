@@ -389,7 +389,8 @@ class BootStrap {
         }
         
         if(com.sme.entities.User.list().size() == 0) {
-            userRole = UserRole.findByCode(1);
+            userRole = UserRole.findByCode(1)
+            roleOperator = UserRole.findByCode(2)
             
             println "\nUser Role selected: " + userRole
             
@@ -587,6 +588,20 @@ class BootStrap {
         }
         
         parseBusinessFile();
+        
+        //  Adding Operator User for Mobile Interface
+        
+        new User(
+            name: 'Vladimir Gundartsev',
+            login: 'vlad',
+            passw: '1234',
+            role: UserRole.findByCode(2),
+            company: Business.get(1)
+        ).save()
+        
+        println ''
+        println 'SME Operator User created'
+        println ''
            
     }
     def destroy = {
