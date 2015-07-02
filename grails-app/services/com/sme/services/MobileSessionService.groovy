@@ -69,4 +69,10 @@ class MobileSessionService {
     def getUser(Long key) {
         return loggedUsers[key]?.user
     }
+    
+    def getLastOperationTime(Long key) {
+        if(key) {
+            return loggedUsers[key].lastOperation
+        }
+    }
 }
