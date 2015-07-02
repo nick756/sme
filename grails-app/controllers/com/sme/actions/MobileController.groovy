@@ -58,6 +58,6 @@ class MobileController {
             }
         }
         
-        render contentType: 'text/xml', writer.toString()
+        render contentType: 'text/xml', encoding: 'UTF-8', writer.toString()
     }
 }
