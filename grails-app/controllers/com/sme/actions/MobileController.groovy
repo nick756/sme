@@ -99,7 +99,7 @@ class MobileController {
                 
                 if(Business.get(companyID)) {
                     company = Business.get(companyID)
-                    operations = company?.?.profile?.operations.toList()
+                    operations = company?.profile?.operations.toList()
                     
                     println ''
                     println 'Operations found'
