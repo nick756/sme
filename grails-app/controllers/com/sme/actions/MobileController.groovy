@@ -91,7 +91,7 @@ class MobileController {
             
             if(companyID == user?.company?.id) {
                 if(Business.get(companyID)) {
-                    operations = Bsiness.get(companyID)?.profile?.operations.toList()
+                    operations = Business.get(companyID)?.profile?.operations.toList()
                     
                     println ''
                     println 'Operations found'
