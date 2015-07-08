@@ -83,35 +83,51 @@ class MobileController {
         
         def userID = params?.id
         def user
-        def companyID = params?.companyID
+        def companyID = new Integer(params?.companyID)
         def company
-        def operations = []                 //  List of GenericOperation instances
+        def oplist = []                 //  List of ProfileLink instances
         
         if(userID) {
             user = User.get(userID)
-            
-            println ''
-            println "User ${user?.name}"
-            println "Company ID: ${companyID} - ${user?.company?.id} ${companyID == user?.company?.id}"
-            println "Business: ${Business.get(companyID)}"
-            
+          
             if(companyID == user?.company?.id) {
+                company = Business.get(companyID)
+                oplist = company?.profile?.operations.asList()
                 
-                //if(Business.get(companyID)) {
-                    company = Business.get(companyID)
-                    operations = company?.profile?.operations as List
-                    
-                    println ''
-                    println 'Operations found'
-                    println operations
-                //}
+                render(contentType: 'text/xml') {
+                    result(code: "0", id: userID) {
+                        
+                        orginator(request.getRemoteAddr())
+                        description("Successful Request")
+                        
+                        supportedOperations {
+                            oplist.each {
+                                def opinstance = it?.operation
+                               
+                                operation {
+                                    code(opinstance?.code)
+                                    name(opinstance?.name)
+                                    inbound(opinstance?.inbound)
+                                    outbound(opinstance?.outbound)
+                                    type(opinstance?.accountType?.name)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            else {
+                render(contentType: 'text/xml') {
+                    result(code: "1", id: userID) {
+                        description("Mismatching Company ID")
+                        operationsList{}
+                    }
+                }
             }
 
         }
         else {
-            
+            render "OK"
         }
-        
-        render "OK"
     }
 }
