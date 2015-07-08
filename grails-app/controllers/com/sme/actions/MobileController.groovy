@@ -92,6 +92,7 @@ class MobileController {
             println ''
             println "User ${user?.name}"
             println "Company ID: ${companyID}"
+            println "Business: ${Business.get(companyID)}"
             
             if(companyID == user?.company?.id) {
                 
