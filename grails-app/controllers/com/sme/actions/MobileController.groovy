@@ -76,4 +76,34 @@ class MobileController {
             }
         }
     }
+    
+    //  Forwarding list of supported Operations to Mobile Application
+    
+    def getoperations() {
+        
+        def userID = params?.id
+        def user
+        def companyID = params?.companyID
+        def operations = []                 //  List of GenericOperation instances
+        
+        if(userID) {
+            user = User.get(userID)
+            
+            if(companyID == user?.company?.id) {
+                if(Business.get(companyID)) {
+                    operations = Bsiness.get(companyID)?.profile?.operations.toList()
+                    
+                    println ''
+                    println 'Operations found'
+                    println operations
+                }
+            }
+            else {
+                
+            }
+        }
+        else {
+            
+        }
+    }
 }
