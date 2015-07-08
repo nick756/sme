@@ -97,18 +97,16 @@ class MobileController {
             
             if(companyID == user?.company?.id) {
                 
-                if(Business.get(companyID)) {
+                //if(Business.get(companyID)) {
                     company = Business.get(companyID)
                     operations = company?.profile?.operations as List
                     
                     println ''
                     println 'Operations found'
                     println operations
-                }
+                //}
             }
-            else {
-                
-            }
+
         }
         else {
             
