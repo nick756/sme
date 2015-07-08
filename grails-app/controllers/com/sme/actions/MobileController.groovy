@@ -84,6 +84,7 @@ class MobileController {
         def userID = params?.id
         def user
         def companyID = params?.companyID
+        def company
         def operations = []                 //  List of GenericOperation instances
         
         if(userID) {
@@ -97,7 +98,8 @@ class MobileController {
             if(companyID == user?.company?.id) {
                 
                 if(Business.get(companyID)) {
-                    operations = Business.get(companyID)?.profile?.operations.toList()
+                    company = Business.get(companyID)
+                    operations = company?.?.profile?.operations.toList()
                     
                     println ''
                     println 'Operations found'
