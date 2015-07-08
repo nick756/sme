@@ -89,6 +89,9 @@ class MobileController {
         if(userID) {
             user = User.get(userID)
             
+            println ''
+            println "User ${user?.name}"
+            
             if(companyID == user?.company?.id) {
                 if(Business.get(companyID)) {
                     operations = Business.get(companyID)?.profile?.operations.toList()
