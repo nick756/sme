@@ -92,7 +92,7 @@ class MobileController {
             
             println ''
             println "User ${user?.name}"
-            println "Company ID: ${companyID} - ${user?.company?.id}"
+            println "Company ID: ${companyID} - ${user?.company?.id} ${companyID == user?.company?.id}"
             println "Business: ${Business.get(companyID)}"
             
             if(companyID == user?.company?.id) {
