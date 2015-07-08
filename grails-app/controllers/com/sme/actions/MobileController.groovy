@@ -81,7 +81,7 @@ class MobileController {
     
     def getoperations() {
         
-        def userID = params?.id
+        def userID = new Integer(params?.id)
         def user
         def companyID = new Integer(params?.companyID)
         def company
