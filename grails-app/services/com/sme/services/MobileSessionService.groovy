@@ -13,7 +13,7 @@ import groovy.time.*
 class MobileSessionService {
     
     ConcurrentHashMap loggedUsers = [:]
-    TimeDuration timout = new TimeDuration(1, 0, 0, 0)  //  Fixed for the time being
+    TimeDuration timout = new TimeDuration(0, 10, 0, 0)  //  Fixed for the time being
     
     /**
     Validating time out only
