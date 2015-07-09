@@ -598,8 +598,16 @@ class BootStrap {
             company: Business.get(1)
         ).save()
         
+        new User(
+            name: 'Andreano Choppolo',
+            login: 'andrea',
+            passw: '1234',
+            role: UserRole.findByCode(2),
+            company: Business.get(2)
+        ).save()        
+        
         println ''
-        println 'SME Operator User created'
+        println 'SME Operator Users created'
         println ''
            
     }

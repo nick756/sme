@@ -87,47 +87,67 @@ class MobileController {
         def company
         def oplist = []                 //  List of ProfileLink instances
         
-        if(userID) {
-            user = User.get(userID)
+        if(!mobileSessionService.validateTimeout(userID)) {
+            render(contentType: 'text/xml') {
+                result(code: "3", id: userID) {
+                    originator(request.getRemoteAddr())
+                    description("Session expired")
+                    operationsList{}
+                }
+            }
+        }
+        else {
+            if(userID) {
+                user = User.get(userID)
           
-            if(companyID == user?.company?.id) {
-                company = Business.get(companyID)
-                oplist = company?.profile?.operations.asList()
+                if(companyID == user?.company?.id) {
+                    company = Business.get(companyID)
                 
-                render(contentType: 'text/xml') {
-                    result(code: "0", id: userID) {
+                    if(company?.profile?.operations) {
+                        oplist = company?.profile?.operations.asList()
+                    }
+                
+                    render(contentType: 'text/xml') {
+                        result(code: "0", id: userID) {
                         
-                        orginator(request.getRemoteAddr())
-                        description("Successful Request")
+                            originator(request.getRemoteAddr())
+                            description("Successful Request")
                         
-                        supportedOperations {
-                            oplist.each {
-                                def opinstance = it?.operation
+                            supportedOperations {
+                                oplist.each {
+                                    def opinstance = it?.operation
                                
-                                operation {
-                                    code(opinstance?.code)
-                                    name(opinstance?.name)
-                                    inbound(opinstance?.inbound)
-                                    outbound(opinstance?.outbound)
-                                    type(opinstance?.accountType?.name)
+                                    operation {
+                                        code(opinstance?.code)
+                                        name(opinstance?.name)
+                                        inbound(opinstance?.inbound)
+                                        outbound(opinstance?.outbound)
+                                        type(opinstance?.accountType?.name)
+                                    }
                                 }
                             }
+                        }
+                    }
+                }
+                else {
+                    render(contentType: 'text/xml') {
+                        result(code: "1", id: userID) {
+                            originator(request.getRemoteAddr())
+                            description("Mismatching Company ID")
+                            operationsList{}
                         }
                     }
                 }
             }
             else {
                 render(contentType: 'text/xml') {
-                    result(code: "1", id: userID) {
-                        description("Mismatching Company ID")
+                    result(code: "2", id: "0") {
+                        originator(request.getRemoteAddr())
+                        description("Authentication failed")
                         operationsList{}
                     }
                 }
             }
-
-        }
-        else {
-            render "OK"
         }
     }
 }
