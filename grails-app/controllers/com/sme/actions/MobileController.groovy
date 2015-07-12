@@ -31,6 +31,8 @@ class MobileController {
             if(user && user?.passw == passw && user?.role?.code == 2) {
                 userID = mobileSessionService.addUser(user)
                 opStatus = 0
+                
+                println "User: ${user?.name} success"
             }
             else {
                 if(user && user?.role?.code != 2) {
@@ -105,7 +107,7 @@ class MobileController {
     def getoperations() {
 
         println ''
-        println "Operation GETOPERATIONS from ${request.getRemoteAddr()}"
+        println "${new Date()} Operation GETOPERATIONS from ${request.getRemoteAddr()}"
         
         def userID = new Integer(params?.id)
         def user
@@ -115,12 +117,20 @@ class MobileController {
         def profileName = "N/A"
         
         if(!mobileSessionService.validateTimeout(userID)) {
-            render(contentType: 'text/xml') {
-                result(code: "3", id: userID) {
-                    originator(request.getRemoteAddr())
-                    description("Session expired")
-                    profile(name: profileName){}
+            
+            println "Timeout event: IP ${request.getRemoteAddr()}"
+            
+            try {
+                render(contentType: 'text/xml') {
+                    result(code: "3", id: userID) {
+                        originator(request.getRemoteAddr())
+                        description("Session expired")
+                        profile(name: profileName){}
+                    }
                 }
+            }
+            catch (Exception e) {
+                render("Error while trying to process request")
             }
         }
         else {

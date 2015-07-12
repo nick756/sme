@@ -19,7 +19,7 @@ class MobileSessionService {
      */
     def validateTimeout(Long key) {
         TimeDuration duration 
-        TimeDuration timeout = new TimeDuration(0, 10, 0, 0)  //  Fixed for the time being
+        TimeDuration timeout = new TimeDuration(0, 5, 0, 0)  //  Fixed for the time being
         
         if(loggedUsers.get(key)) {
             duration = TimeCategory.minus(new Date(), loggedUsers[key]?.lastOperation)
@@ -29,7 +29,7 @@ class MobileSessionService {
                 return false
             }
             else {
-                updateOperationTime(key)
+                return updateOperationTime(key)
             }
         }
         else return false
