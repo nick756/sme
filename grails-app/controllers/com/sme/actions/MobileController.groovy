@@ -22,6 +22,9 @@ class MobileController {
         boolean failure = false
         def descr
         
+        println ''
+        println "Operation LOGIN from ${request.getRemoteAddr()}"
+        
         if(login) {
             user = User.findByLogin(login)
             
@@ -77,22 +80,46 @@ class MobileController {
         }
     }
     
+    /**
+     *  Logout Operation, just cleaning Cash
+     */
+    def logout() {
+
+        println ''
+        println "Operation LOGOUT from ${request.getRemoteAddr()}"
+        
+        if(params?.id) {
+            mobileSessionService.remove(new Integer(params?.id))
+        }
+        
+        render(contentType: 'text/xml') {
+            result(code: "0", id: "0") {
+                originator(request.getRemoteAddr())
+                description("User Session terminated")
+            }
+        }
+    }
+    
     //  Forwarding list of supported Operations to Mobile Application
     
     def getoperations() {
+
+        println ''
+        println "Operation GETOPERATIONS from ${request.getRemoteAddr()}"
         
         def userID = new Integer(params?.id)
         def user
         def companyID = new Integer(params?.companyID)
         def company
         def oplist = []                 //  List of ProfileLink instances
+        def profileName = "N/A"
         
         if(!mobileSessionService.validateTimeout(userID)) {
             render(contentType: 'text/xml') {
                 result(code: "3", id: userID) {
                     originator(request.getRemoteAddr())
                     description("Session expired")
-                    operationsList{}
+                    profile(name: profileName){}
                 }
             }
         }
@@ -105,6 +132,7 @@ class MobileController {
                 
                     if(company?.profile?.operations) {
                         oplist = company?.profile?.operations.asList()
+                        profileName = company?.profile?.name
                     }
                 
                     render(contentType: 'text/xml') {
@@ -113,7 +141,7 @@ class MobileController {
                             originator(request.getRemoteAddr())
                             description("Successful Request")
                         
-                            supportedOperations {
+                            profile(name: profileName) {
                                 oplist.each {
                                     def opinstance = it?.operation
                                
@@ -134,7 +162,7 @@ class MobileController {
                         result(code: "1", id: userID) {
                             originator(request.getRemoteAddr())
                             description("Mismatching Company ID")
-                            operationsList{}
+                            profile(name: profileName){}
                         }
                     }
                 }
@@ -144,7 +172,7 @@ class MobileController {
                     result(code: "2", id: "0") {
                         originator(request.getRemoteAddr())
                         description("Authentication failed")
-                        operationsList{}
+                        profile(name: profileName){}
                     }
                 }
             }
