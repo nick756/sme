@@ -1,7 +1,7 @@
 package com.sme.services
 
 import java.util.concurrent.ConcurrentHashMap
-import grails.transaction.Transactional
+import grails.transaction.*
 import com.sme.entities.*
 import com.sme.util.MobileUser
 import groovy.time.*
@@ -9,8 +9,10 @@ import groovy.time.*
 /**
  *  Managing mobile Sessions, standard HTTP sessions do not work here
  */ 
-@Transactional
+//@NotTransactional
 class MobileSessionService {
+    
+    static transactional = false
     
     ConcurrentHashMap loggedUsers = [:]
        

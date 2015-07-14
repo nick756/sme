@@ -130,7 +130,12 @@ class MobileController {
                 }
             }
             catch (Exception e) {
-                render("Error while trying to process request")
+                def xmlMessage = "<result code='3' id='${userID}'>"
+                xmlMessage += "<originator>${request.getRemoteAddr()}</originator>"
+                xmlMessage += "<description>Session expired</description>"
+                xmlMessage += "<profile name='N/A'/>"
+                
+                render(xmlMessage)
             }
         }
         else {
