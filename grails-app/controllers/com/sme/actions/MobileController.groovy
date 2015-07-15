@@ -193,4 +193,57 @@ class MobileController {
             }
         }
     }
+    
+    /**
+     *  Adding new Transaction
+     */
+    
+    def addtransaction() {
+
+        println ''
+        println "${new Date()} Operation ADDTRANSACTION from ${request.getRemoteAddr()}"
+            
+        def userID          = new Integer(params?.id)
+        def companyID       = New Integer(params?.companyID)
+        def operationCode   = new Integer(params?.operationCode)
+        def amount          = new Double(params?.amount)
+        def description     = params?.description
+        def operationDate   = new Date().parse("d/M/yyyy", params?.date)
+        
+        if(!mobileSessionService.validateTimeout(userID)) {
+            
+            println "Timeout event: IP ${request.getRemoteAddr()}"
+            
+            try {
+                render(contentType: 'text/xml') {
+                    result(code: "3", id: userID) {
+                        originator(request.getRemoteAddr())
+                        description("Session expired")
+                        profile(name: profileName){}
+                    }
+                }
+            }
+            catch (Exception e) {
+                def xmlMessage = "<result code='3' id='${userID}'>"
+                xmlMessage += "<originator>${request.getRemoteAddr()}</originator>"
+                xmlMessage += "<description>Session expired</description>"
+                xmlMessage += "<profile name='N/A'/>"
+                
+                render(xmlMessage)
+            }            
+        }
+        else {  //  Proceed to operation
+            
+            //  Actual Transactions are noy implemented yet
+            //  As on 15/07/2015
+            
+            render(contentType: "text/xml") {
+                result(code: "0", id: userID) {
+                    originator(request.getRemoteAddr())
+                    description("New Transaction added")
+                    transactionID(1567)
+                }
+            }
+        }
+    }
 }
