@@ -202,9 +202,15 @@ class MobileController {
 
         println ''
         println "${new Date()} Operation ADDTRANSACTION from ${request.getRemoteAddr()}"
-            
+
+        params.id               = params?.id ?: 0
+        params.companyID        = params.companyID ?: '0'
+        params.operationCode    = params?.operationCode ?: '0'
+        params.amount           = params?.amount ?: '0'
+        params.date             = params.date ?: new Date().format("d/M/yyyy")
+        
         def userID          = new Integer(params?.id)
-        def companyID       = New Integer(params?.companyID)
+        def companyID       = new Integer(params?.companyID)
         def operationCode   = new Integer(params?.operationCode)
         def amount          = new Double(params?.amount)
         def description     = params?.description
@@ -214,33 +220,22 @@ class MobileController {
             
             println "Timeout event: IP ${request.getRemoteAddr()}"
             
-            try {
-                render(contentType: 'text/xml') {
-                    result(code: "3", id: userID) {
-                        originator(request.getRemoteAddr())
-                        description("Session expired")
-                        profile(name: profileName){}
-                    }
+            render(contentType: 'text/xml') {
+                result(code: "3", id: userID) {
+                    originator(request.getRemoteAddr())
+                    resDescription("Session expired")
                 }
             }
-            catch (Exception e) {
-                def xmlMessage = "<result code='3' id='${userID}'>"
-                xmlMessage += "<originator>${request.getRemoteAddr()}</originator>"
-                xmlMessage += "<description>Session expired</description>"
-                xmlMessage += "<profile name='N/A'/>"
-                
-                render(xmlMessage)
-            }            
         }
         else {  //  Proceed to operation
             
             //  Actual Transactions are noy implemented yet
             //  As on 15/07/2015
             
-            render(contentType: "text/xml") {
+            render(contentType: 'text/xml') {
                 result(code: "0", id: userID) {
                     originator(request.getRemoteAddr())
-                    description("New Transaction added")
+                    resDescription("New Transaction added on ${operationDate.format('d/M/yyyy')}")
                     transactionID(1567)
                 }
             }
