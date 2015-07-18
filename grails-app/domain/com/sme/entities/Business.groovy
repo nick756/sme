@@ -10,20 +10,14 @@ class Business {
     String address
     String city
     
-    State state
-    Industry industry
-    GenericProfile profile
+    State           state
+    Industry        industry
+    GenericProfile  profile
     
     static hasMany = [
-        users: User
+        users: User,
+        businessTransactions: BusinessTransaction
     ]
-    
-    /*
-    static hasMany = [
-        customers: Customer, 
-        operations: Operation
-    ]
-    */
     
     static constraints = {
         name        (blank: false)
@@ -37,6 +31,7 @@ class Business {
         lastUpdated (nullable: true)
         profile     nullable: true
         users       nullable: true
+        businessTransactions    nullable: true
     }
     
     static mapping = {
