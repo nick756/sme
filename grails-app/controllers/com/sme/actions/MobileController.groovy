@@ -9,6 +9,7 @@ import com.sme.services.*
 class MobileController {
     
     def mobileSessionService
+    def businessTransactionService
 
     def index() { }
 
@@ -216,6 +217,10 @@ class MobileController {
         def description     = params?.description
         def operationDate   = new Date().parse("d/M/yyyy", params?.date)
         
+        def resultCode = 0
+        def resultDesc = "New Transaction added"
+        def transactID = 0
+        
         if(!mobileSessionService.validateTimeout(userID)) {
             
             println "Timeout event: IP ${request.getRemoteAddr()}"
@@ -229,14 +234,34 @@ class MobileController {
         }
         else {  //  Proceed to operation
             
-            //  Actual Transactions are noy implemented yet
-            //  As on 15/07/2015
+            def user = User.get(userID)
+            
+            println "In processing: ${user?.name}"
+            
+            transactID = businessTransactionService.addTransaction(
+                user,
+                operationDate,
+                operationCode,
+                amount,
+                description
+            )
+            
+            if(transactID <= 0) {
+                resultCode = 1
+                resultDesc = "Operation failed"
+            }
+            
+            def op = []
+            op = User.get(userID)?.company?.businessTransactions
+            
+            println "Transactions:"
+            println op
             
             render(contentType: 'text/xml') {
-                result(code: "0", id: userID) {
+                result(code: resultCode, id: userID) {
                     originator(request.getRemoteAddr())
-                    resDescription("New Transaction added on ${operationDate.format('d/M/yyyy')}")
-                    transactionID(1567)
+                    resDescription(resultDesc)
+                    transactionID(transactID)
                 }
             }
         }

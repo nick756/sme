@@ -16,6 +16,10 @@ class BusinessTransaction {
     static belongsTo = [company: Business]
 
     static constraints = {
+        transactionRemarks      nullable: false, blank: false
+        operator                blank: false
+        dateCreated             nullable: true
+        lastUpdated             nullable: true
     }
     
     public String toString() {

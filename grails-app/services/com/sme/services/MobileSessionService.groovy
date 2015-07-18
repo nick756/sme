@@ -9,7 +9,6 @@ import groovy.time.*
 /**
  *  Managing mobile Sessions, standard HTTP sessions do not work here
  */ 
-//@NotTransactional
 class MobileSessionService {
     
     static transactional = false
@@ -17,7 +16,7 @@ class MobileSessionService {
     ConcurrentHashMap loggedUsers = [:]
        
     /**
-    Validating time out only
+     *  Validating time out only
      */
     def validateTimeout(Long key) {
         TimeDuration duration 

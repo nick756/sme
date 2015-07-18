@@ -598,19 +598,23 @@ class BootStrap {
             company: Business.get(1)
         ).save()
         
-        new User(
+        def opUser = new User(
             name: 'Andreano Choppolo',
             login: 'andrea',
             passw: '1234',
             role: UserRole.findByCode(2),
             company: Business.get(2)
-        ).save()        
+        ).save(flsuh: true)        
         
         println ''
         println 'SME Operator Users created'
-        println ''
+        
+        def inst = Business.get(2)
+        inst.addToUsers(opUser)
+        println "${inst?.name}: ${inst?.users}"
            
     }
+    
     def destroy = {
     }
     
