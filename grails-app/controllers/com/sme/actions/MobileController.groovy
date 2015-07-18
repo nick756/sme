@@ -251,8 +251,8 @@ class MobileController {
                 resultDesc = "Operation failed"
             }
             
-            def op = []
-            op = User.get(userID)?.company?.businessTransactions
+            //def op = []
+            //op = User.get(userID)?.company?.businessTransactions
             
             println "Transactions:"
             println op
