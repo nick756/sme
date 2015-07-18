@@ -55,16 +55,16 @@ class MobileController {
                 originator(request.getRemoteAddr())
                 
                 if(opStatus == 0) {
-                    description("Successful Login")
+                    resDescription("Successful Login")
                 }
                 else if(opStatus == 1) {
-                    description("User Role is not supported for Mobile Interface")
+                    resDescription("User Role is not supported for Mobile Interface")
                 }
                 else if(opStatus == 2) {
-                    description("Authentication failed")
+                    resDescription("Authentication failed")
                 }
                 else if(opStatus == 3) {
-                    description("Session expired")
+                    resDescription("Session expired")
                 }
                 
                 if(opStatus == 0) {
@@ -97,7 +97,7 @@ class MobileController {
         render(contentType: 'text/xml') {
             result(code: "0", id: "0") {
                 originator(request.getRemoteAddr())
-                description("User Session terminated")
+                resDescription("User Session terminated")
             }
         }
     }
@@ -124,7 +124,7 @@ class MobileController {
                 render(contentType: 'text/xml') {
                     result(code: "3", id: userID) {
                         originator(request.getRemoteAddr())
-                        description("Session expired")
+                        resDescription("Session expired")
                         profile(name: profileName){}
                     }
                 }
@@ -132,7 +132,7 @@ class MobileController {
             catch (Exception e) {
                 def xmlMessage = "<result code='3' id='${userID}'>"
                 xmlMessage += "<originator>${request.getRemoteAddr()}</originator>"
-                xmlMessage += "<description>Session expired</description>"
+                xmlMessage += "<resDescription>Session expired</resDescription>"
                 xmlMessage += "<profile name='N/A'/>"
                 
                 render(xmlMessage)
@@ -154,7 +154,7 @@ class MobileController {
                         result(code: "0", id: userID) {
                         
                             originator(request.getRemoteAddr())
-                            description("Successful Request")
+                            resDescription("Successful Request")
                         
                             profile(name: profileName) {
                                 oplist.each {
@@ -176,7 +176,7 @@ class MobileController {
                     render(contentType: 'text/xml') {
                         result(code: "1", id: userID) {
                             originator(request.getRemoteAddr())
-                            description("Mismatching Company ID")
+                            resDescription("Mismatching Company ID")
                             profile(name: profileName){}
                         }
                     }
@@ -186,7 +186,7 @@ class MobileController {
                 render(contentType: 'text/xml') {
                     result(code: "2", id: "0") {
                         originator(request.getRemoteAddr())
-                        description("Authentication failed")
+                        resDescription("Authentication failed")
                         profile(name: profileName){}
                     }
                 }
