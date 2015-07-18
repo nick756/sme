@@ -254,8 +254,8 @@ class MobileController {
             //def op = []
             //op = User.get(userID)?.company?.businessTransactions
             
-            println "Transactions:"
-            println op
+            //println "Transactions:"
+            //println op
             
             render(contentType: 'text/xml') {
                 result(code: resultCode, id: userID) {
