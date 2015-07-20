@@ -3,10 +3,15 @@ package com.sme.services
 import grails.transaction.Transactional
 import java.text.DecimalFormat
 import com.sme.entities.*
+import groovy.util.logging.Log4j
 
+@Log4j
 @Transactional
 class BusinessTransactionService {
     
+    /*
+     *  Adding New Transaction: using any interface
+     */
     def addTransaction(User operator, Date date, Integer code, double amount, String description) {
         def company = operator?.company
         
@@ -33,5 +38,13 @@ class BusinessTransactionService {
         else {
             return -1
         }
+    }
+    
+    /*
+     *  Fetching list of Transactions for a given range of dates. Range of Dates
+     *  is controlled for Mobile Interface
+     */
+    def getTransactions(User user, Date from, Date till) {
+        
     }
 }

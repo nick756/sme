@@ -4,7 +4,15 @@ import com.sme.entities.*
 import com.sme.services.*
 
 /**
- *  Support for full range of Mobile Operations
+ *  Support for full range of Mobile Operations. The following Methods are
+ *  supported:
+ *  
+ *  -   login
+ *  -   logout
+ *  -   getoperations
+ *  -   addtransaction
+ *  -   listtransactions
+ *  
  */
 class MobileController {
     
@@ -196,9 +204,14 @@ class MobileController {
     }
     
     /**
-     *  Adding new Transaction
+     *  Adding new Transaction from Mobile Application. Expected Parameters:
+     *  -   id
+     *  -   companyID
+     *  -   operationCode
+     *  -   amount
+     *  -   date
+     *  -   description
      */
-    
     def addtransaction() {
 
         println ''
@@ -265,5 +278,22 @@ class MobileController {
                 }
             }
         }
+    }   //  End of 'def addtransaction()'
+    
+    /**
+     *  Request for list of Transactions performed within specified range of 
+     *  dates.
+     *  
+     *  Expected Parameters:
+     *  -   id
+     *  -   datefrom
+     *  -   datetill
+     *  
+     *  All Dates are inclusive. Range for Mobile application should not be
+     *  more than one month (31 Days)
+     */
+    
+    def listtransactions() {
+        
     }
 }
