@@ -44,7 +44,7 @@ class BusinessTransactionService {
      *  Fetching list of Transactions for a given range of dates. Range of Dates
      *  is controlled for Mobile Interface
      */
-    def getTransactions(User user, Date from, Date till) {
+    def getTransactions(Business company, Date from, Date till) {
         
     }
 }
