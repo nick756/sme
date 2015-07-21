@@ -37,17 +37,80 @@ class AdminHomeController {
             redirect (controller: 'login')
         }
         
+        def transList = []
+        def transCount
+        def filtOption
+        def opFilter = 0
+        
+        def Date dateFrom
+        def Date dateTill
+        
         params.offset = params.offset ?: 0
-        params.max = params.max ?: 0
+        params.max = params.max ?: 10
+        
+        params.id = params.id ?: params.instId
+        
+        if(params?.filterOption) {
+            filtOption = params?.filterOption.toLong()
+            
+            if(filtOption > 1) {
+                if(filtOption == 2) {   //  One Month Period (inclusive)
+                    dateTill = new Date().clearTime()
+                    dateFrom = dateTill.minus(31)
+                    
+                    opFilter = 2
+                    //params.offset = 0
+                    
+                    transList = BusinessTransaction.createCriteria().list(max: params.max, offset: params.offset) {
+                        eq('company', Business.get(params.id))
+                        
+                        between('transactionDate', dateFrom, dateTill)
+                       
+                        order('transactionDate', 'asc')
+                    }
+                    
+                }
+                else {                  //  Range of Dates
+                    if(params?.dateFrom && params?.dateTill) {
+                        dateFrom = new Date().parse("d/M/yyyy", params?.dateFrom)
+                        dateTill = new Date().parse("d/M/yyyy", params?.dateTill)
+                        
+                        transList = BusinessTransaction.createCriteria().list(max: params.max, offset: params.offset) {
+                            eq('company', Business.get(params.id))
+                        
+                            between('transactionDate', dateFrom, dateTill)
+                       
+                            order('transactionDate', 'asc')
+                        }
+                        
+                        opFilter = 3
+                    }
+                    else {              //  Fall back to default
+                        
+                    }
+                }
+            }
+            else {
+                transList = BusinessTransaction.findAllByCompany(
+                    Business.get(params?.id), 
+                    [max: 10, sort: "transactionDate", order: "asc", offset: params?.offset]
+                )                
+            }
+        }
+        else {
+            transList = BusinessTransaction.findAllByCompany(
+                Business.get(params?.id), 
+                [max: 10, sort: "transactionDate", order: "asc", offset: params?.offset]
+            )
+        }
         
         [
             businessInstance: Business.get(new Integer(params?.id)),
-            
-            transactionsList: BusinessTransaction.findAllByCompany(
-                Business.get(params?.id), 
-                [max: 10, sort: "transactionDate", order: "asc", offset: params?.offset]
-            ),
-            
+            transactionsList: transList,
+            transactionCount:  transList.size(),
+            operationFilter: opFilter,
+            dateFrom: dateFrom,
+            dateTill: dateTill,
             params: [max: params?.max, offset: params?.offset]
         ]
     }

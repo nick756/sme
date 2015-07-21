@@ -10,7 +10,7 @@ import groovy.util.logging.Log4j
 class BusinessTransactionService {
     
     /*
-     *  Adding New Transaction: using any interface
+     *  Adding New Transaction: using Mobile interface
      */
     def addTransaction(User operator, Date date, Integer code, double amount, String description) {
         def company = operator?.company
@@ -38,6 +38,35 @@ class BusinessTransactionService {
         else {
             return -1
         }
+    }
+    
+    /**
+     *  Adding Transaction through Web Interface
+     */ 
+    def addTransactionWeb(Business company, User user, Date date, Integer code, double amount, String description) {
+        if(company) {
+            def newTransaction = new BusinessTransaction(
+                operationType:      GenericOperation.findByCode(code),
+                transactionDate:    date,
+                transactionAmount:  amount,
+                transactionRemarks: description,
+                operator:           "${operator?.name}",
+                company:            company
+            )
+        
+            if(!newTransaction.validate()) {
+                return 0
+            }
+        
+            else {
+                newTransaction.save(flush: true)
+                company.addToBusinessTransactions(newTransaction)
+                return newTransaction.id
+            }
+        }
+        else {
+            return -1
+        }        
     }
     
     /*
