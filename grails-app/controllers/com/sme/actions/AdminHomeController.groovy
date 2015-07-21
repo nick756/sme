@@ -32,6 +32,10 @@ class AdminHomeController {
         [businessInstance: Business.get(params?.id)]
     }
     
+    /**
+     *  Fetching list of performed Transactions for a given Company, filtering
+     *  options can be applied
+     */
     def listtransactions() {
         if(!session?.user) {
             redirect (controller: 'login')
@@ -48,6 +52,7 @@ class AdminHomeController {
         params.offset = params.offset ?: 0
         params.max = params.max ?: 10
         
+        //  Overring default Grails Form behavior (cannot pass existing id)
         params.id = params.id ?: params.instId
         
         if(params?.filterOption) {

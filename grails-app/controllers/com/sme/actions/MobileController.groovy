@@ -226,13 +226,17 @@ class MobileController {
         def userID          = new Integer(params?.id)
         def companyID       = new Integer(params?.companyID)
         def operationCode   = new Integer(params?.operationCode)
-        def amount          = new Double(params?.amount)
-        def description     = params?.description
+        def amount          = new Double(params?.operationAmount)
+        def description     = params?.operationDescription
         def operationDate   = new Date().parse("d/M/yyyy", params?.date)
         
         def resultCode = 0
         def resultDesc = "New Transaction added"
         def transactID = 0
+        
+        println "Passed Description: ${description}"
+        println "All params:"
+        println params
         
         if(!mobileSessionService.validateTimeout(userID)) {
             
