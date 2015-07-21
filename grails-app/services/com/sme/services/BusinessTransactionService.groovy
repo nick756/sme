@@ -26,6 +26,7 @@ class BusinessTransactionService {
             )
         
             if(!newTransaction.validate()) {
+                println "User: ${operator?.name} - validation failed for ${description}"
                 return 0
             }
         
