@@ -559,3 +559,13 @@ th:hover, tr:hover {
 	text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8);
 }
 
+.action-header {
+    width: 100%; 
+    background: #D0E8F4; 
+    display: inline-block; 
+    text-align: right; 
+    border-bottom: 0px solid #6285C7; 
+    border-top: 0px solid #6285C7; 
+    padding: 5px 0;    
+}
+

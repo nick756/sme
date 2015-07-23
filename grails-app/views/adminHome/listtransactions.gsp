@@ -10,14 +10,16 @@
     <body>
         <div style="width: 100%; background: #D0E8F4; display: inline-block; text-align: right; border-bottom: 0px solid #6285C7; border-top: 0px solid #6285C7; padding: 5px 0;">
             <g:link style="float: left;" action="show" params="['max': params.max, 'offset': params.offset, 'id': businessInstance?.id]"><img class="image-link" style="margin-left: 5px;" src="${resource(dir: 'images', file: 'arrow_left.png')}" title="<g:message code='actions.back'/>"/></g:link>
-            </div>      
+            <g:link action="statements" params="['max': params.max, 'offset': params.offset, 'id': businessInstance?.id]"><img class="image-link" style="margin-right: 5px;" src="${resource(dir: 'images', file: 'statement.png')}" title="<g:message code='actions.statement'/>"/></g:link>
+        </div>      
 
         <h1 class="sub-title">${businessInstance?.name}</h1>
         <div class="edit-form-box">
-
+            <%--
             <label class="edit-form"><g:message code="business.name.label"/></label>
             <g:textField class="text-input" name="name" value="${businessInstance?.name}" readonly="true"/>
             <br/>
+            --%>
             <label class="edit-form"><g:message code="business.profile.label"/></label>
             <g:textField class="text-input" name="name" value="${businessInstance?.profile?.name}" readonly="true"/>
 

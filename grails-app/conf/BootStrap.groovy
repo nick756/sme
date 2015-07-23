@@ -7,6 +7,24 @@ class BootStrap {
         
         def userRole
         
+        if(Month.list().size() == 0) {
+            new Month(number: 1, name: 'JAN').save(flush: true)
+            new Month(number: 2, name: 'FEB').save(flush: true)
+            new Month(number: 3, name: 'MAR').save(flush: true)
+            new Month(number: 4, name: 'APR').save(flush: true)
+            new Month(number: 5, name: 'MAY').save(flush: true)
+            new Month(number: 6, name: 'JUN').save(flush: true)
+            new Month(number: 7, name: 'JUL').save(flush: true)
+            new Month(number: 8, name: 'AUG').save(flush: true)
+            new Month(number: 9, name: 'SEP').save(flush: true)
+            new Month(number: 10, name: 'OCT').save(flush: true)
+            new Month(number: 11, name: 'NOV').save(flush: true)
+            new Month(number: 12, name: 'DEC').save(flush: true)
+            
+            println ''
+            println "Months populated: ${Month.count()} instances"
+        }
+        
         if(AccountType.list().size() == 0) {
             println "\n... populating Account Types"
             

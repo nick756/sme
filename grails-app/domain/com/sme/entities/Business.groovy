@@ -16,7 +16,8 @@ class Business {
     
     static hasMany = [
         users: User,
-        businessTransactions: BusinessTransaction
+        businessTransactions: BusinessTransaction,
+        statements: PNLStatement
     ]
     
     static constraints = {

@@ -13,13 +13,17 @@ class BusinessTransaction {
     String              transactionRemarks
     String              operator            //  Do not use reference to User
     
-    static belongsTo = [company: Business]
+    static belongsTo = [
+        company:    Business, 
+        statement:  PNLStatement
+    ]
 
     static constraints = {
         transactionRemarks      nullable: false, blank: false
         operator                blank: false
         dateCreated             nullable: true
         lastUpdated             nullable: true
+        statement               nullable: true
     }
     
     public String toString() {

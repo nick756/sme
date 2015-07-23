@@ -2,6 +2,7 @@ package com.sme.actions
 
 import com.sme.entities.*
 import java.text.DecimalFormat
+import grails.util.Environment
 
 class AdminHomeController {
 
@@ -148,6 +149,39 @@ class AdminHomeController {
             dateFrom:           dateFrom,
             dateTill:           dateTill,
             params:             [max: params?.max, offset: params?.offset]
+        ]
+    }
+    
+    /**
+     *  Managing PNL Statements for a given Business instance
+     */
+    def statements() {
+        if(!session?.user) {
+            redirect (controller: 'login')
+        }
+        
+        def statements = []
+        def businessID = new Integer(params?.id)
+        def business
+        
+        if(businessID) {
+            business = Business.get(businessID)
+        }
+        
+        statements = PNLStatement.findAllByCompany(Business.get(businessID))
+        
+        if(Environment.current == Environment.DEVELOPMENT) {
+            println ''
+            println 'In Method \'statements\''
+            println "Passed ID: ${businessID}"
+            println "Identified Company: ${business?.name}"
+        }
+
+        [
+            statementList:      statements,
+            statementCount:     statements.size(),
+            businessInstance:   business,
+            params:             params
         ]
     }
 }
