@@ -462,108 +462,20 @@ class BootStrap {
                     name: 'Trading Activities'
                 )
                 
-                prof.save();
+                prof.save(flush: true);
                 
-                def op1 = GenericOperation.findByCode(1)
-                def op2 = GenericOperation.findByCode(2)
+               
+                //  Auto-populating Profile 'Trading Activities'
                 
-                def link1 = new ProfileLink(
-                    operation: op1,
-                    profile: prof,
-                    active: true
-                );
-                link1.save()
-                
-                def link2 = new ProfileLink(
-                    operation: op2,
-                    profile: prof,
-                    active: true
-                )
-                
-                link2.save()
-                
-                prof.addToOperations(link1)
-                prof.addToOperations(link2)
-                
-                prof.addToOperations(
-                    new ProfileLink(
-                        operation: GenericOperation.findByCode(3),
-                        profile: prof,
-                        active: true
-                    ).save()
-                )
-                
-                prof.addToOperations(
-                    new ProfileLink(
-                        operation: GenericOperation.findByCode(4),
-                        profile: prof,
-                        active: true
-                    ).save()
-                ) 
-                
-                prof.addToOperations(
-                    new ProfileLink(
-                        operation: GenericOperation.findByCode(5),
-                        profile: prof,
-                        active: true
-                    ).save()
-                )
-                
-                prof.addToOperations(
-                    new ProfileLink(
-                        operation: GenericOperation.findByCode(6),
-                        profile: prof,
-                        active: true
-                    ).save()
-                )   
-                
-                prof.addToOperations(
-                    new ProfileLink(
-                        operation: GenericOperation.findByCode(7),
-                        profile: prof,
-                        active: true
-                    ).save()
-                )
-                
-                prof.addToOperations(
-                    new ProfileLink(
-                        operation: GenericOperation.findByCode(8),
-                        profile: prof,
-                        active: true
-                    ).save()
-                ) 
-                
-                prof.addToOperations(
-                    new ProfileLink(
-                        operation: GenericOperation.findByCode(9),
-                        profile: prof,
-                        active: true
-                    ).save()
-                )
-                
-                prof.addToOperations(
-                    new ProfileLink(
-                        operation: GenericOperation.findByCode(10),
-                        profile: prof,
-                        active: true
-                    ).save()
-                )
-                
-                prof.addToOperations(
-                    new ProfileLink(
-                        operation: GenericOperation.findByCode(11),
-                        profile: prof,
-                        active: true
-                    ).save()
-                )
-                
-                prof.addToOperations(
-                    new ProfileLink(
-                        operation: GenericOperation.findByCode(12),
-                        profile: prof,
-                        active: true
-                    ).save()
-                )                 
+                for(int i = 0; i < 36; i++) {
+                    prof.addToOperations(
+                        new ProfileLink(
+                            operation: GenericOperation.findByCode(i + 1),
+                            profile: prof,
+                            active: true
+                        ).save(flush: true)
+                    )                    
+                }
                 
                 new GenericProfile(
                     code: 2,
@@ -604,7 +516,7 @@ class BootStrap {
             passw: '1234',
             role: UserRole.findByCode(2),
             company: Business.get(2)
-        ).save(flsuh: true)        
+        ).save(flush: true)        
         
         println ''
         println 'SME Operator Users created'

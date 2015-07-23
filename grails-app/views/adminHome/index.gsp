@@ -53,16 +53,14 @@
                         ${businessInstance?.regNumber}
                     </td>
                     <td class="no-border centered">
-                            <g:formatDate format="dd/MM/yyyy" 
-                                date="${businessInstance?.incorpDate}"/>
+                            <g:formatDate format="dd/MM/yyyy" date="${businessInstance?.incorpDate}"/>
                     </td>
                     <td class="no-border">${businessInstance?.city}</td>
                 </tr>
             </g:each>
 
         </table>
-        <div class="pagination" 
-            style="display: inline-block; width: 100%; float: right;">
+        <div class="pagination" style="display: inline-block; width: 100%; float: right;">
             <g:paginate total="${businessInstanceCount ?: 0}" />
         </div>
         <div class="summary-label">

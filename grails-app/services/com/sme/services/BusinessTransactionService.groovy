@@ -75,6 +75,10 @@ class BusinessTransactionService {
      *  is controlled for Mobile Interface
      */
     def getTransactions(Business company, Date from, Date till) {
-        
+        BusinessTransaction.createCriteria().list() {
+            eq('company', company)
+            between('transactionDate', from, till)
+            order('transactionDate', 'asc')
+        }
     }
 }

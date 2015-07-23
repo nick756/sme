@@ -12,7 +12,10 @@ class AdminHomeController {
         }
         
         params.offset = params.offset ?: 0
-        params.max = Math.min(max ?: 5, 100)
+        params.max = Math.min(max ?: 10, 100)
+        
+        //  TODO:   check passed 'offset' when returning from Transactions List,
+        //          can be beyond the range
         
         [businesses: Business.list(params), businessInstanceCount: Business.count()]
     }
@@ -49,6 +52,9 @@ class AdminHomeController {
         def Date dateFrom
         def Date dateTill
         
+        println "LISTTRANSACTIONS: forwarded params"
+        println params
+        
         params.offset = params.offset ?: 0
         params.max = params.max ?: 10
         
@@ -64,14 +70,20 @@ class AdminHomeController {
                     dateFrom = dateTill.minus(31)
                     
                     opFilter = 2
-                    //params.offset = 0
                     
-                    transList = BusinessTransaction.createCriteria().list(max: params.max, offset: params.offset) {
+                    //  Overriding 'offset' as filtering may be done not
+                    //  from first page
+                    params.offset = 0
+                    
+                    transList = BusinessTransaction.createCriteria().list() {
                         eq('company', Business.get(params.id))
                         
                         between('transactionDate', dateFrom, dateTill)
                        
-                        order('transactionDate', 'asc')
+                        and {
+                            order('transactionDate', 'asc')
+                            order('id', 'asc')
+                        }
                     }
                     
                 }
@@ -80,12 +92,15 @@ class AdminHomeController {
                         dateFrom = new Date().parse("d/M/yyyy", params?.dateFrom)
                         dateTill = new Date().parse("d/M/yyyy", params?.dateTill)
                         
-                        transList = BusinessTransaction.createCriteria().list(max: params.max, offset: params.offset) {
+                        transList = BusinessTransaction.createCriteria().list() {
                             eq('company', Business.get(params.id))
                         
                             between('transactionDate', dateFrom, dateTill)
                        
-                            order('transactionDate', 'asc')
+                            and {
+                                order('transactionDate', 'asc')
+                                order('id', 'asc')
+                            }
                         }
                         
                         opFilter = 3
@@ -98,25 +113,41 @@ class AdminHomeController {
             else {
                 transList = BusinessTransaction.findAllByCompany(
                     Business.get(params?.id), 
-                    [max: 10, sort: "transactionDate", order: "asc", offset: params?.offset]
+                    [sort: "transactionDate", order: "asc"],
+                    [sort: 'id', order: 'asc']
                 )                
             }
         }
         else {
             transList = BusinessTransaction.findAllByCompany(
                 Business.get(params?.id), 
-                [max: 10, sort: "transactionDate", order: "asc", offset: params?.offset]
+                [sort: "transactionDate", order: "asc"],
+                [sort: 'id', order: 'asc']                
             )
         }
         
+        println "Total Records (before pagination): ${transList.size()}"
+        
+        transCount = transList.size()
+        def indexTo     = new Integer(params?.offset) + new Integer(params?.max) - 1
+        def indexFrom   = new Integer(params?.offset)
+        
+        if(indexTo >= transCount) indexTo = transCount - 1
+        
+        if(transCount > 0) {
+            transList = transList[indexFrom..indexTo]
+        }
+        
+        println "Total Records passed after pagination: ${transList.size()}"
+        
         [
-            businessInstance: Business.get(new Integer(params?.id)),
-            transactionsList: transList,
-            transactionCount:  transList.size(),
-            operationFilter: opFilter,
-            dateFrom: dateFrom,
-            dateTill: dateTill,
-            params: [max: params?.max, offset: params?.offset]
+            businessInstance:   Business.get(new Integer(params?.id)),
+            transactionsList:   transList,
+            transactionCount:   transCount,
+            operationFilter:    opFilter,
+            dateFrom:           dateFrom,
+            dateTill:           dateTill,
+            params:             [max: params?.max, offset: params?.offset]
         ]
     }
 }

@@ -2,6 +2,7 @@ package com.sme.actions
 
 import com.sme.entities.*
 import com.sme.services.*
+import grails.util.Environment
 
 /**
  *  Support for full range of Mobile Operations. The following Methods are
@@ -296,8 +297,81 @@ class MobileController {
      *  All Dates are inclusive. Range for Mobile application should not be
      *  more than one month (31 Days)
      */
-    
     def listtransactions() {
         
+        if(Environment.current == Environment.DEVELOPMENT) {
+            println ''
+            println "${new Date()} Operation LISTTRANSACTIONS from ${request.getRemoteAddr()}"
+        }
+            
+        def userID      = new Integer(params?.id)
+        def dateFrom    = new Date().parse("d/M/yyyy", params?.dateFrom)
+        def dateTill    = new Date().parse("d/M/yyyy", params?.dateTill)
+        def user        = User.get(userID)
+        def company     = user?.company
+        def recCount    = 0
+        def recordList  = []
+        def errorCode   = 0
+        
+        if(dateTill < dateFrom) {
+            dateFrom = dateTill
+        }
+        else if(dateTill - dateFrom > 90) {
+            dateFrom = dateTill.minus(90)
+        }
+        
+        if(!mobileSessionService.validateTimeout(userID)) {
+            
+            if(Environment.current == Environment.DEVELOPMENT) {
+                println "Timeout event: IP ${request.getRemoteAddr()}"
+            }
+            
+            render(contentType: 'text/xml') {
+                result(code: "3", id: userID) {
+                    originator(request.getRemoteAddr())
+                    resDescription("Session expired")
+                }
+            }
+        }        
+        else {
+            recordList  = businessTransactionService.getTransactions(company, dateFrom, dateTill)
+            recCount    = recordList.size()
+        
+            if(Environment.current == Environment.DEVELOPMENT) {
+                println "Total Records found: ${recCount}"
+                println "Range of Dates: ${dateFrom} - ${dateTill}"
+            }
+        
+            render(contentType: 'text/xml') {
+                result(code: errorCode, id: userID) {
+                    originator(request.getRemoteAddr())
+                
+                    if(errorCode == 0) {
+                        resDescription("Successful Operation")
+                    }
+                    else if(errorCode == 1) {
+                        resDescription("Wrong Dates Range: defaulted to DateTill")
+                    }
+                
+                    recordCount(recCount)
+                
+                    records {
+                        recordList.each {
+                            def recInstance = it
+                            
+                            record {
+                                tranCode(recInstance?.id)
+                                date(recInstance?.transactionDate.format('dd/MM/yyyy'))
+                                type(recInstance?.operationType)
+                                amount(recInstance?.transactionAmount)
+                                descr(recInstance?.transactionRemarks)
+                                operator(recInstance?.operator)
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
+    
 }

@@ -77,7 +77,10 @@
             </g:else>
         </table>
         <div class="pagination" style="display: inline-block; width: 100%; float: right;">
-            <g:paginate total="${transactionCount ?: 0}" />
+            <g:paginate total="${transactionCount ?: 0}" params="['id': businessInstance?.id, 'filterOption': operationFilter, 'dateFrom': dateFrom, 'dateTill': dateTill]"/>
         </div>  
+        <div class="summary-label">
+            <g:message code="default.application.totalrecords"/>&nbsp;${transactionCount}
+        </div>        
     </body>
 </html>
