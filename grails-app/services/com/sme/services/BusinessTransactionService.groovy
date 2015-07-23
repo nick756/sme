@@ -78,7 +78,11 @@ class BusinessTransactionService {
         BusinessTransaction.createCriteria().list() {
             eq('company', company)
             between('transactionDate', from, till)
-            order('transactionDate', 'asc')
+            
+            and {
+                order('transactionDate', 'asc')
+                order('id', 'asc')
+            }
         }
     }
 }

@@ -32,8 +32,10 @@ class MobileController {
         boolean failure = false
         def descr
         
-        println ''
-        println "Operation LOGIN from ${request.getRemoteAddr()}"
+        if(Environment.current == Environment.DEVELOPMENT) {
+            println ''
+            println "Operation LOGIN from ${request.getRemoteAddr()}"
+        }
         
         if(login) {
             user = User.findByLogin(login)
@@ -42,7 +44,9 @@ class MobileController {
                 userID = mobileSessionService.addUser(user)
                 opStatus = 0
                 
-                println "User: ${user?.name} success"
+                if(Environment.current == Environment.DEVELOPMENT) {
+                    println "User: ${user?.name} success"
+                }
             }
             else {
                 if(user && user?.role?.code != 2) {
@@ -116,8 +120,10 @@ class MobileController {
     
     def getoperations() {
 
-        println ''
-        println "${new Date()} Operation GETOPERATIONS from ${request.getRemoteAddr()}"
+        if(Environment.current == Environment.DEVELOPMENT) {
+            println ''
+            println "${new Date()} Operation GETOPERATIONS from ${request.getRemoteAddr()}"
+        }
         
         def userID = new Integer(params?.id)
         def user
@@ -128,7 +134,9 @@ class MobileController {
         
         if(!mobileSessionService.validateTimeout(userID)) {
             
-            println "Timeout event: IP ${request.getRemoteAddr()}"
+            if(Environment.current == Environment.DEVELOPMENT) {
+                println "Timeout event: IP ${request.getRemoteAddr()}"
+            }
             
             try {
                 render(contentType: 'text/xml') {
@@ -215,8 +223,10 @@ class MobileController {
      */
     def addtransaction() {
 
-        println ''
-        println "${new Date()} Operation ADDTRANSACTION from ${request.getRemoteAddr()}"
+        if(Environment.current == Environment.DEVELOPMENT) {
+            println ''
+            println "${new Date()} Operation ADDTRANSACTION from ${request.getRemoteAddr()}"
+        }
 
         params.id               = params?.id ?: 0
         params.companyID        = params.companyID ?: '0'
@@ -235,13 +245,17 @@ class MobileController {
         def resultDesc = "New Transaction added"
         def transactID = 0
         
-        println "Passed Description: ${description}"
-        println "All params:"
-        println params
+        if(Environment.current == Environment.DEVELOPMENT) {
+            println "Passed Description: ${description}"
+            println "All params:"
+            println params
+        }
         
         if(!mobileSessionService.validateTimeout(userID)) {
             
-            println "Timeout event: IP ${request.getRemoteAddr()}"
+            if(Environment.current == Environment.DEVELOPMENT) {
+                println "Timeout event: IP ${request.getRemoteAddr()}"
+            }
             
             render(contentType: 'text/xml') {
                 result(code: "3", id: userID) {
@@ -254,7 +268,9 @@ class MobileController {
             
             def user = User.get(userID)
             
-            println "In processing: ${user?.name}"
+            if(Environment.current == Environment.DEVELOPMENT) {
+                println "In processing: ${user?.name}"
+            }
             
             transactID = businessTransactionService.addTransaction(
                 user,
@@ -268,12 +284,6 @@ class MobileController {
                 resultCode = 1
                 resultDesc = "Operation failed"
             }
-            
-            //def op = []
-            //op = User.get(userID)?.company?.businessTransactions
-            
-            //println "Transactions:"
-            //println op
             
             render(contentType: 'text/xml') {
                 result(code: resultCode, id: userID) {
@@ -295,7 +305,7 @@ class MobileController {
      *  -   datetill
      *  
      *  All Dates are inclusive. Range for Mobile application should not be
-     *  more than one month (31 Days)
+     *  more than 90 days
      */
     def listtransactions() {
         
@@ -338,8 +348,8 @@ class MobileController {
             recCount    = recordList.size()
         
             if(Environment.current == Environment.DEVELOPMENT) {
-                println "Total Records found: ${recCount}"
-                println "Range of Dates: ${dateFrom} - ${dateTill}"
+                println "Total Transactions found: ${recCount}"
+                println "Final Range of Dates: ${dateFrom.format('dd/MM/yyyy')} - ${dateTill.format('dd/MM/yyyy')}"
             }
         
             render(contentType: 'text/xml') {
@@ -373,5 +383,4 @@ class MobileController {
             }
         }
     }
-    
 }
