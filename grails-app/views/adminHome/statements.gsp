@@ -13,7 +13,7 @@
         <meta name="layout" content="adminpage"/>
         <title><g:message code="pnlstatement.page.label"/></title>
         <style>
-            #period_year {width: 150px;}
+            #period_year {width: 200px;}
         </style>
     </head>
     <body>
@@ -22,13 +22,16 @@
         </div>
         <h1 class="sub-title" style="width: 100%;">${businessInstance?.name}</h1>
         <div class="edit-form-box" style="width: 100%; display: block; float: left;">
-            <label class="edit-form"><g:message code="pnlstatement.year.label"/></label>
-            <g:datePicker name="period" class="select-list" precision="year" style="width: 150px;" relativeYears="[-1..0]" noSelection="${['null':'']}" value="${null}" />
-            <br/>
-            <label class="edit-form"><g:message code="pnlstatement.month.label"/></label>
-            <g:select class="select-list" style="width: 150px;" name="month.id" noSelection="${['null':'']}" from="${Month.list()}" value="${monthInst?.id}" optionkey="id" />
-            <br/>
-            <input type="submit" value="${message(code: 'actions.generate')}" class="myButton" style="margin-left: 205px;"/>
+            <g:form action="statements" params="['max': params.max, 'offset': params.offset]">
+                <g:hiddenField name="instID" value="${businessInstance?.id}"/>
+                <label class="edit-form"><g:message code="pnlstatement.year.label"/></label>
+                <g:datePicker name="period" class="select-list" precision="year" relativeYears="[-1..1]" value="${yearInst}" />
+                <br/>
+                <label class="edit-form"><g:message code="pnlstatement.month.label"/></label>
+                <g:select class="select-list" style="width: 200px;" name="month.id" noSelection="${['null':'']}" from="${Month.list()}" value="${monthInst?.id}" optionKey="id" />
+                <br/>
+                <input type="submit" value="${message(code: 'actions.generate')}" class="myButton" style="margin-left: 205px;"/>
+            </g:form>
         </div>
     </body>
 </html>

@@ -101,8 +101,10 @@ class MobileController {
      */
     def logout() {
 
-        println ''
-        println "Operation LOGOUT from ${request.getRemoteAddr()}"
+        if(Environment.current == Environment.DEVELOPMENT) {
+            println ''
+            println "Operation LOGOUT from ${request.getRemoteAddr()}"
+        }
         
         if(params?.id) {
             mobileSessionService.remove(new Integer(params?.id))
@@ -309,19 +311,28 @@ class MobileController {
      */
     def listtransactions() {
         
-        if(Environment.current == Environment.DEVELOPMENT) {
-            println ''
-            println "${new Date()} Operation LISTTRANSACTIONS from ${request.getRemoteAddr()}"
-        }
-            
         def userID      = new Integer(params?.id)
         def dateFrom    = new Date().parse("d/M/yyyy", params?.dateFrom)
         def dateTill    = new Date().parse("d/M/yyyy", params?.dateTill)
+        Date dateCurr   = new Date()
         def user        = User.get(userID)
         def company     = user?.company
         def recCount    = 0
         def recordList  = []
         def errorCode   = 0
+        
+        if(Environment.current == Environment.DEVELOPMENT) {
+            println ''
+            println "${new Date().format('dd/MM/yyyy HH:mm:ss')} ${user?.login}: operation LISTTRANSACTIONS from ${request.getRemoteAddr()}"
+        } 
+        
+        dateFrom.clearTime()
+        dateTill.clearTime()
+        dateCurr.clearTime()
+        
+        if(dateTill > dateCurr) {
+            dateTill = dateCurr
+        }
         
         if(dateTill < dateFrom) {
             dateFrom = dateTill
@@ -348,11 +359,11 @@ class MobileController {
             recCount    = recordList.size()
         
             if(Environment.current == Environment.DEVELOPMENT) {
-                println "Total Transactions found: ${recCount}"
-                println "Final Range of Dates: ${dateFrom.format('dd/MM/yyyy')} - ${dateTill.format('dd/MM/yyyy')}"
+                println "Total Transactions found : ${recCount}"
+                println "Final Range of Dates     : ${dateFrom.format('dd/MM/yyyy')} - ${dateTill.format('dd/MM/yyyy')}"
             }
         
-            render(contentType: 'text/xml') {
+            render(contentType: 'text/xml', encoding: 'UTF-8') {
                 result(code: errorCode, id: userID) {
                     originator(request.getRemoteAddr())
                 
@@ -362,20 +373,24 @@ class MobileController {
                     else if(errorCode == 1) {
                         resDescription("Wrong Dates Range: defaulted to DateTill")
                     }
-                
-                    recordCount(recCount)
+                    
+                    dateStart   (dateFrom.format('dd/MM/yyyy'))
+                    dateStop    (dateTill.format('dd/MM/yyyy'))
+                    recordCount (recCount)
                 
                     records {
                         recordList.each {
                             def recInstance = it
                             
+                            //  Cannot use implicit variable 'it' in Builder !!!
+                            
                             record {
-                                tranCode(recInstance?.id)
-                                date(recInstance?.transactionDate.format('dd/MM/yyyy'))
-                                type(recInstance?.operationType)
-                                amount(recInstance?.transactionAmount)
-                                descr(recInstance?.transactionRemarks)
-                                operator(recInstance?.operator)
+                                tranCode    (recInstance?.id)
+                                date        (recInstance?.transactionDate.format('dd/MM/yyyy'))
+                                type        (recInstance?.operationType)
+                                amount      (recInstance?.transactionAmount)
+                                descr       (recInstance?.transactionRemarks)
+                                operator    (recInstance?.operator)
                             }
                         }
                     }
