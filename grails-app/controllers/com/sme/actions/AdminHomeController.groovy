@@ -6,6 +6,9 @@ import grails.util.Environment
 
 class AdminHomeController {
 
+    def businessTransactionService
+    //def messageSource
+    
     def index(Integer max) {
         
         if(!session?.user) {
@@ -21,14 +24,14 @@ class AdminHomeController {
         [businesses: Business.list(params), businessInstanceCount: Business.count()]
     }
     
-    def show = {
+    def show() {
         params.offset = params.offset ?: 0
         params.max = params.max ?: 0
         
         [businessInstance: Business.get(new Integer(params?.id)), params: [max: params?.max, offset: params?.offset]]
     }
     
-    def edit = {
+    def edit() {
         if(!session?.user) {
             redirect (controller: 'login')
         }
@@ -53,8 +56,12 @@ class AdminHomeController {
         def Date dateFrom
         def Date dateTill
         
-        println "LISTTRANSACTIONS: forwarded params"
-        println params
+        if(Environment.current == Environment.DEVELOPMENT) {
+            println ''
+            println "--- ${session.user.login}: in Method \'listtransactions\' ---"
+            println "Forwarded params"
+            println params
+        }
         
         params.offset = params.offset ?: 0
         params.max = params.max ?: 10
@@ -127,7 +134,12 @@ class AdminHomeController {
             )
         }
         
-        println "Total Records (before pagination): ${transList.size()}"
+        //  Overriding default pagination options: manual slicing list of
+        //  fetched Transaction
+        
+        if(Environment.current == Environment.DEVELOPMENT) {
+            println "Total Records found before pagination: ${transList.size()}"
+        }
         
         transCount = transList.size()
         def indexTo     = new Integer(params?.offset) + new Integer(params?.max) - 1
@@ -139,7 +151,9 @@ class AdminHomeController {
             transList = transList[indexFrom..indexTo]
         }
         
-        println "Total Records passed after pagination: ${transList.size()}"
+        if(Environment.current == Environment.DEVELOPMENT) {
+            println "Total Records passed after pagination: ${transList.size()}"
+        }
         
         [
             businessInstance:   Business.get(new Integer(params?.id)),
@@ -154,33 +168,153 @@ class AdminHomeController {
     
     /**
      *  Managing PNL Statements for a given Business instance
+     *  
+     *  Passed from GSP Page:
+     *  
+     *  params.period_year
+     *  params.month
+     *  params.generate (1/null)
+     *  
+     *  Scenarios to handle:
+     *  
+     *  1   Statement does not exist, Transactions for the period are found
+     *  2   Statement does not exist, Transactions are NOT found
+     *  3   Statement already exists
+     *  
+     *  Must be banned:
+     *  
+     *  1   Preparing Statement out of sequence (no gaps are allowed)
+     *  2   Future dated Statements
+     *  
      */
     def statements() {
         if(!session?.user) {
             redirect (controller: 'login')
         }
         
-        def statements = []
-        def businessID = new Integer(params?.id)
-        def business
+        String errMessage
         
+        def statements = []
+        def transList  = []
+        def prevStatement = null
+        
+        def businessID
+        def business
+        def month = null
+        def year  = null
+        
+        Integer yearPassed  = 0
+        Integer monthPassed = 0     //  Must be 1..12
+        
+        boolean create = false
+        
+        params.id = params.id ?: params.instID
+        
+        if(params.id) {
+            businessID = new Integer(params?.id)
+        }
+       
         if(businessID) {
             business = Business.get(businessID)
+        }
+        
+        if(params.period_year) {
+            year = new Date().copyWith (
+                year: new Integer(params.period_year),
+                month: Calendar.JANUARY,
+                dayOfMonth: 1
+            )
+            
+            yearPassed = new Integer(params.period_year)
+        }
+        
+        if(params.month && params.month?.id != 'null') {
+            month = Month.get(new Integer(params?.month?.id))
+            monthPassed = month.number
+        }
+        
+        if(year && month) {
+            create = true
+        }
+        else if(year && !month) {
+            errMessage = "${message(code: 'pnlstatement.error.missing_month')}"
         }
         
         statements = PNLStatement.findAllByCompany(Business.get(businessID))
         
         if(Environment.current == Environment.DEVELOPMENT) {
             println ''
-            println 'In Method \'statements\''
-            println "Passed ID: ${businessID}"
-            println "Identified Company: ${business?.name}"
+            println "--- ${session.user.login}: In Method \'statements\' ---"
+            println "Passed ID            : ${businessID} / ${params?.instID}"
+            println "Identified Company   : ${business?.name}"
+            println "Selected Year        : ${params?.period_year}"
+            println "Selected Month       : ${params?.month?.id} -> ${month}/${month?.number}"
+            println "Existing Statements  : ${statements.size()}"
+            println "Create new Statement : ${create}"
+            println "Error Message: ${errMessage}"
         }
-
+        
+        //  Check that Statement for the  period does not yet exist, and if it
+        //  is not the first statement, then previous period is covered
+        
+        if(statements.size() > 0) {
+            prevStatement = PNLStatement.createCriteria().get {
+                eq('company', business)
+                eq('year', yearPassed)
+                eq('month', monthPassed)
+            }
+            
+            if(prevStatement) {
+                create = false
+                errMessage = messageSource.getMessage('application.error.duplicated_pnl_period')
+            }
+            else {
+                prevStatement = null
+                
+                monthPrev = monthPassed - 1
+                yearPrev = yearPassed
+                
+                if(monthPrev == 0) {
+                    monthPrev = 12
+                    yearPrev = yearPassed - 1
+                }
+                
+                prevStatement = PNLStatement.createCriteria().get {
+                    eq('company', business)
+                    eq('year', yearPrev)
+                    eq('month', monthPrev)
+                }
+                
+                if(!prevStatement) {
+                    create = false  //  Missing previous period
+                    errMessage = messageSource.getMessage('application.error.missing_pnl_period')
+                }
+            }
+        }
+        
+        if(create) {
+            transList = businessTransactionService.checkAvailableTransactions(business, new Integer(params.period_year), month.number - 1)
+        
+            if(Environment.current == Environment.DEVELOPMENT) {
+                println ''
+                println '--- Return from service'
+                println "Transactions Found :"
+                println transList
+            }
+            
+            if(transList) {
+                if(Environment.current == Environment.DEVELOPMENT) {
+                    println "Proceed to creation of new Statement Record"
+                }
+            }
+        }
+        
         [
             statementList:      statements,
             statementCount:     statements.size(),
             businessInstance:   business,
+            monthInst:          month,
+            yearInst:           year,
             params:             params
         ]
     }
