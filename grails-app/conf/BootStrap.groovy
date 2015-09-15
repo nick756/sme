@@ -520,13 +520,13 @@ class BootStrap {
         
         //  Adding Operator User for Mobile Interface
         
-        new User(
+        def vlad = new User(
             name: 'Vladimir Gundartsev',
             login: 'vlad',
             passw: '1234',
             role: UserRole.findByCode(2),
             company: Business.get(1)
-        ).save()
+        ).save(flush: true)
         
         def opUser = new User(
             name: 'Andreano Choppolo',
@@ -542,10 +542,348 @@ class BootStrap {
         def inst = Business.get(2)
         inst.addToUsers(opUser)
         println "${inst?.name}: ${inst?.users}"
+        
+        Business.get(1).addToUsers(vlad)
+        println "${Business.get(1).name}: ${Business.get(1).users}"
+        
+        if(!BusinessTransaction.list()) {
+            emulateTransactions()
+        }
            
     }
     
     def destroy = {
+    }
+    
+    /**
+     *  Emulation of Transactions for first Company
+     */
+    void emulateTransactions() {
+        def company = Business.get(2)
+        def operator = company?.users[0]
+        
+        println ""
+        println "Transactions emulation"
+        println "Company  : ${company.name}"
+        println "Operator : ${operator?.name}"
+        
+        //  January entries
+        
+        company.addToBusinessTransactions(
+            new BusinessTransaction(
+                operationType:      GenericOperation.findByCode(1),
+                transactionDate:    new Date().copyWith(year: 2015, month: 0, dayOfMonth: 3),
+                transactionAmount:  50000.0,
+                transactionRemarks: 'Capital Injection',
+                operator:           "${operator?.name}",
+                company:            company
+            ).save(flush: true) 
+        )
+        
+        company.addToBusinessTransactions(
+            new BusinessTransaction(
+                operationType:      GenericOperation.findByCode(2),
+                transactionDate:    new Date().copyWith(year: 2015, month: 0, dayOfMonth: 8),
+                transactionAmount:  20000.0,
+                transactionRemarks: 'Advance from Directors',
+                operator:           "${operator?.name}",
+                company:            company
+            ).save(flush: true) 
+        )
+        
+        company.addToBusinessTransactions(
+            new BusinessTransaction(
+                operationType:      GenericOperation.findByCode(34),
+                transactionDate:    new Date().copyWith(year: 2015, month: 0, dayOfMonth: 8),
+                transactionAmount:  150.0,
+                transactionRemarks: 'Telephone Bill',
+                operator:           "${operator?.name}",
+                company:            company
+            ).save(flush: true) 
+        )        
+        
+        company.addToBusinessTransactions(
+            new BusinessTransaction(
+                operationType:      GenericOperation.findByCode(32),
+                transactionDate:    new Date().copyWith(year: 2015, month: 0, dayOfMonth: 25),
+                transactionAmount:  5400.0,
+                transactionRemarks: 'Salary for January',
+                operator:           "${operator?.name}",
+                company:            company
+            ).save(flush: true) 
+        ) 
+        
+        company.addToBusinessTransactions(
+            new BusinessTransaction(
+                operationType:      GenericOperation.findByCode(6),
+                transactionDate:    new Date().copyWith(year: 2015, month: 0, dayOfMonth: 30),
+                transactionAmount:  45000.0,
+                transactionRemarks: 'Vehicle Purchase: Proton Persona',
+                operator:           "${operator?.name}",
+                company:            company
+            ).save(flush: true) 
+        )        
+        
+        //  February entries
+        
+        company.addToBusinessTransactions(
+            new BusinessTransaction(
+                operationType:      GenericOperation.findByCode(14),
+                transactionDate:    new Date().copyWith(year: 2015, month: 1, dayOfMonth: 1),
+                transactionAmount:  8500.0,
+                transactionRemarks: 'Sales',
+                operator:           "${operator?.name}",
+                company:            company
+            ).save(flush: true) 
+        )         
+        
+        company.addToBusinessTransactions(
+            new BusinessTransaction(
+                operationType:      GenericOperation.findByCode(14),
+                transactionDate:    new Date().copyWith(year: 2015, month: 1, dayOfMonth: 3),
+                transactionAmount:  5000.0,
+                transactionRemarks: 'Sales',
+                operator:           "${operator?.name}",
+                company:            company
+            ).save(flush: true) 
+        )
+        
+        company.addToBusinessTransactions(
+            new BusinessTransaction(
+                operationType:      GenericOperation.findByCode(14),
+                transactionDate:    new Date().copyWith(year: 2015, month: 1, dayOfMonth: 10),
+                transactionAmount:  6540.0,
+                transactionRemarks: 'Sales',
+                operator:           "${operator?.name}",
+                company:            company
+            ).save(flush: true) 
+        )
+        
+        company.addToBusinessTransactions(
+            new BusinessTransaction(
+                operationType:      GenericOperation.findByCode(36),
+                transactionDate:    new Date().copyWith(year: 2015, month: 1, dayOfMonth: 11),
+                transactionAmount:  550.80,
+                transactionRemarks: 'Untility Bills',
+                operator:           "${operator?.name}",
+                company:            company
+            ).save(flush: true) 
+        ) 
+        
+        company.addToBusinessTransactions(
+            new BusinessTransaction(
+                operationType:      GenericOperation.findByCode(10),
+                transactionDate:    new Date().copyWith(year: 2015, month: 1, dayOfMonth: 14),
+                transactionAmount:  8500.0,
+                transactionRemarks: 'Small Office Renovation',
+                operator:           "${operator?.name}",
+                company:            company
+            ).save(flush: true) 
+        ) 
+        
+        company.addToBusinessTransactions(
+            new BusinessTransaction(
+                operationType:      GenericOperation.findByCode(32),
+                transactionDate:    new Date().copyWith(year: 2015, month: 1, dayOfMonth: 25),
+                transactionAmount:  5400.0,
+                transactionRemarks: 'Salary for February',
+                operator:           "${operator?.name}",
+                company:            company
+            ).save(flush: true) 
+        )  
+        
+        company.addToBusinessTransactions(
+            new BusinessTransaction(
+                operationType:      GenericOperation.findByCode(34),
+                transactionDate:    new Date().copyWith(year: 2015, month: 1, dayOfMonth: 26),
+                transactionAmount:  150.0,
+                transactionRemarks: 'Telephone Bill',
+                operator:           "${operator?.name}",
+                company:            company
+            ).save(flush: true) 
+        )
+        
+        //  March entries
+
+        company.addToBusinessTransactions(
+            new BusinessTransaction(
+                operationType:      GenericOperation.findByCode(14),
+                transactionDate:    new Date().copyWith(year: 2015, month: 2, dayOfMonth: 1),
+                transactionAmount:  8500.0,
+                transactionRemarks: 'Sales',
+                operator:           "${operator?.name}",
+                company:            company
+            ).save(flush: true) 
+        )         
+        
+        company.addToBusinessTransactions(
+            new BusinessTransaction(
+                operationType:      GenericOperation.findByCode(14),
+                transactionDate:    new Date().copyWith(year: 2015, month: 2, dayOfMonth: 3),
+                transactionAmount:  5000.0,
+                transactionRemarks: 'Sales',
+                operator:           "${operator?.name}",
+                company:            company
+            ).save(flush: true) 
+        )
+        
+        company.addToBusinessTransactions(
+            new BusinessTransaction(
+                operationType:      GenericOperation.findByCode(14),
+                transactionDate:    new Date().copyWith(year: 2015, month: 2, dayOfMonth: 10),
+                transactionAmount:  6540.0,
+                transactionRemarks: 'Sales',
+                operator:           "${operator?.name}",
+                company:            company
+            ).save(flush: true) 
+        )
+        
+        company.addToBusinessTransactions(
+            new BusinessTransaction(
+                operationType:      GenericOperation.findByCode(36),
+                transactionDate:    new Date().copyWith(year: 2015, month: 2, dayOfMonth: 11),
+                transactionAmount:  540.80,
+                transactionRemarks: 'Untility Bills',
+                operator:           "${operator?.name}",
+                company:            company
+            ).save(flush: true) 
+        ) 
+        
+        company.addToBusinessTransactions(
+            new BusinessTransaction(
+                operationType:      GenericOperation.findByCode(33),
+                transactionDate:    new Date().copyWith(year: 2015, month: 2, dayOfMonth: 14),
+                transactionAmount:  1500.0,
+                transactionRemarks: 'Pantries',
+                operator:           "${operator?.name}",
+                company:            company
+            ).save(flush: true) 
+        ) 
+        
+        company.addToBusinessTransactions(
+            new BusinessTransaction(
+                operationType:      GenericOperation.findByCode(32),
+                transactionDate:    new Date().copyWith(year: 2015, month: 2, dayOfMonth: 25),
+                transactionAmount:  5400.0,
+                transactionRemarks: 'Salary for March',
+                operator:           "${operator?.name}",
+                company:            company
+            ).save(flush: true) 
+        )  
+        
+        company.addToBusinessTransactions(
+            new BusinessTransaction(
+                operationType:      GenericOperation.findByCode(34),
+                transactionDate:    new Date().copyWith(year: 2015, month: 2, dayOfMonth: 28),
+                transactionAmount:  150.0,
+                transactionRemarks: 'Telephone Bill',
+                operator:           "${operator?.name}",
+                company:            company
+            ).save(flush: true) 
+        )   
+        
+        company.addToBusinessTransactions(
+            new BusinessTransaction(
+                operationType:      GenericOperation.findByCode(4),
+                transactionDate:    new Date().copyWith(year: 2015, month: 2, dayOfMonth: 30),
+                transactionAmount:  10000.0,
+                transactionRemarks: 'Grant from Government',
+                operator:           "${operator?.name}",
+                company:            company
+            ).save(flush: true) 
+        ) 
+        
+        company.addToBusinessTransactions(
+            new BusinessTransaction(
+                operationType:      GenericOperation.findByCode(8),
+                transactionDate:    new Date().copyWith(year: 2015, month: 2, dayOfMonth: 31),
+                transactionAmount:  18000.0,
+                transactionRemarks: 'Office Equipment',
+                operator:           "${operator?.name}",
+                company:            company
+            ).save(flush: true) 
+        )         
+        
+        //  April entries
+        
+        company.addToBusinessTransactions(
+            new BusinessTransaction(
+                operationType:      GenericOperation.findByCode(14),
+                transactionDate:    new Date().copyWith(year: 2015, month: 3, dayOfMonth: 1),
+                transactionAmount:  8500.0,
+                transactionRemarks: 'Sales',
+                operator:           "${operator?.name}",
+                company:            company
+            ).save(flush: true) 
+        )         
+        
+        company.addToBusinessTransactions(
+            new BusinessTransaction(
+                operationType:      GenericOperation.findByCode(14),
+                transactionDate:    new Date().copyWith(year: 2015, month: 3, dayOfMonth: 3),
+                transactionAmount:  5000.0,
+                transactionRemarks: 'Sales',
+                operator:           "${operator?.name}",
+                company:            company
+            ).save(flush: true) 
+        )
+        
+        company.addToBusinessTransactions(
+            new BusinessTransaction(
+                operationType:      GenericOperation.findByCode(14),
+                transactionDate:    new Date().copyWith(year: 2015, month: 3, dayOfMonth: 10),
+                transactionAmount:  6540.0,
+                transactionRemarks: 'Sales',
+                operator:           "${operator?.name}",
+                company:            company
+            ).save(flush: true) 
+        )
+        
+        company.addToBusinessTransactions(
+            new BusinessTransaction(
+                operationType:      GenericOperation.findByCode(36),
+                transactionDate:    new Date().copyWith(year: 2015, month: 3, dayOfMonth: 11),
+                transactionAmount:  540.80,
+                transactionRemarks: 'Untility Bills',
+                operator:           "${operator?.name}",
+                company:            company
+            ).save(flush: true) 
+        ) 
+        
+        company.addToBusinessTransactions(
+            new BusinessTransaction(
+                operationType:      GenericOperation.findByCode(32),
+                transactionDate:    new Date().copyWith(year: 2015, month: 3, dayOfMonth: 25),
+                transactionAmount:  5800.0,
+                transactionRemarks: 'Salary for April',
+                operator:           "${operator?.name}",
+                company:            company
+            ).save(flush: true) 
+        )  
+        
+        company.addToBusinessTransactions(
+            new BusinessTransaction(
+                operationType:      GenericOperation.findByCode(34),
+                transactionDate:    new Date().copyWith(year: 2015, month: 3, dayOfMonth: 28),
+                transactionAmount:  150.0,
+                transactionRemarks: 'Telephone Bill',
+                operator:           "${operator?.name}",
+                company:            company
+            ).save(flush: true) 
+        )   
+        
+        company.addToBusinessTransactions(
+            new BusinessTransaction(
+                operationType:      GenericOperation.findByCode(6),
+                transactionDate:    new Date().copyWith(year: 2015, month: 3, dayOfMonth: 30),
+                transactionAmount:  65000.0,
+                transactionRemarks: 'Another better Vehicle',
+                operator:           "${operator?.name}",
+                company:            company
+            ).save(flush: true) 
+        )        
+
+        println "Total Transactions added: ${company?.businessTransactions.size()}"
     }
     
     void parseBusinessFile() {

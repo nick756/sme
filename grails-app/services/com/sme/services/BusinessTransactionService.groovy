@@ -44,6 +44,8 @@ class BusinessTransactionService {
     
     /**
      *  Adding Transaction through Web Interface
+     *  TODO (17/08/2017):  Option for saving an image (document) that may be
+     *                      related to Transaction
      */ 
     def addTransactionWeb(Business company, User user, Date date, Integer code, double amount, String description) {
         if(company) {
@@ -59,7 +61,6 @@ class BusinessTransactionService {
             if(!newTransaction.validate()) {
                 return 0
             }
-        
             else {
                 newTransaction.save(flush: true)
                 company.addToBusinessTransactions(newTransaction)
@@ -79,7 +80,7 @@ class BusinessTransactionService {
     def getTransactions(Business company, Date from, Date till) {
         BusinessTransaction.createCriteria().list() {
             eq('company', company)
-            between('transactionDate', from, till)
+            between('transactionDate', from, till + 1)
             
             and {
                 order('transactionDate', 'asc')
@@ -105,7 +106,7 @@ class BusinessTransactionService {
         
         result = BusinessTransaction.createCriteria().list() {
             eq('company', company)
-            between('transactionDate', dateFrom, dateTill)
+            between('transactionDate', dateFrom, dateTill + 1)
             isNull('statement')
         }
         

@@ -44,7 +44,7 @@ class BusinessController {
         request.withFormat {
             form multipartForm {
                 flash.message = message(code: 'default.created.message', args: [message(code: 'business.label', default: 'Business'), businessInstance.id])
-                redirect businessInstance
+                redirect controller: 'adminHome', action: 'index'
             }
             '*' { respond businessInstance, [status: CREATED] }
         }

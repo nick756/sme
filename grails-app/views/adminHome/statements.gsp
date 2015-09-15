@@ -1,9 +1,3 @@
-<!--
-  To change this license header, choose License Headers in Project Properties.
-  To change this template file, choose Tools | Templates
-  and open the template in the editor.
--->
-
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page import="com.sme.entities.*" %>
 
@@ -33,5 +27,50 @@
                 <input type="submit" value="${message(code: 'actions.generate')}" class="myButton" style="margin-left: 205px;"/>
             </g:form>
         </div>
+        
+        <g:if test="${errMessage}">
+            <div style="display: block; width: 100%; color: #b00000; font-size: 14pt;">${errMessage}</div>
+        </g:if>
+        
+        <table class="righted-content">
+            <caption><g:message code="cfstatement.page.label"/></caption>
+            <tr>
+                <th><g:message code="cfstatement.year.label"/></th>
+                <g:sortableColumn property="month" title="${message(code: 'cfstatement.month.label')}" />
+                <th><g:message code="cfstatement.openingbalance.label"/></th>
+                <th><g:message code="cfstatement.inboundamount.label"/></th>
+                <th><g:message code="cfstatement.outboundamount.label"/></th>
+                <th><g:message code="cfstatement.resultamount.label"/></th>
+                <th><g:message code="cfstatement.cumulativeamount.label"/></th>
+            </tr> 
+
+            <g:each status="index" in="${statementList}" var="item">
+                
+                <g:if test="${new Integer(params.offset) > 0}">
+                    <g:set var="offset" value="${new Integer(params.offset)}"/>
+                </g:if>
+                <g:else><g:set var="offset" value="${0}"/></g:else>
+
+                <tr class="${(index % 2) == 0 ? 'even' : 'odd'}">
+                    <td class="no-border centered">${item?.year}</td>
+                    <td class="no-border centered">${item?.month}</td>
+                    <td class="no-border righted"><g:formatNumber number="${item?.openingBalance}" format="#,##0.00" /></td>
+                    <td class="no-border righted"><g:formatNumber number="${item?.inflow}" format="#,##0.00" /></td>
+                    <td class="no-border righted"><g:formatNumber number="${item?.outflow}" format="#,##0.00" /></td>
+                    
+                    <g:if test="${item?.nettAmount >= 0}">
+                        <td class="no-border righted">
+                    </g:if>
+                    <g:else>
+                        <td class="no-border righted" style="color: #fa0000;">
+                    </g:else>
+                    
+                    <g:formatNumber number="${item?.nettAmount}" format="#,##0.00" /></td>
+                    <td class="righted"><g:formatNumber number="${item?.cumulativeAmount}" format="#,##0.00" /></td>
+                </tr>
+                
+            </g:each>
+                
+        </table>
     </body>
 </html>

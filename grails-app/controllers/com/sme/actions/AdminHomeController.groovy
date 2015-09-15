@@ -7,6 +7,9 @@ import grails.util.Environment
 class AdminHomeController {
 
     def businessTransactionService
+    def cashFlowService
+    def messageSource
+    
     //def messageSource
     
     def index(Integer max) {
@@ -167,7 +170,7 @@ class AdminHomeController {
     }
     
     /**
-     *  Managing PNL Statements for a given Business instance
+     *  Managing CF Statements for a given Business instance
      *  
      *  Passed from GSP Page:
      *  
@@ -205,6 +208,8 @@ class AdminHomeController {
         
         Integer yearPassed  = 0
         Integer monthPassed = 0     //  Must be 1..12
+        Integer monthPrev
+        Integer yearPrev
         
         boolean create = false
         
@@ -232,15 +237,19 @@ class AdminHomeController {
             month = Month.get(new Integer(params?.month?.id))
             monthPassed = month.number
         }
+        else {
+            monthPassed = -1
+        }
         
         if(year && month) {
             create = true
         }
         else if(year && !month) {
             errMessage = "${message(code: 'pnlstatement.error.missing_month')}"
+            month = null
         }
         
-        statements = PNLStatement.findAllByCompany(Business.get(businessID))
+        statements = CashFlowStatement.findAllByCompany(Business.get(businessID))
         
         if(Environment.current == Environment.DEVELOPMENT) {
             println ''
@@ -258,7 +267,7 @@ class AdminHomeController {
         //  is not the first statement, then previous period is covered
         
         if(statements.size() > 0) {
-            prevStatement = PNLStatement.createCriteria().get {
+            prevStatement = CashFlowStatement.createCriteria().get {
                 eq('company', business)
                 eq('year', yearPassed)
                 eq('month', monthPassed)
@@ -266,7 +275,9 @@ class AdminHomeController {
             
             if(prevStatement) {
                 create = false
-                errMessage = messageSource.getMessage('application.error.duplicated_pnl_period')
+                errMessage = message(code: 'application.error.duplicated_cf_period')
+                println 'Duplicated Statement Period'
+                println errMessage
             }
             else {
                 prevStatement = null
@@ -279,15 +290,15 @@ class AdminHomeController {
                     yearPrev = yearPassed - 1
                 }
                 
-                prevStatement = PNLStatement.createCriteria().get {
+                prevStatement = CashFlowStatement.createCriteria().get {
                     eq('company', business)
                     eq('year', yearPrev)
                     eq('month', monthPrev)
                 }
                 
-                if(!prevStatement) {
+                if(!prevStatement && month) {
                     create = false  //  Missing previous period
-                    errMessage = messageSource.getMessage('application.error.missing_pnl_period')
+                    errMessage = message(code: 'application.error.missing_cf_period')
                 }
             }
         }
@@ -306,15 +317,24 @@ class AdminHomeController {
                 if(Environment.current == Environment.DEVELOPMENT) {
                     println "Proceed to creation of new Statement Record"
                 }
+                
+                def newStatement = cashFlowService.createNewCFStatement(business, yearPassed, monthPassed)
+                cashFlowService.populateCFStatement(newStatement, transList)
+                cashFlowService.calculateCFStatement(newStatement)
             }
         }
         
+        statements = CashFlowStatement.findAllByCompany(Business.get(businessID))
+        
         [
+            //  Statements List must be refreshed after new instance
             statementList:      statements,
             statementCount:     statements.size(),
             businessInstance:   business,
             monthInst:          month,
             yearInst:           year,
+            params:             params,
+            errMessage:         errMessage,
             params:             params
         ]
     }

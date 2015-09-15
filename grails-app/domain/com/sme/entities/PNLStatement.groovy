@@ -10,10 +10,10 @@ class PNLStatement {
     Integer month
     Integer year
     
-    BigDecimal openingBalance
-    BigDecimal inboundAmount
-    BigDecimal outboundAmount
-    BigDecimal resultAmount
+    BigDecimal openingBalance       //  Cumulative amount (result from past period)
+    BigDecimal inboundAmount        //  Inflow amount
+    BigDecimal outboundAmount       //  Outflow amount
+    BigDecimal resultAmount         //  Nett amount (difference in - out)
     
     static belongsTo = [company: Business]
     static hasMany = [busTransactions: BusinessTransaction]

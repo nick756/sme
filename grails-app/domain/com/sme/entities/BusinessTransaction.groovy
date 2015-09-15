@@ -15,7 +15,8 @@ class BusinessTransaction {
     
     static belongsTo = [
         company:    Business, 
-        statement:  PNLStatement
+        statement:  CashFlowStatement
+        
     ]
 
     static constraints = {

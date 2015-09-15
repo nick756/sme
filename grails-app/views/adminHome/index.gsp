@@ -12,7 +12,7 @@
             border-top: 0px solid #6285C7; padding: 5px 0;">
             
             <g:link 
-                action="add" 
+                controller="business" action="create" 
                 params="['max': params.max, 'offset': params.offset]">
                     <img class="image-link" 
                         style="margin-right: 5px;" 
