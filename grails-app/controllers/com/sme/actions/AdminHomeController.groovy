@@ -1,7 +1,7 @@
 package com.sme.actions
 
 import com.sme.entities.*
-import java.text.DecimalFormat
+import java.text.*
 import grails.util.Environment
 
 class AdminHomeController {
@@ -19,7 +19,7 @@ class AdminHomeController {
         }
         
         params.offset = params.offset ?: 0
-        params.max = Math.min(max ?: 10, 100)
+        params.max = params.max ?: 10
         
         //  TODO:   check passed 'offset' when returning from Transactions List,
         //          can be beyond the range
@@ -28,8 +28,12 @@ class AdminHomeController {
     }
     
     def show() {
+        if(!session?.user) {
+            redirect (controller: 'login')
+        }        
+
         params.offset = params.offset ?: 0
-        params.max = params.max ?: 0
+        params.max = params.max ?: 10
         
         [businessInstance: Business.get(new Integer(params?.id)), params: [max: params?.max, offset: params?.offset]]
     }
@@ -56,13 +60,16 @@ class AdminHomeController {
         def filtOption
         def opFilter = 0
         
-        def Date dateFrom
-        def Date dateTill
+        def dateFrom
+        def dateTill
+        def dateFromStr
+        def dateTillStr
+        Business businessInstance
         
         if(Environment.current == Environment.DEVELOPMENT) {
             println ''
-            println "--- ${session.user.login}: in Method \'listtransactions\' ---"
-            println "Forwarded params"
+            println "--- ${new Date()}: ${session.user.login} in ${params.controller}/${params?.action} ---"
+            print "Forwarded params: "
             println params
         }
         
@@ -71,100 +78,94 @@ class AdminHomeController {
         
         //  Overring default Grails Form behavior (cannot pass existing id)
         params.id = params.id ?: params.instId
+        businessInstance = Business.get(new Integer(params?.id))
+        filtOption = 1
         
         if(params?.filterOption) {
             filtOption = params?.filterOption.toLong()
-            
-            if(filtOption > 1) {
-                if(filtOption == 2) {   //  One Month Period (inclusive)
-                    dateTill = new Date().clearTime()
-                    dateFrom = dateTill.minus(31)
-                    
-                    opFilter = 2
-                    
-                    //  Overriding 'offset' as filtering may be done not
-                    //  from first page
-                    params.offset = 0
-                    
-                    transList = BusinessTransaction.createCriteria().list() {
-                        eq('company', Business.get(params.id))
-                        
-                        between('transactionDate', dateFrom, dateTill)
-                       
-                        and {
-                            order('transactionDate', 'asc')
-                            order('id', 'asc')
-                        }
-                    }
-                    
-                }
-                else {                  //  Range of Dates
-                    if(params?.dateFrom && params?.dateTill) {
-                        dateFrom = new Date().parse("d/M/yyyy", params?.dateFrom)
-                        dateTill = new Date().parse("d/M/yyyy", params?.dateTill)
-                        
-                        transList = BusinessTransaction.createCriteria().list() {
-                            eq('company', Business.get(params.id))
-                        
-                            between('transactionDate', dateFrom, dateTill)
-                       
-                            and {
-                                order('transactionDate', 'asc')
-                                order('id', 'asc')
-                            }
-                        }
-                        
-                        opFilter = 3
-                    }
-                    else {              //  Fall back to default
-                        
-                    }
+        }
+        
+        switch(filtOption) {
+        case 1:
+            transList = BusinessTransaction.createCriteria().list(params) {
+                eq('company', businessInstance)
+
+                and {
+                    order('transactionDate', 'asc')
+                    order('id', 'asc')
+                }                
+            }
+            break
+
+        case 2:
+            dateTill = new Date().clearTime()
+            dateFrom = dateTill.minus(31)
+
+            transList = BusinessTransaction.createCriteria().list(params) {
+                eq('company', businessInstance)
+
+                between('transactionDate', dateFrom, dateTill)
+
+                and {
+                    order('transactionDate', 'asc')
+                    order('id', 'asc')
                 }
             }
-            else {
-                transList = BusinessTransaction.findAllByCompany(
-                    Business.get(params?.id), 
-                    [sort: "transactionDate", order: "asc"],
-                    [sort: 'id', order: 'asc']
-                )                
+            break
+
+        case 3:
+            dateFrom = null
+            dateTill = null
+
+            if(params?.dateFrom && params?.dateTill) {
+                try {
+                    dateFrom = new Date().parse("d/M/yyyy", params?.dateFrom).clearTime()
+                    dateTill = new Date().parse("d/M/yyyy", params?.dateTill).clearTime() 
+                }
+                catch(Exception e) {
+                    filtOption = 1
+                }
             }
+
+            transList = BusinessTransaction.createCriteria().list(params) {
+                eq('company', businessInstance)
+
+                if(dateFrom && dateTill) {
+                    between('transactionDate', dateFrom, dateTill + 1)
+                }
+
+                and {
+                    order('transactionDate', 'asc')
+                    order('id', 'asc')
+                }
+            }
+            break
+        }
+        
+        if(Environment.current == Environment.DEVELOPMENT) {
+            println "Total Records filtered: ${transList.totalCount}"
+            println "Total Records after pagination: ${transList.size()}"
+            println "operationFilter: ${filtOption}"
+            println "dateFrom: ${dateFrom}"
+            println "dateTill: ${dateTill}"
+        }        
+        
+        if(dateFrom && dateTill) {
+            dateFromStr = new SimpleDateFormat('dd/MM/yyyy').format(dateFrom)
+            dateTillStr = new SimpleDateFormat('dd/MM/yyyy').format(dateTill)
         }
         else {
-            transList = BusinessTransaction.findAllByCompany(
-                Business.get(params?.id), 
-                [sort: "transactionDate", order: "asc"],
-                [sort: 'id', order: 'asc']                
-            )
-        }
-        
-        //  Overriding default pagination options: manual slicing list of
-        //  fetched Transaction
-        
-        if(Environment.current == Environment.DEVELOPMENT) {
-            println "Total Records found before pagination: ${transList.size()}"
-        }
-        
-        transCount = transList.size()
-        def indexTo     = new Integer(params?.offset) + new Integer(params?.max) - 1
-        def indexFrom   = new Integer(params?.offset)
-        
-        if(indexTo >= transCount) indexTo = transCount - 1
-        
-        if(transCount > 0) {
-            transList = transList[indexFrom..indexTo]
-        }
-        
-        if(Environment.current == Environment.DEVELOPMENT) {
-            println "Total Records passed after pagination: ${transList.size()}"
+            dateFromStr = null
+            dateTillStr = null
         }
         
         [
-            businessInstance:   Business.get(new Integer(params?.id)),
+            businessInstance:   businessInstance,
             transactionsList:   transList,
-            transactionCount:   transCount,
-            operationFilter:    opFilter,
-            dateFrom:           dateFrom,
-            dateTill:           dateTill,
+            transactionCount:   transList.totalCount,
+            operationFilter:    filtOption,
+            dateFrom:           dateFromStr,
+            dateTill:           dateTillStr,
             params:             [max: params?.max, offset: params?.offset]
         ]
     }
@@ -191,10 +192,7 @@ class AdminHomeController {
      *  
      */
     def statements() {
-        if(!session?.user) {
-            redirect (controller: 'login')
-        }
-        
+       
         String errMessage
         
         def statements = []
@@ -213,6 +211,11 @@ class AdminHomeController {
         
         boolean create = false
         
+        if(!session?.user) {
+            redirect (controller: 'login')
+            return
+        }        
+        
         params.id = params.id ?: params.instID
         
         if(params.id) {
@@ -225,8 +228,8 @@ class AdminHomeController {
         
         if(params.period_year) {
             year = new Date().copyWith (
-                year: new Integer(params.period_year),
-                month: Calendar.JANUARY,
+                year:       new Integer(params.period_year),
+                month:      Calendar.JANUARY,
                 dayOfMonth: 1
             )
             
@@ -234,7 +237,7 @@ class AdminHomeController {
         }
         
         if(params.month && params.month?.id != 'null') {
-            month = Month.get(new Integer(params?.month?.id))
+            month       = Month.get(new Integer(params?.month?.id))
             monthPassed = month.number
         }
         else {
@@ -245,8 +248,8 @@ class AdminHomeController {
             create = true
         }
         else if(year && !month) {
-            errMessage = "${message(code: 'pnlstatement.error.missing_month')}"
-            month = null
+            errMessage  = "${message(code: 'pnlstatement.error.missing_month')}"
+            month       = null
         }
         
         statements = CashFlowStatement.findAllByCompany(Business.get(businessID))
@@ -336,6 +339,47 @@ class AdminHomeController {
             params:             params,
             errMessage:         errMessage,
             params:             params
+        ]
+    }
+    
+    //  Report on Cash Flow Summary details for particular month
+    
+    def statementdetails(CashFlowStatement summary) {
+        if(!session?.user) {
+            redirect controller: 'login', action: 'index'
+            return
+        }
+        
+        def groupsMap = [:]
+        def transactionsGroup
+        
+        CFGroup.list().each {group ->
+            
+            transactionsGroup = BusinessTransaction.createCriteria().list() {
+                eq('statement', summary)
+                
+                operationType {
+                    eq('group', group)
+                }
+            }
+            
+            groupsMap.put(group, transactionsGroup)
+        }
+        
+        if(Environment.current == Environment.DEVELOPMENT) {
+            println ''
+            println "--- ${session.user.login} ${new Date().format('dd/MM/yyyy HH:mm')}: method ${params?.controller}/${params.action} ---"
+            println "Received Summary: ${summary}"
+//            println "Transactions    : ${summary?.transactions?.toList().size()}"
+//            println summary?.transactions?.toList()
+//            println "Group Map       : ${groupsMap}"
+            
+        }   
+        
+        [
+            groups: groupsMap,
+            summary: summary,
+            company: summary?.company
         ]
     }
 }

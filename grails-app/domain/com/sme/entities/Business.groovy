@@ -1,6 +1,6 @@
 package com.sme.entities
 
-class Business {
+class Business implements Serializable {
     Date dateCreated
     Date lastUpdated
     

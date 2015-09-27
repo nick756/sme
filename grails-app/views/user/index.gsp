@@ -35,6 +35,7 @@
 						<g:sortableColumn property="email" title="${message(code: 'user.email.label', default: 'Email')}" />
 					
 						<th><g:message code="user.role.label" default="Role" /></th>
+                                                <td>Company</td>
 					
 					</tr>
 				</thead>
@@ -53,6 +54,7 @@
 						<td>${fieldValue(bean: userInstance, field: "email")}</td>
 					
 						<td>${fieldValue(bean: userInstance, field: "role")}</td>
+                                                <td>${userInstance?.company?.name}</td>
 					
 					</tr>
 				</g:each>

@@ -93,6 +93,7 @@ class BusinessTransactionService {
      *  Checking available Transactions for PNL Statement: PNLStatement instance
      *  must be checked prior to calling this method, to avoid duplicates
      */
+    @Transactional (readOnly = true)
     def checkAvailableTransactions(Business company, int year, int month) {
         List result = []
         Date dateFrom

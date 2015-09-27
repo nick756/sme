@@ -1,6 +1,7 @@
 /*
 *= require_self
 *= require main
+*= require reports
 #= require style
 */
 
@@ -224,7 +225,7 @@ label.mand {
 }
 table.righted-content {
     width: 100%;
-    display: inline-block;
+    display: block;
     float: right;
     margin-top: 0.5em;
     border-collapse: separate;

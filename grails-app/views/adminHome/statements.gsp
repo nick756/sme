@@ -42,6 +42,7 @@
                 <th><g:message code="cfstatement.outboundamount.label"/></th>
                 <th><g:message code="cfstatement.resultamount.label"/></th>
                 <th><g:message code="cfstatement.cumulativeamount.label"/></th>
+                <th></th>
             </tr> 
 
             <g:each status="index" in="${statementList}" var="item">
@@ -67,6 +68,11 @@
                     
                     <g:formatNumber number="${item?.nettAmount}" format="#,##0.00" /></td>
                     <td class="righted"><g:formatNumber number="${item?.cumulativeAmount}" format="#,##0.00" /></td>
+                    <td class="no-border centered">
+                        <g:link  target="_blank" action="statementdetails" params="['max': params.max, 'offset': params.offset, 'id': item?.id, 'businessId': businessInstance?.id]">
+                            <img class="image-link" src="${resource(dir: 'images', file: 'details.png')}" title="<g:message code='actions.back'/>"/>
+                        </g:link>
+                    </td>
                 </tr>
                 
             </g:each>

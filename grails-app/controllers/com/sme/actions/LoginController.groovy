@@ -9,6 +9,7 @@ class LoginController {
         if(params.lang) {
             def newLocale = new Locale(params.lang)
             RCU.getLocaleResolver(request).setLocale(request, response, newLocale)
+            session.locale = newLocale
             //println "Locale set: " + newLocale
         }
         else {
@@ -28,14 +29,15 @@ class LoginController {
                     //session.company = session?.user.company
 
                     if(session?.user) {
+                        session.setMaxInactiveInterval(-1)
+                        
                         switch (session?.user.role.code) {
                             case 1: redirect(controller: 'adminHome')
                                     break
-                            case 2: //redirect(controller: 'smeHome')
+                            case 2: session.company = session?.user.company
+                                    redirect(controller: 'smehome')
                                     break
                         }
-                        //session.setMaxInactiveInterval(600)
-                        //redirect(uri: '/')
                     }
                 }
                 else {

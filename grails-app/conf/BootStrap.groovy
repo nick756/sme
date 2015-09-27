@@ -76,6 +76,43 @@ class BootStrap {
             println "Total " + AccountType.count() + " instances created"
         }
         
+        if(CFGroup.list().size() == 0){
+            println ''
+            println 'Creating Cash Flow Groups'
+            
+            new CFGroup(
+                code: 1,
+                name: 'Cash Inflow'
+            ).save(flush: true)
+            
+            new CFGroup(
+                code: 2,
+                name: 'Cost of Sales'
+            ).save(flush: true)
+            
+            new CFGroup(
+                code: 3,
+                name: 'Operational Expenses'
+            ).save(flush: true)
+            
+            new CFGroup(
+                code: 4,
+                name: 'Capital Expenditures'
+            ).save(flush: true)  
+            
+            new CFGroup(
+                code: 5,
+                name: 'Cash in Hands'
+            ).save(flush: true) 
+            
+            new CFGroup(
+                code: 6,
+                name: 'Cash at Bank'
+            ).save(flush: true)
+            
+            println "Total ${CFGroup.count()} instances created"
+        }
+        
         if(GenericOperation.list().size() == 0) {
             println "\n... creating list of Generic Operation Types"
             
@@ -84,7 +121,8 @@ class BootStrap {
                 name: 'Additional Capital',
                 inbound: true,
                 outbound: false,
-                accountType: AccountType.findByCode(1)
+                accountType: AccountType.findByCode(1),
+                group: CFGroup.findByCode(1)
             ).save()
             
             new GenericOperation(
@@ -92,7 +130,8 @@ class BootStrap {
                 name: 'Advance from Directors',
                 inbound: true,
                 outbound: false,
-                accountType: AccountType.findByCode(1)
+                accountType: AccountType.findByCode(1),
+                group: CFGroup.findByCode(1)
             ).save()       
             
             new GenericOperation(
@@ -100,7 +139,8 @@ class BootStrap {
                 name: 'Capital Injection',
                 inbound: true,
                 outbound: false,
-                accountType: AccountType.findByCode(1)
+                accountType: AccountType.findByCode(1),
+                group: CFGroup.findByCode(1)
             ).save()    
             
             new GenericOperation(
@@ -108,7 +148,8 @@ class BootStrap {
                 name: 'Grant Received',
                 inbound: true,
                 outbound: false,
-                accountType: AccountType.findByCode(8)
+                accountType: AccountType.findByCode(8),
+                group: CFGroup.findByCode(1)
             ).save()    
             
             new GenericOperation(
@@ -116,7 +157,8 @@ class BootStrap {
                 name: 'Loan Received',
                 inbound: true,
                 outbound: false,
-                accountType: AccountType.findByCode(3)
+                accountType: AccountType.findByCode(3),
+                group: CFGroup.findByCode(1)
             ).save()     
             
             new GenericOperation(
@@ -124,7 +166,8 @@ class BootStrap {
                 name: 'Purchase of Vehicle',
                 inbound: false,
                 outbound: true,
-                accountType: AccountType.findByCode(4)
+                accountType: AccountType.findByCode(4),
+                group: CFGroup.findByCode(4)
             ).save() 
             
             new GenericOperation(
@@ -132,7 +175,8 @@ class BootStrap {
                 name: 'Purchase of Plants and Machineries',
                 inbound: false,
                 outbound: true,
-                accountType: AccountType.findByCode(4)
+                accountType: AccountType.findByCode(4),
+                group: CFGroup.findByCode(4)
             ).save()    
             
             new GenericOperation(
@@ -140,7 +184,8 @@ class BootStrap {
                 name: 'Purchase of Office Equipment',
                 inbound: false,
                 outbound: true,
-                accountType: AccountType.findByCode(4)
+                accountType: AccountType.findByCode(4),
+                group: CFGroup.findByCode(4)
             ).save()  
             
             new GenericOperation(
@@ -148,7 +193,8 @@ class BootStrap {
                 name: 'Loan Repayment',
                 inbound: false,
                 outbound: true,
-                accountType: AccountType.findByCode(3)
+                accountType: AccountType.findByCode(3),
+                group: CFGroup.findByCode(4)
             ).save() 
             
             new GenericOperation(
@@ -156,7 +202,8 @@ class BootStrap {
                 name: 'Renovations',
                 inbound: false,
                 outbound: true,
-                accountType: AccountType.findByCode(4)
+                accountType: AccountType.findByCode(4),
+                group: CFGroup.findByCode(4)
             ).save() 
             
             new GenericOperation(
@@ -164,7 +211,8 @@ class BootStrap {
                 name: 'Purchase of Furniture/Fittings',
                 inbound: false,
                 outbound: true,
-                accountType: AccountType.findByCode(4)
+                accountType: AccountType.findByCode(4),
+                group: CFGroup.findByCode(4)
             ).save()             
             
             new GenericOperation(
@@ -172,7 +220,8 @@ class BootStrap {
                 name: 'Cash in Hands',
                 inbound: false,
                 outbound: true,
-                accountType: AccountType.findByCode(5)
+                accountType: AccountType.findByCode(5),
+                group: CFGroup.findByCode(5)
             ).save() 
             
             new GenericOperation(
@@ -180,7 +229,8 @@ class BootStrap {
                 name: 'Cash in Bank',
                 inbound: false,
                 outbound: true,
-                accountType: AccountType.findByCode(5)
+                accountType: AccountType.findByCode(5),
+                group: CFGroup.findByCode(6)
             ).save()  
             
             new GenericOperation(
@@ -188,7 +238,8 @@ class BootStrap {
                 name: 'Sales',
                 inbound: true,
                 outbound: false,
-                accountType: AccountType.findByCode(7)
+                accountType: AccountType.findByCode(7),
+                group: CFGroup.findByCode(1)
             ).save()     
             
             new GenericOperation(
@@ -196,7 +247,8 @@ class BootStrap {
                 name: 'Raw Materials',
                 inbound: false,
                 outbound: true,
-                accountType: AccountType.findByCode(6)
+                accountType: AccountType.findByCode(6),
+                group: CFGroup.findByCode(3)
             ).save() 
             
             new GenericOperation(
@@ -204,7 +256,8 @@ class BootStrap {
                 name: 'Wages',
                 inbound: false,
                 outbound: true,
-                accountType: AccountType.findByCode(6)
+                accountType: AccountType.findByCode(6),
+                group: CFGroup.findByCode(3)
             ).save() 
             
             new GenericOperation(
@@ -212,7 +265,8 @@ class BootStrap {
                 name: 'Carriage Inwards',
                 inbound: false,
                 outbound: true,
-                accountType: AccountType.findByCode(6)
+                accountType: AccountType.findByCode(6),
+                group: CFGroup.findByCode(3)
             ).save()  
             
             new GenericOperation(
@@ -220,7 +274,8 @@ class BootStrap {
                 name: 'Production Cost',
                 inbound: false,
                 outbound: true,
-                accountType: AccountType.findByCode(9)
+                accountType: AccountType.findByCode(9),
+                group: CFGroup.findByCode(3)
             ).save() 
             
             new GenericOperation(
@@ -228,7 +283,8 @@ class BootStrap {
                 name: 'Accommodation Cost',
                 inbound: false,
                 outbound: true,
-                accountType: AccountType.findByCode(9)
+                accountType: AccountType.findByCode(9),
+                group: CFGroup.findByCode(3)
             ).save() 
             
             new GenericOperation(
@@ -236,7 +292,8 @@ class BootStrap {
                 name: 'Advertisement',
                 inbound: false,
                 outbound: true,
-                accountType: AccountType.findByCode(9)
+                accountType: AccountType.findByCode(9),
+                group: CFGroup.findByCode(3)
             ).save() 
             
             new GenericOperation(
@@ -244,7 +301,8 @@ class BootStrap {
                 name: 'Bank Charges',
                 inbound: false,
                 outbound: true,
-                accountType: AccountType.findByCode(9)
+                accountType: AccountType.findByCode(9),
+                group: CFGroup.findByCode(3)
             ).save()
             
             new GenericOperation(
@@ -252,7 +310,8 @@ class BootStrap {
                 name: 'Entertainment',
                 inbound: false,
                 outbound: true,
-                accountType: AccountType.findByCode(9)
+                accountType: AccountType.findByCode(9),
+                group: CFGroup.findByCode(3)
             ).save()
             
             new GenericOperation(
@@ -260,7 +319,8 @@ class BootStrap {
                 name: 'EPF and SOCSO',
                 inbound: false,
                 outbound: true,
-                accountType: AccountType.findByCode(9)
+                accountType: AccountType.findByCode(9),
+                group: CFGroup.findByCode(3)
             ).save()
             
             new GenericOperation(
@@ -268,7 +328,8 @@ class BootStrap {
                 name: 'Legal Fees',
                 inbound: false,
                 outbound: true,
-                accountType: AccountType.findByCode(9)
+                accountType: AccountType.findByCode(9),
+                group: CFGroup.findByCode(3)
             ).save() 
             
             new GenericOperation(
@@ -276,7 +337,8 @@ class BootStrap {
                 name: 'Maintenance of Office and Equipment',
                 inbound: false,
                 outbound: true,
-                accountType: AccountType.findByCode(9)
+                accountType: AccountType.findByCode(9),
+                group: CFGroup.findByCode(3)
             ).save() 
             
             new GenericOperation(
@@ -284,7 +346,8 @@ class BootStrap {
                 name: 'Maintenance of Vehicle',
                 inbound: false,
                 outbound: true,
-                accountType: AccountType.findByCode(9)
+                accountType: AccountType.findByCode(9),
+                group: CFGroup.findByCode(3)
             ).save()
             
             new GenericOperation(
@@ -292,7 +355,8 @@ class BootStrap {
                 name: 'Marketing and Promotion',
                 inbound: false,
                 outbound: true,
-                accountType: AccountType.findByCode(9)
+                accountType: AccountType.findByCode(9),
+                group: CFGroup.findByCode(3)
             ).save() 
             
             new GenericOperation(
@@ -300,7 +364,8 @@ class BootStrap {
                 name: 'Medical Expenses',
                 inbound: false,
                 outbound: true,
-                accountType: AccountType.findByCode(9)
+                accountType: AccountType.findByCode(9),
+                group: CFGroup.findByCode(3)
             ).save() 
             
             new GenericOperation(
@@ -308,7 +373,8 @@ class BootStrap {
                 name: 'Office Expenses',
                 inbound: false,
                 outbound: true,
-                accountType: AccountType.findByCode(9)
+                accountType: AccountType.findByCode(9),
+                group: CFGroup.findByCode(3)
             ).save()
             
             new GenericOperation(
@@ -316,7 +382,8 @@ class BootStrap {
                 name: 'Printing and Stationaries',
                 inbound: false,
                 outbound: true,
-                accountType: AccountType.findByCode(9)
+                accountType: AccountType.findByCode(9),
+                group: CFGroup.findByCode(3)
             ).save()
             
             new GenericOperation(
@@ -324,7 +391,8 @@ class BootStrap {
                 name: 'Rental of Premise',
                 inbound: false,
                 outbound: true,
-                accountType: AccountType.findByCode(9)
+                accountType: AccountType.findByCode(9),
+                group: CFGroup.findByCode(3)
             ).save() 
             
             new GenericOperation(
@@ -332,7 +400,8 @@ class BootStrap {
                 name: 'Salaries and Allowances',
                 inbound: false,
                 outbound: true,
-                accountType: AccountType.findByCode(9)
+                accountType: AccountType.findByCode(9),
+                group: CFGroup.findByCode(3)
             ).save()
             
             new GenericOperation(
@@ -340,7 +409,8 @@ class BootStrap {
                 name: 'Pantry Expenses',
                 inbound: false,
                 outbound: true,
-                accountType: AccountType.findByCode(9)
+                accountType: AccountType.findByCode(9),
+                group: CFGroup.findByCode(3)
             ).save()
             
             new GenericOperation(
@@ -348,7 +418,8 @@ class BootStrap {
                 name: 'Telephone, Fax and Internet',
                 inbound: false,
                 outbound: true,
-                accountType: AccountType.findByCode(9)
+                accountType: AccountType.findByCode(9),
+                group: CFGroup.findByCode(3)
             ).save() 
             
             new GenericOperation(
@@ -356,7 +427,8 @@ class BootStrap {
                 name: 'Travelling Cost',
                 inbound: false,
                 outbound: true,
-                accountType: AccountType.findByCode(9)
+                accountType: AccountType.findByCode(9),
+                group: CFGroup.findByCode(3)
             ).save() 
             
             new GenericOperation(
@@ -364,10 +436,11 @@ class BootStrap {
                 name: 'Water and Electricity',
                 inbound: false,
                 outbound: true,
-                accountType: AccountType.findByCode(9)
+                accountType: AccountType.findByCode(9),
+                group: CFGroup.findByCode(3)
             ).save()             
             
-            println "Total " + GenericOperation.count() + " instance created"
+            println "Total " + GenericOperation.count() + " instances created"
         }
         
         //  Initiating list of States
@@ -376,7 +449,7 @@ class BootStrap {
             println "\n...populating State instances"
         }
         
-        if(com.sme.entities.UserRole.list().size() == 0) {
+        if(UserRole.list().size() == 0) {
             println ""
             
             new com.sme.entities.UserRole(
@@ -404,32 +477,6 @@ class BootStrap {
             new Industry(code: 6, name: 'Restorant').save()
             
             println "List of Industries created: " + Industry.count() + " instances"
-        }
-        
-        if(com.sme.entities.User.list().size() == 0) {
-            userRole = UserRole.findByCode(1)
-            
-            println "\nUser Role selected: " + userRole
-            
-            def user = new com.sme.entities.User (
-                dateCreated: new Date(),
-                name: "Nikolay",
-                login: "nick",
-                passw: "1234"
-            )
-            
-            user.role = userRole
-            user.save()
-            
-            new User(
-                dateCreated: new Date(),
-                name: 'Mohar',
-                login: 'mohar',
-                passw: '1234',
-                role: userRole
-            ).save()
-            
-            println "User ${user?.name} created"
         }
         
         if(Business.list().size() == 0) {
@@ -472,85 +519,126 @@ class BootStrap {
             
             println "\nList of Businesses created: " + Business.count() + " instances"
             
-            //  Creation of default Business Profiles
+            parseBusinessFile();
+        }
+        
+        //  Creation of default Business Profiles
             
-            if(GenericProfile.list().size() == 0) {
-                def prof = new GenericProfile(
-                    code: 1,
-                    name: 'Trading Activities'
-                )
+        if(GenericProfile.list().size() == 0) {
+            def prof = new GenericProfile(
+                code: 1,
+                name: 'Trading Activities'
+            )
                 
-                prof.save(flush: true);
+            prof.save(flush: true);
                 
                
-                //  Auto-populating Profile 'Trading Activities'
+            //  Auto-populating Profile 'Trading Activities'
                 
-                for(int i = 0; i < 36; i++) {
-                    prof.addToOperations(
-                        new ProfileLink(
-                            operation: GenericOperation.findByCode(i + 1),
-                            profile: prof,
-                            active: true
-                        ).save(flush: true)
-                    )                    
-                }
+            for(int i = 0; i < 36; i++) {
+                prof.addToOperations(
+                    new ProfileLink(
+                        operation: GenericOperation.findByCode(i + 1),
+                        profile: prof,
+                        active: true
+                    ).save(flush: true)
+                )                    
+            }
                 
-                new GenericProfile(
-                    code: 2,
-                    name: 'Food Manufacturing Activities'
-                ).save()   
+            new GenericProfile(
+                code: 2,
+                name: 'Food Manufacturing Activities'
+            ).save()   
                 
-                new GenericProfile(
-                    code: 3,
-                    name: 'Restorant/Food Stall Operations'
-                ).save()                 
+            new GenericProfile(
+                code: 3,
+                name: 'Restorant/Food Stall Operations'
+            ).save()                 
                 
-                println ""
-                println "\nGeneric Profiles created: ${GenericProfile.count()} instances"
-                println "Profile \'${prof.name}\' has been added Operations:"
-                def list = prof.getOperations().asList().sort{it.operation.code}
+            println ""
+            println "\nGeneric Profiles created: ${GenericProfile.count()} instances"
+            println "Profile \'${prof.name}\' has been added Operations:"
+            def list = prof.getOperations().asList().sort{it.operation.code}
                 
-                list.each {
-                    println "- " + it?.operation?.code + " " + it?.operation?.name
-                }
+            list.each {
+                println "- " + it?.operation?.code + " " + it?.operation?.name
             }
         }
         
-        parseBusinessFile();
+        //  Creating default Users
         
-        //  Adding Operator User for Mobile Interface
+        if(User.list().size() == 0) {
+            
+            userRole = UserRole.findByCode(1)
+            
+            println "\nUser Role selected: " + userRole
+            
+            def user = new com.sme.entities.User (
+                dateCreated: new Date(),
+                name: "Nikolay",
+                login: "nick",
+                passw: "1234"
+            )
+            
+            user.role = userRole
+            user.save()
+            
+            new User(
+                dateCreated: new Date(),
+                name: 'Mohar',
+                login: 'mohar',
+                passw: '1234',
+                role: userRole
+            ).save()
+            
+            println "User ${user?.name} created"
+            
+            //  Creating Operators and assigning to a Company
+            
+            def vlad = new User(
+                name: 'Vladimir Gundartsev',
+                login: 'vlad',
+                passw: '1234',
+                role: UserRole.findByCode(2),
+                company: Business.get(1)
+            ).save(flush: true)
         
-        def vlad = new User(
-            name: 'Vladimir Gundartsev',
-            login: 'vlad',
-            passw: '1234',
-            role: UserRole.findByCode(2),
-            company: Business.get(1)
-        ).save(flush: true)
+            def opUser1 = new User(
+                name: 'Andreano Choppolo',
+                login: 'andrea',
+                passw: '1234',
+                role: UserRole.findByCode(2),
+                company: Business.get(2)
+            ).save(flush: true)
         
-        def opUser = new User(
-            name: 'Andreano Choppolo',
-            login: 'andrea',
-            passw: '1234',
-            role: UserRole.findByCode(2),
-            company: Business.get(2)
-        ).save(flush: true)        
+            def opUser2 = new User(
+                name: 'Nikolay',
+                login: 'nick_sme',
+                passw: '1234',
+                role: UserRole.findByCode(2),
+                company: Business.get(2)
+            ).save(flush: true)          
         
-        println ''
-        println 'SME Operator Users created'
+            println ''
+            println 'SME Operator Users created:'
         
-        def inst = Business.get(2)
-        inst.addToUsers(opUser)
-        println "${inst?.name}: ${inst?.users}"
+            def inst = Business.get(2)
+            inst.addToUsers(opUser1)
+            inst.addToUsers(opUser2)
         
-        Business.get(1).addToUsers(vlad)
-        println "${Business.get(1).name}: ${Business.get(1).users}"
+            println "${inst?.name}: ${inst?.users}"
+        
+            Business.get(1).addToUsers(vlad)
+            println "${Business.get(1).name}: ${Business.get(1).users}"            
+        }        
+
+        //  Emulation of Business Transactions
         
         if(!BusinessTransaction.list()) {
             emulateTransactions()
         }
-           
     }
+
     
     def destroy = {
     }
@@ -874,14 +962,60 @@ class BootStrap {
         
         company.addToBusinessTransactions(
             new BusinessTransaction(
-                operationType:      GenericOperation.findByCode(6),
+                operationType:      GenericOperation.findByCode(10),
                 transactionDate:    new Date().copyWith(year: 2015, month: 3, dayOfMonth: 30),
-                transactionAmount:  65000.0,
-                transactionRemarks: 'Another better Vehicle',
+                transactionAmount:  15000.0,
+                transactionRemarks: 'car repair',
                 operator:           "${operator?.name}",
                 company:            company
             ).save(flush: true) 
-        )        
+        ) 
+        
+        //  May enrties
+        
+        company.addToBusinessTransactions(
+            new BusinessTransaction(
+                operationType:      GenericOperation.findByCode(14),
+                transactionDate:    new Date().copyWith(year: 2015, month: 4, dayOfMonth: 1),
+                transactionAmount:  850.0,
+                transactionRemarks: 'Sales',
+                operator:           "${operator?.name}",
+                company:            company
+            ).save(flush: true)
+        )
+            
+        company.addToBusinessTransactions(
+            new BusinessTransaction(
+                operationType:      GenericOperation.findByCode(8),
+                transactionDate:    new Date().copyWith(year: 2015, month: 4, dayOfMonth: 3),
+                transactionAmount:  2850.0,
+                transactionRemarks: 'Laptop',
+                operator:           "${operator?.name}",
+                company:            company
+            ).save(flush: true)            
+        )      
+        
+        company.addToBusinessTransactions(
+            new BusinessTransaction(
+                operationType:      GenericOperation.findByCode(14),
+                transactionDate:    new Date().copyWith(year: 2015, month: 4, dayOfMonth: 4),
+                transactionAmount:  670.0,
+                transactionRemarks: 'Sales',
+                operator:           "${operator?.name}",
+                company:            company
+            ).save(flush: true)            
+        )
+        
+        company.addToBusinessTransactions(
+            new BusinessTransaction(
+                operationType:      GenericOperation.findByCode(29),
+                transactionDate:    new Date().copyWith(year: 2015, month: 4, dayOfMonth: 6),
+                transactionAmount:  1500.0,
+                transactionRemarks: 'Office cleaning',
+                operator:           "${operator?.name}",
+                company:            company
+            ).save(flush: true)            
+        )         
 
         println "Total Transactions added: ${company?.businessTransactions.size()}"
     }

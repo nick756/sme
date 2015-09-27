@@ -28,6 +28,11 @@ class BusinessTransaction {
     }
     
     public String toString() {
-        "${transactionDate.format('dd/MM/yyyy')} ${new DecimalFormat('#,##0.00').format(transactionAmount)} ${operationType?.name}"
+        if(transactionDate) {
+            return "${transactionDate.format('dd/MM/yyyy')} ${transactionRemarks}"
+        }
+        else {
+            return "${transactionRemarks}"
+        }
     }
 }

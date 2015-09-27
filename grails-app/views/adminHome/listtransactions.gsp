@@ -24,24 +24,55 @@
             <g:textField class="text-input" name="name" value="${businessInstance?.profile?.name}" readonly="true"/>
 
         </div>  
+        
         <table class="righted-content">
             <caption><g:message code="default.application.transactionslist"/></caption>
             <tr>
-                <td colspan= "6" class="no-border" style="background: #d0e8f4; padding: 10px 5px 10px 5px;">
-                    <g:form action="listtransactions" params="['offset': params?.offset, 'max':params?.max]">
-                        <g:hiddenField name="instId" value="${businessInstance?.id}"/> 
-                        <select name="filterOption" id="filterOption" style="width: 300px;">
-                            <option value="1" ${operationFilter == 1 ? 'selected':''}><g:message code="default.application.filter.all"/></option>
-                            <option value="2" ${operationFilter == 2 ? 'selected':''}><g:message code="default.application.filter.lastmonth"/></option>
-                            <option value="3" ${operationFilter == 3 ? 'selected':''}><g:message code="default.application.filter.dates"/></option>
-                        </select>
-                        <g:message code="default.application.dates.range"/>
-                        <g:textField class="text-input" style="width: 150px;" name="dateFrom" value="${formatDate(format: 'dd/MM/yyyy', date: dateFrom)}"/>
-                        <g:textField class="text-input" style="width: 150px;" name="dateTill" value="${formatDate(format: 'dd/MM/yyyy', date: dateTill)}"/>
-                        <input type="submit" value="<g:message code='default.application.filter.show'/>" class="myButton" style="float: right;"/>
-                    </g:form>
+                <td colspan="6" class="no-border" style="padding: 0;">
+                    
+                    <%-- Inner Table for overriding separated borders --%>
+                    <table border="0" class="righted-content" style="border-collapse: collapse; border: none; padding: 0; margin: 0;">
+                        
+                        <%-- Filtering (search) Form --%>
+                        <g:form action="listtransactions" params="['offset': 0, 'max':params?.max]">
+                            <g:hiddenField name="instId" value="${businessInstance?.id}"/>  
+                            <tr>
+                                <td colspan="3" class="no-border" style="background: #D0E8F4;">
+                                    <g:message code="default.application.filter.type"/>
+                                </td>
+                                <td colspan="3" class="no-border" style="background: #D0E8F4;">
+                                    <select name="filterOption" id="filterOption" style="width: 300px;">
+                                        <option value="1" ${operationFilter == 1 ? 'selected':''}><g:message code="default.application.filter.all"/></option>
+                                        <option value="2" ${operationFilter == 2 ? 'selected':''}><g:message code="default.application.filter.lastmonth"/></option>
+                                        <option value="3" ${operationFilter == 3 ? 'selected':''}><g:message code="default.application.filter.dates"/></option>
+                                    </select>  
+                                    
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" class="no-border" style="background: #D0E8F4;">
+                                    <g:message code="default.application.filter.from"/>
+                                </td>
+                                <td colspan="3" class="no-border" style="background: #D0E8F4;">
+                                    <g:textField class="text-input" style="width: 150px;" name="dateFrom" value="${dateFrom}"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" class="no-border" style="background: #D0E8F4;">
+                                    <g:message code="default.application.filter.till"/>
+                                </td>
+                                <td colspan="3" class="no-border" style="background: #D0E8F4;">
+                                    <g:textField class="text-input" style="width: 150px;" name="dateTill" value="${dateTill}"/>
+                                    <input type="submit" value="<g:message code='default.application.filter.show'/>" class="myButton" style="float: right;"/>
+                                </td>
+                            </tr>                
+                        </g:form>
+                        
+                    </table>
+                    
                 </td>
             </tr>
+
             <g:if test="${transactionsList.size() > 0}">                
                 <tr>
                     <th>No</th>

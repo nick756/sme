@@ -13,6 +13,7 @@ class GenericOperation {
     boolean outbound
     
     AccountType accountType
+    CFGroup     group
     
     static hasMany = [profiles: ProfileLink]
     

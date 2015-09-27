@@ -11,7 +11,7 @@
             <g:link action="edit" params="['max': params.max, 'offset': params.offset, 'id': businessInstance?.id]"><img class="image-link" src="${resource(dir: 'images', file: 'edit.png')}" title="<g:message code='actions.edit'/>"/></g:link>
             <g:link action="index" params="['max': params.max, 'offset': params.offset]"><img class="image-link" src="${resource(dir: 'images', file: 'employee.png')}" title="<g:message code='actions.members'/>"/></g:link>
             <% /* g:link action="index" params="['max': params.max, 'offset': params.offset]"><img class="image-link" src="${resource(dir: 'images', file: 'list.png')}" title="<g:message code='actions.profile'/>"/></g:link */ %>
-            <g:link action="listtransactions" params="['max': params.max, 'offset': params.offset, 'id': businessInstance?.id]"><img class="image-link" style="margin-right: 5px;" src="${resource(dir: 'images', file: 'calculator.png')}" title="<g:message code='actions.transactions'/>"/></g:link>
+            <g:link action="listtransactions" params="['max': params.max, 'offset': 0, 'id': businessInstance?.id]"><img class="image-link" style="margin-right: 5px;" src="${resource(dir: 'images', file: 'calculator.png')}" title="<g:message code='actions.transactions'/>"/></g:link>
             </div>
 
         <h1 class="sub-title">${businessInstance?.name}</h1>

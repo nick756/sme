@@ -91,8 +91,8 @@ class CashFlowService {
             } 
             
             if(prevStatement) {
-                statement.openingBalance = prevStatement.nettAmount + prevStatement.cumulativeAmount
-                statement.cumulativeAmount = result + prevStatement.nettAmount + prevStatement.cumulativeAmount
+                statement.openingBalance = prevStatement.cumulativeAmount
+                statement.cumulativeAmount = result + statement.openingBalance
             }
             else {
                 statement.cumulativeAmount = result

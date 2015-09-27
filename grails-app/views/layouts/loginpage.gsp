@@ -29,9 +29,27 @@
             </g:else>
         </div>
         <div class="login-title-box">
-            <h1 class="login-title"><g:message code="default.application.title"/></h1>
+            <center>
+            <div style="width: 70%; display: table; margin-top: 15px;">
+                    <div style="width: 40%; display: table-cell">
+                        <img style="width: 257px; height: 168px; display: inline-block;" src="${resource(dir: 'images', file: 'sifar_logo.png')}">
+                    </div>
+                    <div style="text-align: center; vertical-align: middle; display: table-cell;">
+                        <h1 class="login-title" style="display: inline-block; margin-top: -30px;"><g:message code="default.application.title"/></h1>
+                    </div>
+            </div>
+            </center>
         </div>
         
         <g:layoutBody/>
+        
+        <center>
+        <div style="font-family: 'Muli', sans-serif; font-size: 12pt; margin-top: 15px;">
+        HELP DESK : info@mysifar.com / +6010-226-2887
+        <br/><br/>
+        <b>KCOMMERCE (M) SDN BHD (867123-P)</b><br/>
+        32-1A, Kompleks Otomobil Shah Alam, Jalan Pahat J 15/J, Seksyen 15.<br/>40000 Shah Alam Selangor, MALAYSIA
+        </div>
+        </center>
     </body>
 </html>
