@@ -33,7 +33,9 @@ class Business implements Serializable {
         lastUpdated (nullable: true)
         profile     nullable: true
         users       nullable: true
+        
         businessTransactions    nullable: true
+        statements              nullable: true
     }
     
     static mapping = {

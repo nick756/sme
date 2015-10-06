@@ -1,22 +1,24 @@
 import com.sme.entities.*
+import com.sme.services.*
 
 class BootStrap {
     def grailsApplication
+    def businessTransactionService
     
     def init = { servletContext ->
         
         def userRole
         
         if(Month.list().size() == 0) {
-            new Month(number: 1, name: 'JAN').save(flush: true)
-            new Month(number: 2, name: 'FEB').save(flush: true)
-            new Month(number: 3, name: 'MAR').save(flush: true)
-            new Month(number: 4, name: 'APR').save(flush: true)
-            new Month(number: 5, name: 'MAY').save(flush: true)
-            new Month(number: 6, name: 'JUN').save(flush: true)
-            new Month(number: 7, name: 'JUL').save(flush: true)
-            new Month(number: 8, name: 'AUG').save(flush: true)
-            new Month(number: 9, name: 'SEP').save(flush: true)
+            new Month(number:  1, name: 'JAN').save(flush: true)
+            new Month(number:  2, name: 'FEB').save(flush: true)
+            new Month(number:  3, name: 'MAR').save(flush: true)
+            new Month(number:  4, name: 'APR').save(flush: true)
+            new Month(number:  5, name: 'MAY').save(flush: true)
+            new Month(number:  6, name: 'JUN').save(flush: true)
+            new Month(number:  7, name: 'JUL').save(flush: true)
+            new Month(number:  8, name: 'AUG').save(flush: true)
+            new Month(number:  9, name: 'SEP').save(flush: true)
             new Month(number: 10, name: 'OCT').save(flush: true)
             new Month(number: 11, name: 'NOV').save(flush: true)
             new Month(number: 12, name: 'DEC').save(flush: true)
@@ -28,50 +30,15 @@ class BootStrap {
         if(AccountType.list().size() == 0) {
             println "\n... populating Account Types"
             
-            new AccountType(
-                code: 1,
-                name: 'Capital'
-            ).save()
-            
-            new AccountType(
-                code: 2,
-                name: 'Current Liabilities'
-            ).save()            
-            
-            new AccountType(
-                code: 3,
-                name: 'Long Term Liabilities'
-            ).save() 
-            
-            new AccountType(
-                code: 4,
-                name: 'Fixed Assets'
-            ).save()            
-            
-            new AccountType(
-                code: 5,
-                name: 'Current Assets'
-            ).save() 
-            
-            new AccountType(
-                code: 6,
-                name: 'Cost of Goods Sold'
-            ).save() 
-            
-            new AccountType(
-                code: 7,
-                name: 'Income'
-            ).save()  
-            
-            new AccountType(
-                code: 8,
-                name: 'Other Income'
-            ).save() 
-            
-            new AccountType(
-                code: 9,
-                name: 'Expenses'
-            ).save() 
+            new AccountType(code: 1, name: 'Capital').save()
+            new AccountType(code: 2, name: 'Current Liabilities').save()            
+            new AccountType(code: 3, name: 'Long Term Liabilities').save() 
+            new AccountType(code: 4, name: 'Fixed Assets').save()            
+            new AccountType(code: 5, name: 'Current Assets').save() 
+            new AccountType(code: 6, name: 'Cost of Goods Sold').save() 
+            new AccountType(code: 7, name: 'Income').save()  
+            new AccountType(code: 8, name: 'Other Income').save() 
+            new AccountType(code: 9, name: 'Expenses').save() 
             
             println "Total " + AccountType.count() + " instances created"
         }
@@ -80,35 +47,12 @@ class BootStrap {
             println ''
             println 'Creating Cash Flow Groups'
             
-            new CFGroup(
-                code: 1,
-                name: 'Cash Inflow'
-            ).save(flush: true)
-            
-            new CFGroup(
-                code: 2,
-                name: 'Cost of Sales'
-            ).save(flush: true)
-            
-            new CFGroup(
-                code: 3,
-                name: 'Operational Expenses'
-            ).save(flush: true)
-            
-            new CFGroup(
-                code: 4,
-                name: 'Capital Expenditures'
-            ).save(flush: true)  
-            
-            new CFGroup(
-                code: 5,
-                name: 'Cash in Hands'
-            ).save(flush: true) 
-            
-            new CFGroup(
-                code: 6,
-                name: 'Cash at Bank'
-            ).save(flush: true)
+            new CFGroup(code: 1, name: 'Cash Inflow').save(flush: true)
+            new CFGroup(code: 2, name: 'Cost of Sales').save(flush: true)
+            new CFGroup(code: 3, name: 'Operational Expenses').save(flush: true)
+            new CFGroup(code: 4, name: 'Capital Expenditures').save(flush: true)  
+            new CFGroup(code: 5, name: 'Cash in Hands').save(flush: true) 
+            new CFGroup(code: 6, name: 'Cash at Bank').save(flush: true)
             
             println "Total ${CFGroup.count()} instances created"
         }
@@ -116,13 +60,82 @@ class BootStrap {
         if(GenericOperation.list().size() == 0) {
             println "\n... creating list of Generic Operation Types"
             
+            /*******************************************************************
+             *  Mirroring rules (actual = true only)
+             *  
+             *  Outbound:
+             *  -   Operation (+)
+             *  -   Bank/Cash (-)
+             *  
+             *  Inbound:
+             *  -   Operation (+)
+             *  -   Bank/Cash (+)
+             *  
+             *  For Transactions with code >= 1000, flag 'cash' is ignored,
+             *  must follow specific rules.
+             * ****************************************************************/
+
+            //  Previous codes: 12, 13
+            //  No mirroring
+            
+            def opCashHand = new GenericOperation(
+                code:           1000,
+                name:           'Cash in Hands',
+                inbound:        false,
+                outbound:       true,
+                accountType:    AccountType.findByCode(5),
+                group:          CFGroup.findByCode(5),
+                actual:         0
+            ).save(flush: true) 
+            
+            def opCashBank = new GenericOperation(
+                code: 1010,
+                name: 'Cash at Bank',
+                inbound: false,
+                outbound: true,
+                accountType: AccountType.findByCode(5),
+                group: CFGroup.findByCode(6),
+                actual: 0
+            ).save(flush: true)            
+            
+            //  Mirrored Operations (hidden)
+            
+            def opCashWith = new GenericOperation(
+                code: 1020,
+                name: 'Cash Withdrawal',
+                inbound: false,
+                outbound: true,
+                accountType: AccountType.findByCode(5),
+                group: CFGroup.findByCode(5),
+                actual: 0,
+                mirrorCash: opCashBank
+            ).save(flush: true)   
+            
+            //  Mirrored with Cash in Hands (1000) (negative)
+            
+            def opCashDepo = new GenericOperation(
+                code: 1030,
+                name: 'Cash Deposit to Bank',
+                inbound: false,
+                outbound: true,
+                accountType: AccountType.findByCode(5),
+                group: CFGroup.findByCode(6),
+                actual: 0,
+                mirrorCash: opCashHand
+            ).save(flush: true)
+            
+            //  Standard Operations
+            
             new GenericOperation(
                 code: 1,
                 name: 'Additional Capital',
                 inbound: true,
                 outbound: false,
                 accountType: AccountType.findByCode(1),
-                group: CFGroup.findByCode(1)
+                group: CFGroup.findByCode(1),
+                actual: 1,
+                mirrorCash: opCashHand,
+                mirrorBank: opCashBank
             ).save()
             
             new GenericOperation(
@@ -131,7 +144,10 @@ class BootStrap {
                 inbound: true,
                 outbound: false,
                 accountType: AccountType.findByCode(1),
-                group: CFGroup.findByCode(1)
+                group: CFGroup.findByCode(1),
+                actual: 1,
+                mirrorCash: opCashHand,
+                mirrorBank: opCashBank                
             ).save()       
             
             new GenericOperation(
@@ -140,7 +156,10 @@ class BootStrap {
                 inbound: true,
                 outbound: false,
                 accountType: AccountType.findByCode(1),
-                group: CFGroup.findByCode(1)
+                group: CFGroup.findByCode(1),
+                actual: 1,
+                mirrorCash: opCashHand,
+                mirrorBank: opCashBank                
             ).save()    
             
             new GenericOperation(
@@ -149,7 +168,10 @@ class BootStrap {
                 inbound: true,
                 outbound: false,
                 accountType: AccountType.findByCode(8),
-                group: CFGroup.findByCode(1)
+                group: CFGroup.findByCode(1),
+                actual: 1,
+                mirrorCash: opCashHand,
+                mirrorBank: opCashBank                
             ).save()    
             
             new GenericOperation(
@@ -158,7 +180,10 @@ class BootStrap {
                 inbound: true,
                 outbound: false,
                 accountType: AccountType.findByCode(3),
-                group: CFGroup.findByCode(1)
+                group: CFGroup.findByCode(1),
+                actual: 1,
+                mirrorCash: opCashHand,
+                mirrorBank: opCashBank                
             ).save()     
             
             new GenericOperation(
@@ -167,7 +192,10 @@ class BootStrap {
                 inbound: false,
                 outbound: true,
                 accountType: AccountType.findByCode(4),
-                group: CFGroup.findByCode(4)
+                group: CFGroup.findByCode(4),
+                actual: 1,
+                mirrorCash: opCashHand,
+                mirrorBank: opCashBank                
             ).save() 
             
             new GenericOperation(
@@ -176,7 +204,10 @@ class BootStrap {
                 inbound: false,
                 outbound: true,
                 accountType: AccountType.findByCode(4),
-                group: CFGroup.findByCode(4)
+                group: CFGroup.findByCode(4),
+                actual: 1,
+                mirrorCash: opCashHand,
+                mirrorBank: opCashBank                
             ).save()    
             
             new GenericOperation(
@@ -185,7 +216,10 @@ class BootStrap {
                 inbound: false,
                 outbound: true,
                 accountType: AccountType.findByCode(4),
-                group: CFGroup.findByCode(4)
+                group: CFGroup.findByCode(4),
+                actual: true,
+                mirrorCash: opCashHand,
+                mirrorBank: opCashBank                
             ).save()  
             
             new GenericOperation(
@@ -194,7 +228,10 @@ class BootStrap {
                 inbound: false,
                 outbound: true,
                 accountType: AccountType.findByCode(3),
-                group: CFGroup.findByCode(4)
+                group: CFGroup.findByCode(4),
+                actual: 1,
+                mirrorCash: opCashHand,
+                mirrorBank: opCashBank                
             ).save() 
             
             new GenericOperation(
@@ -203,7 +240,10 @@ class BootStrap {
                 inbound: false,
                 outbound: true,
                 accountType: AccountType.findByCode(4),
-                group: CFGroup.findByCode(4)
+                group: CFGroup.findByCode(4),
+                actual: 1,
+                mirrorCash: opCashHand,
+                mirrorBank: opCashBank                
             ).save() 
             
             new GenericOperation(
@@ -212,26 +252,11 @@ class BootStrap {
                 inbound: false,
                 outbound: true,
                 accountType: AccountType.findByCode(4),
-                group: CFGroup.findByCode(4)
+                group: CFGroup.findByCode(4),
+                actual: 1,
+                mirrorCash: opCashHand,
+                mirrorBank: opCashBank                
             ).save()             
-            
-            new GenericOperation(
-                code: 12,
-                name: 'Cash in Hands',
-                inbound: false,
-                outbound: true,
-                accountType: AccountType.findByCode(5),
-                group: CFGroup.findByCode(5)
-            ).save() 
-            
-            new GenericOperation(
-                code: 13,
-                name: 'Cash in Bank',
-                inbound: false,
-                outbound: true,
-                accountType: AccountType.findByCode(5),
-                group: CFGroup.findByCode(6)
-            ).save()  
             
             new GenericOperation(
                 code: 14,
@@ -239,7 +264,10 @@ class BootStrap {
                 inbound: true,
                 outbound: false,
                 accountType: AccountType.findByCode(7),
-                group: CFGroup.findByCode(1)
+                group: CFGroup.findByCode(1),
+                actual: 1,
+                mirrorCash: opCashHand,
+                mirrorBank: opCashBank                
             ).save()     
             
             new GenericOperation(
@@ -248,7 +276,10 @@ class BootStrap {
                 inbound: false,
                 outbound: true,
                 accountType: AccountType.findByCode(6),
-                group: CFGroup.findByCode(3)
+                group: CFGroup.findByCode(2),
+                actual: 1,
+                mirrorCash: opCashHand,
+                mirrorBank: opCashBank                
             ).save() 
             
             new GenericOperation(
@@ -257,7 +288,10 @@ class BootStrap {
                 inbound: false,
                 outbound: true,
                 accountType: AccountType.findByCode(6),
-                group: CFGroup.findByCode(3)
+                group: CFGroup.findByCode(2),
+                actual: 1,
+                mirrorCash: opCashHand,
+                mirrorBank: opCashBank
             ).save() 
             
             new GenericOperation(
@@ -266,7 +300,10 @@ class BootStrap {
                 inbound: false,
                 outbound: true,
                 accountType: AccountType.findByCode(6),
-                group: CFGroup.findByCode(3)
+                group: CFGroup.findByCode(2),
+                actual: 1,
+                mirrorCash: opCashHand,
+                mirrorBank: opCashBank                
             ).save()  
             
             new GenericOperation(
@@ -275,7 +312,10 @@ class BootStrap {
                 inbound: false,
                 outbound: true,
                 accountType: AccountType.findByCode(9),
-                group: CFGroup.findByCode(3)
+                group: CFGroup.findByCode(2),
+                actual: 1,
+                mirrorCash: opCashHand,
+                mirrorBank: opCashBank                
             ).save() 
             
             new GenericOperation(
@@ -284,7 +324,10 @@ class BootStrap {
                 inbound: false,
                 outbound: true,
                 accountType: AccountType.findByCode(9),
-                group: CFGroup.findByCode(3)
+                group: CFGroup.findByCode(3),
+                actual: 1,
+                mirrorCash: opCashHand,
+                mirrorBank: opCashBank                
             ).save() 
             
             new GenericOperation(
@@ -293,7 +336,10 @@ class BootStrap {
                 inbound: false,
                 outbound: true,
                 accountType: AccountType.findByCode(9),
-                group: CFGroup.findByCode(3)
+                group: CFGroup.findByCode(3),
+                actual: 1,
+                mirrorCash: opCashHand,
+                mirrorBank: opCashBank                
             ).save() 
             
             new GenericOperation(
@@ -302,7 +348,10 @@ class BootStrap {
                 inbound: false,
                 outbound: true,
                 accountType: AccountType.findByCode(9),
-                group: CFGroup.findByCode(3)
+                group: CFGroup.findByCode(3),
+                actual: 1,
+                mirrorCash: opCashHand,
+                mirrorBank: opCashBank                
             ).save()
             
             new GenericOperation(
@@ -311,7 +360,10 @@ class BootStrap {
                 inbound: false,
                 outbound: true,
                 accountType: AccountType.findByCode(9),
-                group: CFGroup.findByCode(3)
+                group: CFGroup.findByCode(3),
+                actual: 1,
+                mirrorCash: opCashHand,
+                mirrorBank: opCashBank                
             ).save()
             
             new GenericOperation(
@@ -320,7 +372,10 @@ class BootStrap {
                 inbound: false,
                 outbound: true,
                 accountType: AccountType.findByCode(9),
-                group: CFGroup.findByCode(3)
+                group: CFGroup.findByCode(3),
+                actual: 1,
+                mirrorCash: opCashHand,
+                mirrorBank: opCashBank                
             ).save()
             
             new GenericOperation(
@@ -329,7 +384,10 @@ class BootStrap {
                 inbound: false,
                 outbound: true,
                 accountType: AccountType.findByCode(9),
-                group: CFGroup.findByCode(3)
+                group: CFGroup.findByCode(3),
+                actual: 1,
+                mirrorCash: opCashHand,
+                mirrorBank: opCashBank                
             ).save() 
             
             new GenericOperation(
@@ -338,7 +396,10 @@ class BootStrap {
                 inbound: false,
                 outbound: true,
                 accountType: AccountType.findByCode(9),
-                group: CFGroup.findByCode(3)
+                group: CFGroup.findByCode(3),
+                actual: 1,
+                mirrorCash: opCashHand,
+                mirrorBank: opCashBank                
             ).save() 
             
             new GenericOperation(
@@ -347,7 +408,10 @@ class BootStrap {
                 inbound: false,
                 outbound: true,
                 accountType: AccountType.findByCode(9),
-                group: CFGroup.findByCode(3)
+                group: CFGroup.findByCode(3),
+                actual: 1,
+                mirrorCash: opCashHand,
+                mirrorBank: opCashBank                
             ).save()
             
             new GenericOperation(
@@ -356,7 +420,10 @@ class BootStrap {
                 inbound: false,
                 outbound: true,
                 accountType: AccountType.findByCode(9),
-                group: CFGroup.findByCode(3)
+                group: CFGroup.findByCode(3),
+                actual: 1,
+                mirrorCash: opCashHand,
+                mirrorBank: opCashBank                
             ).save() 
             
             new GenericOperation(
@@ -365,7 +432,10 @@ class BootStrap {
                 inbound: false,
                 outbound: true,
                 accountType: AccountType.findByCode(9),
-                group: CFGroup.findByCode(3)
+                group: CFGroup.findByCode(3),
+                actual: 1,
+                mirrorCash: opCashHand,
+                mirrorBank: opCashBank                
             ).save() 
             
             new GenericOperation(
@@ -374,7 +444,10 @@ class BootStrap {
                 inbound: false,
                 outbound: true,
                 accountType: AccountType.findByCode(9),
-                group: CFGroup.findByCode(3)
+                group: CFGroup.findByCode(3),
+                actual: 1,
+                mirrorCash: opCashHand,
+                mirrorBank: opCashBank                
             ).save()
             
             new GenericOperation(
@@ -383,7 +456,10 @@ class BootStrap {
                 inbound: false,
                 outbound: true,
                 accountType: AccountType.findByCode(9),
-                group: CFGroup.findByCode(3)
+                group: CFGroup.findByCode(3),
+                actual: 1,
+                mirrorCash: opCashHand,
+                mirrorBank: opCashBank                
             ).save()
             
             new GenericOperation(
@@ -392,7 +468,10 @@ class BootStrap {
                 inbound: false,
                 outbound: true,
                 accountType: AccountType.findByCode(9),
-                group: CFGroup.findByCode(3)
+                group: CFGroup.findByCode(3),
+                actual: 1,
+                mirrorCash: opCashHand,
+                mirrorBank: opCashBank                
             ).save() 
             
             new GenericOperation(
@@ -401,7 +480,10 @@ class BootStrap {
                 inbound: false,
                 outbound: true,
                 accountType: AccountType.findByCode(9),
-                group: CFGroup.findByCode(3)
+                group: CFGroup.findByCode(3),
+                actual: 1,
+                mirrorCash: opCashHand,
+                mirrorBank: opCashBank                
             ).save()
             
             new GenericOperation(
@@ -410,7 +492,10 @@ class BootStrap {
                 inbound: false,
                 outbound: true,
                 accountType: AccountType.findByCode(9),
-                group: CFGroup.findByCode(3)
+                group: CFGroup.findByCode(3),
+                actual: 1,
+                mirrorCash: opCashHand,
+                mirrorBank: opCashBank                
             ).save()
             
             new GenericOperation(
@@ -419,7 +504,10 @@ class BootStrap {
                 inbound: false,
                 outbound: true,
                 accountType: AccountType.findByCode(9),
-                group: CFGroup.findByCode(3)
+                group: CFGroup.findByCode(3),
+                actual: 1,
+                mirrorCash: opCashHand,
+                mirrorBank: opCashBank                
             ).save() 
             
             new GenericOperation(
@@ -428,7 +516,10 @@ class BootStrap {
                 inbound: false,
                 outbound: true,
                 accountType: AccountType.findByCode(9),
-                group: CFGroup.findByCode(3)
+                group: CFGroup.findByCode(3),
+                actual: 1,
+                mirrorCash: opCashHand,
+                mirrorBank: opCashBank                
             ).save() 
             
             new GenericOperation(
@@ -437,8 +528,23 @@ class BootStrap {
                 inbound: false,
                 outbound: true,
                 accountType: AccountType.findByCode(9),
-                group: CFGroup.findByCode(3)
-            ).save()             
+                group: CFGroup.findByCode(3),
+                actual: 1,
+                mirrorCash: opCashHand,
+                mirrorBank: opCashBank                
+            ).save()  
+            
+            new GenericOperation(
+                code: 37,
+                name: 'Sales return',
+                inbound: false,
+                outbound: true,
+                accountType: AccountType.findByCode(9),
+                group: CFGroup.findByCode(3),
+                actual: 1,
+                mirrorCash: opCashHand,
+                mirrorBank: opCashBank                
+            ).save()            
             
             println "Total " + GenericOperation.count() + " instances created"
         }
@@ -452,18 +558,11 @@ class BootStrap {
         if(UserRole.list().size() == 0) {
             println ""
             
-            new com.sme.entities.UserRole(
-                code: 1,
-                name: "Administrator"
-            ).save()
-            
-            new com.sme.entities.UserRole(
-                code: 2,
-                name: "SME Operator"
-            ).save() 
+            new com.sme.entities.UserRole(code: 1, name: "Administrator").save()
+            new com.sme.entities.UserRole(code: 2, name: "SME Operator").save() 
             
             println ""
-            println "User Role Instances created"
+            println "User Role Instances created: ${UserRole.count()}"
         }
         
         if(Industry.list().size() == 0) {
@@ -534,16 +633,29 @@ class BootStrap {
                 
                
             //  Auto-populating Profile 'Trading Activities'
-                
-            for(int i = 0; i < 36; i++) {
+            
+            GenericOperation.list().each {operationType ->
                 prof.addToOperations(
                     new ProfileLink(
-                        operation: GenericOperation.findByCode(i + 1),
+                        operation: operationType,
                         profile: prof,
                         active: true
-                    ).save(flush: true)
-                )                    
+                    )
+                )
             }
+                
+            //            for(int i = 0; i < 36; i++) {
+            //                
+            //                if(i != 11 && i != 12) {
+            //                    prof.addToOperations(
+            //                        new ProfileLink(
+            //                            operation: GenericOperation.findByCode(i + 1),
+            //                            profile: prof,
+            //                            active: true
+            //                        ).save(flush: true)
+            //                    ) 
+            //                }
+            //            }
                 
             new GenericProfile(
                 code: 2,
@@ -561,7 +673,8 @@ class BootStrap {
             def list = prof.getOperations().asList().sort{it.operation.code}
                 
             list.each {
-                println "- " + it?.operation?.code + " " + it?.operation?.name
+                println "- ${String.format('%1$4s', it?.operation?.code)} ${it?.operation?.name}"
+                //println "- " + it?.operation?.code + " " + it?.operation?.name
             }
         }
         
@@ -637,6 +750,13 @@ class BootStrap {
         if(!BusinessTransaction.list()) {
             emulateTransactions()
         }
+        
+        /***********************************************************************
+         *  Unconditional verification and updates for changes
+         * ********************************************************************/
+        
+        updateGenericOperationTypes()
+        createTransactionsPeers()
     }
 
     
@@ -649,6 +769,7 @@ class BootStrap {
     void emulateTransactions() {
         def company = Business.get(2)
         def operator = company?.users[0]
+        BusinessTransaction trans
         
         println ""
         println "Transactions emulation"
@@ -657,365 +778,417 @@ class BootStrap {
         
         //  January entries
         
-        company.addToBusinessTransactions(
-            new BusinessTransaction(
-                operationType:      GenericOperation.findByCode(1),
-                transactionDate:    new Date().copyWith(year: 2015, month: 0, dayOfMonth: 3),
-                transactionAmount:  50000.0,
-                transactionRemarks: 'Capital Injection',
-                operator:           "${operator?.name}",
-                company:            company
-            ).save(flush: true) 
+        def listing = company.businessTransactions
+        println "Initial list ${listing}"
+        
+        trans =  new BusinessTransaction(
+            operationType:      GenericOperation.findByCode(1),
+            transactionDate:    new Date().copyWith(year: 2015, month: 0, dayOfMonth: 3),
+            transactionAmount:  50000.0,
+            transactionRemarks: 'Capital Injection',
+            operator:           "${operator?.name}",
+            company:            company,
+            cash:               0
         )
         
-        company.addToBusinessTransactions(
-            new BusinessTransaction(
-                operationType:      GenericOperation.findByCode(2),
-                transactionDate:    new Date().copyWith(year: 2015, month: 0, dayOfMonth: 8),
-                transactionAmount:  20000.0,
-                transactionRemarks: 'Advance from Directors',
-                operator:           "${operator?.name}",
-                company:            company
-            ).save(flush: true) 
-        )
+        listing = []
         
-        company.addToBusinessTransactions(
-            new BusinessTransaction(
-                operationType:      GenericOperation.findByCode(34),
-                transactionDate:    new Date().copyWith(year: 2015, month: 0, dayOfMonth: 8),
-                transactionAmount:  150.0,
-                transactionRemarks: 'Telephone Bill',
-                operator:           "${operator?.name}",
-                company:            company
-            ).save(flush: true) 
-        )        
         
-        company.addToBusinessTransactions(
-            new BusinessTransaction(
-                operationType:      GenericOperation.findByCode(32),
-                transactionDate:    new Date().copyWith(year: 2015, month: 0, dayOfMonth: 25),
-                transactionAmount:  5400.0,
-                transactionRemarks: 'Salary for January',
-                operator:           "${operator?.name}",
-                company:            company
-            ).save(flush: true) 
-        ) 
+        if(trans == null) {
+            println '*** Instance of BusinessTransaction was not created'
+        }
         
-        company.addToBusinessTransactions(
-            new BusinessTransaction(
-                operationType:      GenericOperation.findByCode(6),
-                transactionDate:    new Date().copyWith(year: 2015, month: 0, dayOfMonth: 30),
-                transactionAmount:  45000.0,
-                transactionRemarks: 'Vehicle Purchase: Proton Persona',
-                operator:           "${operator?.name}",
-                company:            company
-            ).save(flush: true) 
-        )        
+        if(!trans.validate()) {
+            println trans.errors
+        }
+        trans.save()
+        
+        listing << trans
+       
+        
+        trans =
+        new BusinessTransaction(
+            operationType:      GenericOperation.findByCode(2),
+            transactionDate:    new Date().copyWith(year: 2015, month: 0, dayOfMonth: 8),
+            transactionAmount:  20000.0,
+            transactionRemarks: 'Advance from Directors',
+            operator:           "${operator?.name}",
+            company:            company,
+            cash:               0
+        ).save(flush: true) 
+        
+        listing << trans
+        
+        trans = 
+        new BusinessTransaction(
+            operationType:      GenericOperation.findByCode(34),
+            transactionDate:    new Date().copyWith(year: 2015, month: 0, dayOfMonth: 8),
+            transactionAmount:  150.0,
+            transactionRemarks: 'Telephone Bill',
+            operator:           "${operator?.name}",
+            company:            company,
+            cash:               0
+        ).save(flush: true) 
+        listing << trans
+        
+        trans = 
+        new BusinessTransaction(
+            operationType:      GenericOperation.findByCode(32),
+            transactionDate:    new Date().copyWith(year: 2015, month: 0, dayOfMonth: 25),
+            transactionAmount:  5400.0,
+            transactionRemarks: 'Salary for January',
+            operator:           "${operator?.name}",
+            company:            company,
+            cash:               0
+        ).save(flush: true) 
+        listing << trans
+        
+        trans = 
+        new BusinessTransaction(
+            operationType:      GenericOperation.findByCode(6),
+            transactionDate:    new Date().copyWith(year: 2015, month: 0, dayOfMonth: 30),
+            transactionAmount:  45000.0,
+            transactionRemarks: 'Vehicle Purchase: Proton Persona',
+            operator:           "${operator?.name}",
+            company:            company,
+            cash:               0
+        ).save(flush: true) 
+        listing << trans
         
         //  February entries
         
-        company.addToBusinessTransactions(
-            new BusinessTransaction(
-                operationType:      GenericOperation.findByCode(14),
-                transactionDate:    new Date().copyWith(year: 2015, month: 1, dayOfMonth: 1),
-                transactionAmount:  8500.0,
-                transactionRemarks: 'Sales',
-                operator:           "${operator?.name}",
-                company:            company
-            ).save(flush: true) 
-        )         
+        trans = 
+        new BusinessTransaction(
+            operationType:      GenericOperation.findByCode(14),
+            transactionDate:    new Date().copyWith(year: 2015, month: 1, dayOfMonth: 1),
+            transactionAmount:  8500.0,
+            transactionRemarks: 'Sales',
+            operator:           "${operator?.name}",
+            company:            company,
+            cash:               1
+        ).save(flush: true) 
+        listing << trans
         
-        company.addToBusinessTransactions(
-            new BusinessTransaction(
-                operationType:      GenericOperation.findByCode(14),
-                transactionDate:    new Date().copyWith(year: 2015, month: 1, dayOfMonth: 3),
-                transactionAmount:  5000.0,
-                transactionRemarks: 'Sales',
-                operator:           "${operator?.name}",
-                company:            company
-            ).save(flush: true) 
-        )
+        trans = 
+        new BusinessTransaction(
+            operationType:      GenericOperation.findByCode(14),
+            transactionDate:    new Date().copyWith(year: 2015, month: 1, dayOfMonth: 3),
+            transactionAmount:  5000.0,
+            transactionRemarks: 'Sales',
+            operator:           "${operator?.name}",
+            company:            company,
+            cash:               0
+        ).save(flush: true) 
+        listing << trans
         
-        company.addToBusinessTransactions(
-            new BusinessTransaction(
-                operationType:      GenericOperation.findByCode(14),
-                transactionDate:    new Date().copyWith(year: 2015, month: 1, dayOfMonth: 10),
-                transactionAmount:  6540.0,
-                transactionRemarks: 'Sales',
-                operator:           "${operator?.name}",
-                company:            company
-            ).save(flush: true) 
-        )
+        trans = 
+        new BusinessTransaction(
+            operationType:      GenericOperation.findByCode(14),
+            transactionDate:    new Date().copyWith(year: 2015, month: 1, dayOfMonth: 10),
+            transactionAmount:  6540.0,
+            transactionRemarks: 'Sales',
+            operator:           "${operator?.name}",
+            company:            company,
+            cash:               0
+        ).save(flush: true) 
+        listing << trans
         
-        company.addToBusinessTransactions(
-            new BusinessTransaction(
-                operationType:      GenericOperation.findByCode(36),
-                transactionDate:    new Date().copyWith(year: 2015, month: 1, dayOfMonth: 11),
-                transactionAmount:  550.80,
-                transactionRemarks: 'Untility Bills',
-                operator:           "${operator?.name}",
-                company:            company
-            ).save(flush: true) 
-        ) 
+        trans = 
+        new BusinessTransaction(
+            operationType:      GenericOperation.findByCode(36),
+            transactionDate:    new Date().copyWith(year: 2015, month: 1, dayOfMonth: 11),
+            transactionAmount:  550.80,
+            transactionRemarks: 'Untility Bills',
+            operator:           "${operator?.name}",
+            company:            company,
+            cash:               0
+        ).save(flush: true) 
+        listing << trans
         
-        company.addToBusinessTransactions(
-            new BusinessTransaction(
-                operationType:      GenericOperation.findByCode(10),
-                transactionDate:    new Date().copyWith(year: 2015, month: 1, dayOfMonth: 14),
-                transactionAmount:  8500.0,
-                transactionRemarks: 'Small Office Renovation',
-                operator:           "${operator?.name}",
-                company:            company
-            ).save(flush: true) 
-        ) 
+        trans = 
+        new BusinessTransaction(
+            operationType:      GenericOperation.findByCode(10),
+            transactionDate:    new Date().copyWith(year: 2015, month: 1, dayOfMonth: 14),
+            transactionAmount:  8500.0,
+            transactionRemarks: 'Small Office Renovation',
+            operator:           "${operator?.name}",
+            company:            company,
+            cash:               0
+        ).save(flush: true) 
+        listing << trans
         
-        company.addToBusinessTransactions(
-            new BusinessTransaction(
-                operationType:      GenericOperation.findByCode(32),
-                transactionDate:    new Date().copyWith(year: 2015, month: 1, dayOfMonth: 25),
-                transactionAmount:  5400.0,
-                transactionRemarks: 'Salary for February',
-                operator:           "${operator?.name}",
-                company:            company
-            ).save(flush: true) 
-        )  
+        trans = 
+        new BusinessTransaction(
+            operationType:      GenericOperation.findByCode(32),
+            transactionDate:    new Date().copyWith(year: 2015, month: 1, dayOfMonth: 25),
+            transactionAmount:  5400.0,
+            transactionRemarks: 'Salary for February',
+            operator:           "${operator?.name}",
+            company:            company,
+            cash:               0
+        ).save(flush: true) 
+        listing << trans
         
-        company.addToBusinessTransactions(
-            new BusinessTransaction(
-                operationType:      GenericOperation.findByCode(34),
-                transactionDate:    new Date().copyWith(year: 2015, month: 1, dayOfMonth: 26),
-                transactionAmount:  150.0,
-                transactionRemarks: 'Telephone Bill',
-                operator:           "${operator?.name}",
-                company:            company
-            ).save(flush: true) 
-        )
+        trans = 
+        new BusinessTransaction(
+            operationType:      GenericOperation.findByCode(34),
+            transactionDate:    new Date().copyWith(year: 2015, month: 1, dayOfMonth: 26),
+            transactionAmount:  150.0,
+            transactionRemarks: 'Telephone Bill',
+            operator:           "${operator?.name}",
+            company:            company,
+            cash:               0
+        ).save(flush: true) 
+        listing << trans
         
         //  March entries
 
-        company.addToBusinessTransactions(
-            new BusinessTransaction(
-                operationType:      GenericOperation.findByCode(14),
-                transactionDate:    new Date().copyWith(year: 2015, month: 2, dayOfMonth: 1),
-                transactionAmount:  8500.0,
-                transactionRemarks: 'Sales',
-                operator:           "${operator?.name}",
-                company:            company
-            ).save(flush: true) 
-        )         
+        trans = 
+        new BusinessTransaction(
+            operationType:      GenericOperation.findByCode(14),
+            transactionDate:    new Date().copyWith(year: 2015, month: 2, dayOfMonth: 1),
+            transactionAmount:  8500.0,
+            transactionRemarks: 'Sales',
+            operator:           "${operator?.name}",
+            company:            company,
+            cash:               0
+        ).save(flush: true) 
+        listing << trans
         
-        company.addToBusinessTransactions(
-            new BusinessTransaction(
-                operationType:      GenericOperation.findByCode(14),
-                transactionDate:    new Date().copyWith(year: 2015, month: 2, dayOfMonth: 3),
-                transactionAmount:  5000.0,
-                transactionRemarks: 'Sales',
-                operator:           "${operator?.name}",
-                company:            company
-            ).save(flush: true) 
-        )
+        trans = 
+        new BusinessTransaction(
+            operationType:      GenericOperation.findByCode(14),
+            transactionDate:    new Date().copyWith(year: 2015, month: 2, dayOfMonth: 3),
+            transactionAmount:  5000.0,
+            transactionRemarks: 'Sales',
+            operator:           "${operator?.name}",
+            company:            company,
+            cash:               0
+        ).save(flush: true) 
+        listing << trans
         
-        company.addToBusinessTransactions(
-            new BusinessTransaction(
-                operationType:      GenericOperation.findByCode(14),
-                transactionDate:    new Date().copyWith(year: 2015, month: 2, dayOfMonth: 10),
-                transactionAmount:  6540.0,
-                transactionRemarks: 'Sales',
-                operator:           "${operator?.name}",
-                company:            company
-            ).save(flush: true) 
-        )
+        trans = 
+        new BusinessTransaction(
+            operationType:      GenericOperation.findByCode(14),
+            transactionDate:    new Date().copyWith(year: 2015, month: 2, dayOfMonth: 10),
+            transactionAmount:  6540.0,
+            transactionRemarks: 'Sales',
+            operator:           "${operator?.name}",
+            company:            company,
+            cash:               0
+        ).save(flush: true) 
+        listing << trans
         
-        company.addToBusinessTransactions(
-            new BusinessTransaction(
-                operationType:      GenericOperation.findByCode(36),
-                transactionDate:    new Date().copyWith(year: 2015, month: 2, dayOfMonth: 11),
-                transactionAmount:  540.80,
-                transactionRemarks: 'Untility Bills',
-                operator:           "${operator?.name}",
-                company:            company
-            ).save(flush: true) 
-        ) 
+        trans = 
+        new BusinessTransaction(
+            operationType:      GenericOperation.findByCode(36),
+            transactionDate:    new Date().copyWith(year: 2015, month: 2, dayOfMonth: 11),
+            transactionAmount:  540.80,
+            transactionRemarks: 'Untility Bills',
+            operator:           "${operator?.name}",
+            company:            company,
+            cash:               0
+        ).save(flush: true) 
+        listing << trans
         
-        company.addToBusinessTransactions(
-            new BusinessTransaction(
-                operationType:      GenericOperation.findByCode(33),
-                transactionDate:    new Date().copyWith(year: 2015, month: 2, dayOfMonth: 14),
-                transactionAmount:  1500.0,
-                transactionRemarks: 'Pantries',
-                operator:           "${operator?.name}",
-                company:            company
-            ).save(flush: true) 
-        ) 
+        trans = 
+        new BusinessTransaction(
+            operationType:      GenericOperation.findByCode(33),
+            transactionDate:    new Date().copyWith(year: 2015, month: 2, dayOfMonth: 14),
+            transactionAmount:  1500.0,
+            transactionRemarks: 'Pantries',
+            operator:           "${operator?.name}",
+            company:            company,
+            cash:               0
+        ).save(flush: true) 
+        listing << trans
         
-        company.addToBusinessTransactions(
-            new BusinessTransaction(
-                operationType:      GenericOperation.findByCode(32),
-                transactionDate:    new Date().copyWith(year: 2015, month: 2, dayOfMonth: 25),
-                transactionAmount:  5400.0,
-                transactionRemarks: 'Salary for March',
-                operator:           "${operator?.name}",
-                company:            company
-            ).save(flush: true) 
-        )  
+        trans = 
+        new BusinessTransaction(
+            operationType:      GenericOperation.findByCode(32),
+            transactionDate:    new Date().copyWith(year: 2015, month: 2, dayOfMonth: 25),
+            transactionAmount:  5400.0,
+            transactionRemarks: 'Salary for March',
+            operator:           "${operator?.name}",
+            company:            company,
+            cash:               0
+        ).save(flush: true) 
+        listing << trans
         
-        company.addToBusinessTransactions(
-            new BusinessTransaction(
-                operationType:      GenericOperation.findByCode(34),
-                transactionDate:    new Date().copyWith(year: 2015, month: 2, dayOfMonth: 28),
-                transactionAmount:  150.0,
-                transactionRemarks: 'Telephone Bill',
-                operator:           "${operator?.name}",
-                company:            company
-            ).save(flush: true) 
-        )   
+        trans = 
+        new BusinessTransaction(
+            operationType:      GenericOperation.findByCode(34),
+            transactionDate:    new Date().copyWith(year: 2015, month: 2, dayOfMonth: 28),
+            transactionAmount:  150.0,
+            transactionRemarks: 'Telephone Bill',
+            operator:           "${operator?.name}",
+            company:            company,
+            cash:               0
+        ).save(flush: true) 
+        listing << trans
         
-        company.addToBusinessTransactions(
-            new BusinessTransaction(
-                operationType:      GenericOperation.findByCode(4),
-                transactionDate:    new Date().copyWith(year: 2015, month: 2, dayOfMonth: 30),
-                transactionAmount:  10000.0,
-                transactionRemarks: 'Grant from Government',
-                operator:           "${operator?.name}",
-                company:            company
-            ).save(flush: true) 
-        ) 
+        trans = 
+        new BusinessTransaction(
+            operationType:      GenericOperation.findByCode(4),
+            transactionDate:    new Date().copyWith(year: 2015, month: 2, dayOfMonth: 30),
+            transactionAmount:  10000.0,
+            transactionRemarks: 'Grant from Government',
+            operator:           "${operator?.name}",
+            company:            company,
+            cash:               0
+        ).save(flush: true) 
+        listing << trans
         
-        company.addToBusinessTransactions(
-            new BusinessTransaction(
-                operationType:      GenericOperation.findByCode(8),
-                transactionDate:    new Date().copyWith(year: 2015, month: 2, dayOfMonth: 31),
-                transactionAmount:  18000.0,
-                transactionRemarks: 'Office Equipment',
-                operator:           "${operator?.name}",
-                company:            company
-            ).save(flush: true) 
-        )         
+        trans = 
+        new BusinessTransaction(
+            operationType:      GenericOperation.findByCode(8),
+            transactionDate:    new Date().copyWith(year: 2015, month: 2, dayOfMonth: 31),
+            transactionAmount:  18000.0,
+            transactionRemarks: 'Office Equipment',
+            operator:           "${operator?.name}",
+            company:            company,
+            cash:               0
+        ).save(flush: true) 
+        listing << trans
         
         //  April entries
         
-        company.addToBusinessTransactions(
-            new BusinessTransaction(
-                operationType:      GenericOperation.findByCode(14),
-                transactionDate:    new Date().copyWith(year: 2015, month: 3, dayOfMonth: 1),
-                transactionAmount:  8500.0,
-                transactionRemarks: 'Sales',
-                operator:           "${operator?.name}",
-                company:            company
-            ).save(flush: true) 
-        )         
+        trans = 
+        new BusinessTransaction(
+            operationType:      GenericOperation.findByCode(14),
+            transactionDate:    new Date().copyWith(year: 2015, month: 3, dayOfMonth: 1),
+            transactionAmount:  8500.0,
+            transactionRemarks: 'Sales',
+            operator:           "${operator?.name}",
+            company:            company,
+            cash:               0
+        ).save(flush: true) 
+        listing << trans
         
-        company.addToBusinessTransactions(
-            new BusinessTransaction(
-                operationType:      GenericOperation.findByCode(14),
-                transactionDate:    new Date().copyWith(year: 2015, month: 3, dayOfMonth: 3),
-                transactionAmount:  5000.0,
-                transactionRemarks: 'Sales',
-                operator:           "${operator?.name}",
-                company:            company
-            ).save(flush: true) 
-        )
+        trans = 
+        new BusinessTransaction(
+            operationType:      GenericOperation.findByCode(14),
+            transactionDate:    new Date().copyWith(year: 2015, month: 3, dayOfMonth: 3),
+            transactionAmount:  5000.0,
+            transactionRemarks: 'Sales',
+            operator:           "${operator?.name}",
+            company:            company,
+            cash:               0
+        ).save(flush: true) 
+        listing << trans
         
-        company.addToBusinessTransactions(
-            new BusinessTransaction(
-                operationType:      GenericOperation.findByCode(14),
-                transactionDate:    new Date().copyWith(year: 2015, month: 3, dayOfMonth: 10),
-                transactionAmount:  6540.0,
-                transactionRemarks: 'Sales',
-                operator:           "${operator?.name}",
-                company:            company
-            ).save(flush: true) 
-        )
+        trans = 
+        new BusinessTransaction(
+            operationType:      GenericOperation.findByCode(14),
+            transactionDate:    new Date().copyWith(year: 2015, month: 3, dayOfMonth: 10),
+            transactionAmount:  6540.0,
+            transactionRemarks: 'Sales',
+            operator:           "${operator?.name}",
+            company:            company,
+            cash:               0
+        ).save(flush: true) 
+        listing << trans
         
-        company.addToBusinessTransactions(
-            new BusinessTransaction(
-                operationType:      GenericOperation.findByCode(36),
-                transactionDate:    new Date().copyWith(year: 2015, month: 3, dayOfMonth: 11),
-                transactionAmount:  540.80,
-                transactionRemarks: 'Untility Bills',
-                operator:           "${operator?.name}",
-                company:            company
-            ).save(flush: true) 
-        ) 
+        trans = 
+        new BusinessTransaction(
+            operationType:      GenericOperation.findByCode(36),
+            transactionDate:    new Date().copyWith(year: 2015, month: 3, dayOfMonth: 11),
+            transactionAmount:  540.80,
+            transactionRemarks: 'Untility Bills',
+            operator:           "${operator?.name}",
+            company:            company,
+            cash:               0
+        ).save(flush: true) 
+        listing << trans
         
-        company.addToBusinessTransactions(
-            new BusinessTransaction(
-                operationType:      GenericOperation.findByCode(32),
-                transactionDate:    new Date().copyWith(year: 2015, month: 3, dayOfMonth: 25),
-                transactionAmount:  5800.0,
-                transactionRemarks: 'Salary for April',
-                operator:           "${operator?.name}",
-                company:            company
-            ).save(flush: true) 
-        )  
+        trans = 
+        new BusinessTransaction(
+            operationType:      GenericOperation.findByCode(32),
+            transactionDate:    new Date().copyWith(year: 2015, month: 3, dayOfMonth: 25),
+            transactionAmount:  5800.0,
+            transactionRemarks: 'Salary for April',
+            operator:           "${operator?.name}",
+            company:            company,
+            cash:               0
+        ).save(flush: true) 
+        listing << trans
         
-        company.addToBusinessTransactions(
-            new BusinessTransaction(
-                operationType:      GenericOperation.findByCode(34),
-                transactionDate:    new Date().copyWith(year: 2015, month: 3, dayOfMonth: 28),
-                transactionAmount:  150.0,
-                transactionRemarks: 'Telephone Bill',
-                operator:           "${operator?.name}",
-                company:            company
-            ).save(flush: true) 
-        )   
+        trans = 
+        new BusinessTransaction(
+            operationType:      GenericOperation.findByCode(34),
+            transactionDate:    new Date().copyWith(year: 2015, month: 3, dayOfMonth: 28),
+            transactionAmount:  150.0,
+            transactionRemarks: 'Telephone Bill',
+            operator:           "${operator?.name}",
+            company:            company,
+            cash:               0
+        ).save(flush: true) 
+        listing << trans
         
-        company.addToBusinessTransactions(
-            new BusinessTransaction(
-                operationType:      GenericOperation.findByCode(10),
-                transactionDate:    new Date().copyWith(year: 2015, month: 3, dayOfMonth: 30),
-                transactionAmount:  15000.0,
-                transactionRemarks: 'car repair',
-                operator:           "${operator?.name}",
-                company:            company
-            ).save(flush: true) 
-        ) 
+        trans = 
+        new BusinessTransaction(
+            operationType:      GenericOperation.findByCode(10),
+            transactionDate:    new Date().copyWith(year: 2015, month: 3, dayOfMonth: 30),
+            transactionAmount:  15000.0,
+            transactionRemarks: 'Car repair',
+            operator:           "${operator?.name}",
+            company:            company,
+            cash:               0
+        ).save(flush: true) 
+        listing << trans
         
         //  May enrties
         
-        company.addToBusinessTransactions(
-            new BusinessTransaction(
-                operationType:      GenericOperation.findByCode(14),
-                transactionDate:    new Date().copyWith(year: 2015, month: 4, dayOfMonth: 1),
-                transactionAmount:  850.0,
-                transactionRemarks: 'Sales',
-                operator:           "${operator?.name}",
-                company:            company
-            ).save(flush: true)
-        )
+        trans = 
+        new BusinessTransaction(
+            operationType:      GenericOperation.findByCode(14),
+            transactionDate:    new Date().copyWith(year: 2015, month: 4, dayOfMonth: 1),
+            transactionAmount:  850.0,
+            transactionRemarks: 'Sales',
+            operator:           "${operator?.name}",
+            company:            company,
+            cash:               1
+        ).save(flush: true)
+        listing << trans
             
-        company.addToBusinessTransactions(
-            new BusinessTransaction(
-                operationType:      GenericOperation.findByCode(8),
-                transactionDate:    new Date().copyWith(year: 2015, month: 4, dayOfMonth: 3),
-                transactionAmount:  2850.0,
-                transactionRemarks: 'Laptop',
-                operator:           "${operator?.name}",
-                company:            company
-            ).save(flush: true)            
-        )      
+        trans = 
+        new BusinessTransaction(
+            operationType:      GenericOperation.findByCode(8),
+            transactionDate:    new Date().copyWith(year: 2015, month: 4, dayOfMonth: 3),
+            transactionAmount:  2850.0,
+            transactionRemarks: 'Laptop',
+            operator:           "${operator?.name}",
+            company:            company,
+            cash:               0
+        ).save(flush: true)            
+        listing << trans
         
-        company.addToBusinessTransactions(
-            new BusinessTransaction(
-                operationType:      GenericOperation.findByCode(14),
-                transactionDate:    new Date().copyWith(year: 2015, month: 4, dayOfMonth: 4),
-                transactionAmount:  670.0,
-                transactionRemarks: 'Sales',
-                operator:           "${operator?.name}",
-                company:            company
-            ).save(flush: true)            
-        )
+        trans =
+        new BusinessTransaction(
+            operationType:      GenericOperation.findByCode(14),
+            transactionDate:    new Date().copyWith(year: 2015, month: 4, dayOfMonth: 4),
+            transactionAmount:  670.0,
+            transactionRemarks: 'Sales',
+            operator:           "${operator?.name}",
+            company:            company,
+            cash:               1
+        ).save(flush: true)            
+        listing << trans
         
-        company.addToBusinessTransactions(
-            new BusinessTransaction(
-                operationType:      GenericOperation.findByCode(29),
-                transactionDate:    new Date().copyWith(year: 2015, month: 4, dayOfMonth: 6),
-                transactionAmount:  1500.0,
-                transactionRemarks: 'Office cleaning',
-                operator:           "${operator?.name}",
-                company:            company
-            ).save(flush: true)            
-        )         
+        trans = 
+        new BusinessTransaction(
+            operationType:      GenericOperation.findByCode(29),
+            transactionDate:    new Date().copyWith(year: 2015, month: 4, dayOfMonth: 6),
+            transactionAmount:  1500.0,
+            transactionRemarks: 'Office cleaning',
+            operator:           "${operator?.name}",
+            company:            company,
+            cash:               0
+        ).save(flush: true)            
+        listing << trans
+
+        company.businessTransactions = listing
+        company.save(flush: true)
 
         println "Total Transactions added: ${company?.businessTransactions.size()}"
     }
@@ -1039,4 +1212,166 @@ class BootStrap {
         
         println "Total Business instances created: ${Business.count()}"
     }
+    
+    /***************************************************************************
+     *  Correcting GenericOperation instances to comply with latest changes: the
+     *  scope of types remains, and must be attanded manually if required
+     **************************************************************************/
+    void updateGenericOperationTypes() {
+        println ''
+        println 'Updating list of Generic Operations'
+        
+        def updates = 0
+        def operations = GenericOperation.list()
+        
+        println "Total items found: ${operations.size()}"
+        
+        def cashHandOp = GenericOperation.findByCode(1000)
+        def cashBankOp = GenericOperation.findByCode(1010)
+        
+        if(cashHandOp == null) {
+            cashHandOp = new GenericOperation(
+                code:           1000,
+                name:           'Cash in Hands',
+                inbound:        false,
+                outbound:       true,
+                accountType:    AccountType.findByCode(5),
+                group:          CFGroup.findByCode(5),
+                actual:         0
+            ).save(flush: true) 
+            
+            println "Operation created: ${cashHandOp}"
+        }
+        
+        if(cashBankOp == null) {
+            cashBankOp = new GenericOperation(
+                code:           1010,
+                name:           'Cash at Bank',
+                inbound:        false,
+                outbound:       true,
+                accountType:    AccountType.findByCode(5),
+                group:          CFGroup.findByCode(6),
+                actual:         0
+            ).save(flush: true) 
+            
+            println "Operation created: ${cashBankOp}"
+        } 
+        
+        println 'Cheking for existance of mirrored Operations'
+        
+        if(!GenericOperation.findByCode(1020)) {
+            new GenericOperation(
+                code: 1020,
+                name: 'Cash Withdrawal',
+                inbound: false,
+                outbound: true,
+                accountType: AccountType.findByCode(5),
+                group: CFGroup.findByCode(5),
+                actual: 0,
+                mirrorCash: cashBankOp
+            ).save(flush: true) 
+            
+            println '... Cash Withdrawal created'
+        }
+        else {
+            println '... Cash Withdrawal exists'
+        }
+        
+        if(!GenericOperation.findByCode(1030)) {
+            new GenericOperation(
+                code: 1030,
+                name: 'Cash Deposit to Bank',
+                inbound: false,
+                outbound: true,
+                accountType: AccountType.findByCode(5),
+                group: CFGroup.findByCode(6),
+                actual: 0,
+                mirrorCash: cashHandOp
+            ).save(flush: true)
+            
+            println '... Cash Deposit created'
+        }
+        else {
+            println '... Cash Deposit exists'
+        }
+        
+        operations.each {
+            switch(it?.code) {
+            case [1, 2, 3, 4, 5, 14]:
+                it.mirrorCash = cashHandOp
+                it.mirrorBank = cashBankOp
+                it.actual = 1
+                it.group = CFGroup.findByCode(1)
+                it.save()
+                updates++
+                break
+                
+            case [15, 16, 17, 18]:
+                it.mirrorCash = cashHandOp
+                it.mirrorBank = cashBankOp
+                it.actual = 1
+                it.group = CFGroup.findByCode(2)
+                it.save()
+                updates++
+                break  
+                
+            case 19..37:
+                it.mirrorCash = cashHandOp
+                it.mirrorBank = cashBankOp
+                it.actual = 1
+                it.group = CFGroup.findByCode(3)
+                it.save()
+                updates++
+                break 
+                
+            case [6, 7, 8, 9, 10, 11]:
+                it.mirrorCash = cashHandOp
+                it.mirrorBank = cashBankOp
+                it.actual = 1
+                it.group = CFGroup.findByCode(4)
+                it.save()
+                updates++
+                break                
+            }
+        }
+        
+        println "Total Operations updated: ${updates}"
+    }   //  End of 'updateGenericOperationTypes'
+    
+    /***************************************************************************
+     *  Verifying and updating existing BusinessTransaction instances
+     **************************************************************************/
+    
+    void createTransactionsPeers() {
+        println ''
+        println 'Verification of created BusinessTransaction inctances'
+        
+        def transactions = BusinessTransaction.list()
+        def cashBankType = GenericOperation.findByCode(1010)
+        
+        println "Total Records found: ${transactions.size()}"
+        
+        transactions.each {transaction ->
+            if(transaction?.cash == null) {
+                transaction.cash = 0 // Default value
+                transaction.save()
+                
+                println "Defaulted to Bank Operation: ${transaction}"
+            }
+            
+            //  Correcting 'Cash at Bank' entries
+            
+            if(transaction.operationType?.code == 13) {
+                transaction.operationType = cashBankType
+                transaction.save(flush: true)
+                
+                println "Corrected Transaction: ${transaction} to Code 1010"
+            }
+            
+            if(transaction.operationType.actual > 0 && transaction?.peer == null) {
+                println "Peer missing for: ${transaction}"
+                businessTransactionService.createPeer(transaction)
+            }
+        }
+    }   //  End of 'createTransactionPeers()'
 }

@@ -7,6 +7,7 @@ import grails.transaction.Transactional
 
 @Transactional (readOnly = true)
 class SmehomeController {
+    
     def businessTransactionService
     def messageSource
     
@@ -118,6 +119,8 @@ class SmehomeController {
 
         businessTransactionInstance.save flush:true
         
+        businessTransactionService.createPeer(businessTransactionInstance)
+        
         if(Environment.current == Environment.DEVELOPMENT) {
             println "Transaction added: ${businessTransactionInstance}"
         }        
@@ -131,6 +134,7 @@ class SmehomeController {
     def profile() {
         if(!session.user) {
             redirect (controller: 'login', action: 'index')
+            return
         }
         
         params.offset = params.offset ?: 0

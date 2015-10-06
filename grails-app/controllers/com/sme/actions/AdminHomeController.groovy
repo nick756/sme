@@ -16,6 +16,7 @@ class AdminHomeController {
         
         if(!session?.user) {
             redirect (controller: 'login')
+            return
         }
         
         params.offset = params.offset ?: 0
@@ -30,6 +31,7 @@ class AdminHomeController {
     def show() {
         if(!session?.user) {
             redirect (controller: 'login')
+            return
         }        
 
         params.offset = params.offset ?: 0
@@ -53,6 +55,7 @@ class AdminHomeController {
     def listtransactions() {
         if(!session?.user) {
             redirect (controller: 'login')
+            return
         }
         
         def transList = []
@@ -327,10 +330,10 @@ class AdminHomeController {
             }
         }
         
+        //  Statements List must be refreshed after new instance
         statements = CashFlowStatement.findAllByCompany(Business.get(businessID))
         
         [
-            //  Statements List must be refreshed after new instance
             statementList:      statements,
             statementCount:     statements.size(),
             businessInstance:   business,
@@ -342,7 +345,9 @@ class AdminHomeController {
         ]
     }
     
-    //  Report on Cash Flow Summary details for particular month
+    /**
+     *  Cash Flow Report for selected Month
+     */
     
     def statementdetails(CashFlowStatement summary) {
         if(!session?.user) {
@@ -370,9 +375,9 @@ class AdminHomeController {
             println ''
             println "--- ${session.user.login} ${new Date().format('dd/MM/yyyy HH:mm')}: method ${params?.controller}/${params.action} ---"
             println "Received Summary: ${summary}"
-//            println "Transactions    : ${summary?.transactions?.toList().size()}"
-//            println summary?.transactions?.toList()
-//            println "Group Map       : ${groupsMap}"
+            //            println "Transactions    : ${summary?.transactions?.toList().size()}"
+            //            println summary?.transactions?.toList()
+            //            println "Group Map       : ${groupsMap}"
             
         }   
         
@@ -381,5 +386,25 @@ class AdminHomeController {
             summary: summary,
             company: summary?.company
         ]
+    }
+    
+    def deleteAllStatements(Business businessInstance) {
+        
+        def statements = businessInstance.statements as List
+        def transactions
+        
+        statements.each {statement ->
+            transactions = BusinessTransaction.findAllByStatement(statement)
+            
+            transactions.each {transaction ->
+                statement.removeFromTransactions(transaction)
+            }
+            
+            statement.save(flush: true)
+            businessInstance.removeFromStatements(statement)
+            statement.delete(flush: true)
+        }
+
+        redirect action: 'listtransactions', params: ['id': businessInstance.id]
     }
 }

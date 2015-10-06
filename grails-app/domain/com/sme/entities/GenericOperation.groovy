@@ -1,16 +1,20 @@
 package com.sme.entities
 
 /**
-    Generic Operations (Operation Types) assignable 
-    to a Generic Profile
-*/
+Generic Operations (Operation Types) assignable 
+to a Generic Profile
+ */
 class GenericOperation {
-    Date dateCreated
-    Date lastUpdated
     Integer code
     String name
+    
     boolean inbound
     boolean outbound
+    Integer actual
+    
+    //  Operation Types for double entry creation
+    GenericOperation mirrorCash
+    GenericOperation mirrorBank
     
     AccountType accountType
     CFGroup     group
@@ -18,19 +22,20 @@ class GenericOperation {
     static hasMany = [profiles: ProfileLink]
     
     static constraints = {
-        dateCreated nullable: true
-        lastUpdated nullable: true
-        
         code        nullable: false, unique: true
         name        nullable: false, blank: false
         accountType nullable: false
         profiles    nullable: true
+        group       nullable: true  //  For compatibility
+        mirrorCash  nullable: true
+        mirrorBank  nullable: true
+        actual      nullable: true, blank: true
 
         //  Values of inbound and outbound cannot coincide
         inbound     nullable: false
         outbound    nullable: false, validator: {value, obj ->
-                        return !(value == obj.inbound)
-                    }
+            return !(value == obj.inbound)
+        }
     }
     
     static mapping = {
@@ -38,13 +43,15 @@ class GenericOperation {
     }
     
     public String toString() {
-        def out
+        def out = ''
         
-        if(this.inbound) {
-            out = "IN: "
-        }
-        else {
-            out = "OUT: "
+        if(this.code < 1000) {
+            if(this.inbound) {
+                out = "MASUK: "
+            }
+            else {
+                out = "KELUAR: "
+            }
         }
         
         return out + name

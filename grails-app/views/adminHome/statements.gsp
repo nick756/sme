@@ -13,6 +13,7 @@
     <body>
         <div class="action-header">
             <g:link style="float: left;" action="listtransactions" params="['max': params.max, 'offset': params.offset, 'id': businessInstance?.id]"><img class="image-link" style="margin-left: 5px;" src="${resource(dir: 'images', file: 'arrow_left.png')}" title="<g:message code='actions.back'/>"/></g:link>
+            <g:link style="float: right;" action="deleteAllStatements" params="['max': params.max, 'offset': params.offset, 'id': businessInstance?.id]"><img class="image-link" style="margin-right: 5px;" src="${resource(dir: 'images', file: 'data_delete.png')}" title="<g:message code='actions.back'/>"/></g:link>
         </div>
         <h1 class="sub-title" style="width: 100%;">${businessInstance?.name}</h1>
         <div class="edit-form-box" style="width: 100%; display: block; float: left;">

@@ -29,6 +29,12 @@
                 <label class="edit-form mand"><g:message code="businesstransaction.date.label" default="Incorp Date"/></label>
                 <g:datePicker class="select-list" name="transactionDate" value="${businessTransactionInstance?.transactionDate}" precision="day"/>
                 <br/>
+                
+                <g:radioGroup name="cash" labels="['Cash', 'Bank/Cheque']" values="[1, 0]" value="0">
+                    <label class="edit-form">${it.label}</label>
+                    ${it.radio}
+                    <br/>
+                </g:radioGroup>
                 <hr color="#9CC7F2" style="margin-bottom: 10px;"/>
                 <input type="submit" value="<g:message code='actions.login.submit'/>" class="myButton" />
             </g:form>

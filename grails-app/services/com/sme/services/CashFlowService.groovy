@@ -41,7 +41,9 @@ class CashFlowService {
             println ''
             println "--- ${new Date().format('dd/MM/yyyy HH:mm:ss')} - CashFlowService.populateCFStatement ---"
             println "Records added: ${statement?.transactions.size()}"
-        }        
+        }
+        
+        statement.save(flush: true)
     }
     
     def calculateCFStatement(CashFlowStatement statement) {
@@ -60,11 +62,13 @@ class CashFlowService {
         
         if(transactions.size() > 0) {
             transactions.each {item ->
-                if(item?.operationType.inbound) {
-                    inflow += item?.transactionAmount
-                }
-                else {
-                    outflow += item?.transactionAmount
+                if(item?.operationType.actual == 1) {
+                    if(item?.operationType.inbound) {
+                        inflow += item?.transactionAmount
+                    }
+                    else {
+                        outflow += item?.transactionAmount
+                    }
                 }
             }
             
@@ -98,6 +102,24 @@ class CashFlowService {
                 statement.cumulativeAmount = result
             }
             
+            /*******************************************************************
+             *  Managing Cash entries (in Hand and at Bank)
+             ******************************************************************/
+            BigDecimal cashHand = 0
+            BigDecimal cashBank = 0
+            
+            transactions.each {
+                switch(it?.operationType?.group?.code) {
+                    case 5:
+                        cashHand += it.transactionAmount
+                        break
+                    case 6:
+                        cashBank += it.transactionAmount
+                }
+            }
+            
+            statement.cashHand = cashHand
+            statement.cashBank = cashBank
             statement.save(flush: true)
             
             if(Environment.current == Environment.DEVELOPMENT) {

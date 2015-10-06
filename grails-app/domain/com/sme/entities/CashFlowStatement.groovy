@@ -16,8 +16,11 @@ class CashFlowStatement {
     BigDecimal inflow
     BigDecimal outflow
     BigDecimal nettAmount
-    BigDecimal cumulativeAmount     //  ~ nettAmount from previous period
+    BigDecimal cumulativeAmount     //  BF + CF
     BigDecimal openingBalance
+    
+    BigDecimal cashHand
+    BigDecimal cashBank
 
     static belongsTo = [company: Business]
     static hasMany = [transactions: BusinessTransaction]
@@ -26,6 +29,8 @@ class CashFlowStatement {
         dateCreated     nullable: true
         lastUpdated     nullable: true
         transactions    nullable: true
+        cashHand        nullable: true
+        cashBank        nullable: true
     }
     
     static mapping = {

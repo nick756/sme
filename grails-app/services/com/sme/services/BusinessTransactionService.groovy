@@ -13,7 +13,7 @@ class BusinessTransactionService {
     /*
      *  Adding New Transaction: using Mobile interface
      */
-    def addTransaction(User operator, Date date, Integer code, double amount, String description) {
+    def addTransaction(User operator, Date date, Integer code, double amount, String description, Integer cash) {
         def company = operator?.company
         
         if(company) {
@@ -23,7 +23,8 @@ class BusinessTransactionService {
                 transactionAmount:  amount,
                 transactionRemarks: description,
                 operator:           "${operator?.name}",
-                company:            company
+                company:            company,
+                cash:               cash
             )
         
             if(!newTransaction.validate()) {
@@ -33,7 +34,10 @@ class BusinessTransactionService {
         
             else {
                 newTransaction.save(flush: true)
+                
                 company.addToBusinessTransactions(newTransaction)
+                createPeer(newTransaction)
+                
                 return newTransaction.id
             }
         }
@@ -47,7 +51,7 @@ class BusinessTransactionService {
      *  TODO (17/08/2017):  Option for saving an image (document) that may be
      *                      related to Transaction
      */ 
-    def addTransactionWeb(Business company, User user, Date date, Integer code, double amount, String description) {
+    def addTransactionWeb(Business company, User user, Date date, Integer code, double amount, String description, Integer cash) {
         if(company) {
             def newTransaction = new BusinessTransaction(
                 operationType:      GenericOperation.findByCode(code),
@@ -55,7 +59,8 @@ class BusinessTransactionService {
                 transactionAmount:  amount,
                 transactionRemarks: description,
                 operator:           "${operator?.name}",
-                company:            company
+                company:            company,
+                cash:               cash
             )
         
             if(!newTransaction.validate()) {
@@ -121,5 +126,75 @@ class BusinessTransactionService {
         }
         
         return result
+    }
+    
+    /***************************************************************************
+     *  Creation of peer for the given Transaction
+     **************************************************************************/
+    def createPeer(BusinessTransaction source) {
+        def mode = source?.cash
+        BusinessTransaction peer
+        BigDecimal amountPeer
+        def peerType
+        
+        if(Environment.current == Environment.DEVELOPMENT) {
+            println ''
+            println "--- ${new Date().format('dd/MM/yyyy HH:mm:ss')} - BusinessTransactionService.createPeer ---"
+            println "Mode of Payment    : ${mode}"
+            println "Actual Transaction : ${source.operationType.actual}"
+            println "Cash case          : ${source?.operationType?.mirrorCash}"
+            println "Bank case          : ${source?.operationType?.mirrorBank}"
+        }
+        
+        if(source?.operationType.inbound && source?.operationType.code < 1000) {
+            amountPeer = source?.transactionAmount
+            
+            if(mode == 1) {     //  Cash Operation
+                peerType = source?.operationType?.mirrorCash
+            }
+            else {
+                peerType = source?.operationType?.mirrorBank
+            }
+        }
+        else if (source?.operationType.outbound && source?.operationType.code < 1000) {
+            amountPeer = -source?.transactionAmount
+            
+            if(mode == 1) {     //  Cash Operation
+                peerType = source?.operationType?.mirrorCash
+            }
+            else {
+                peerType = source?.operationType?.mirrorBank
+            }            
+        }
+        else {
+            //  Exclude Cash Balance entries from peering
+            
+            if(source?.operationType.code == 1000 || source?.operationType.code == 1010 ) {
+                return
+            }
+            else {
+                amountPeer  = -source?.transactionAmount
+                peerType    = source?.operationType.mirrorCash
+            }
+        }
+        
+        if(Environment.current == Environment.DEVELOPMENT) {        
+            println 'After Processing:'
+            println "Amount Peer   : ${amountPeer}"
+            println "Operation     : ${peerType}"
+        }
+        
+        peer = new BusinessTransaction(
+            operationType:      peerType,
+            transactionDate:    source?.transactionDate,
+            transactionAmount:  amountPeer,
+            transactionRemarks: "(${source?.transactionRemarks})",
+            operator:           source?.operator,
+            company:            source?.company,
+            cash:               mode            
+        ).save(flush: true)
+        
+        source.peer = peer.id
+        source.save(flush: true)
     }
 }

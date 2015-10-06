@@ -242,6 +242,14 @@ class MobileController {
         def amount          = new Double(params?.operationAmount)
         def description     = params?.operationDescription
         def operationDate   = new Date().parse("d/M/yyyy", params?.date)
+        Integer cashFlag
+        
+        if(params.cash == 'true') {
+            cashFlag = 1
+        }
+        else {
+            cashFlag = 0
+        }
         
         def resultCode = 0
         def resultDesc = "New Transaction added"
@@ -279,7 +287,8 @@ class MobileController {
                 operationDate,
                 operationCode,
                 amount,
-                description
+                description,
+                cashFlag
             )
             
             if(transactID <= 0) {
