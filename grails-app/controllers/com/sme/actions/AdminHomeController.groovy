@@ -72,6 +72,11 @@ class AdminHomeController {
         if(Environment.current == Environment.DEVELOPMENT) {
             println ''
             println "--- ${new Date()}: ${session.user.login} in ${params.controller}/${params?.action} ---"
+            println "Current Locale: ${session.locale}"
+            
+            if(session.locale == null || session.locale.toString() == 'en_us') {
+                println "English Version must be used"
+            }
             print "Forwarded params: "
             println params
         }

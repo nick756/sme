@@ -29,7 +29,7 @@
 
                     <td class="no-border centered"><g:link action="show" id="${genericOperationInstance.id}">${genericOperationInstance.code}</g:link></td>
 
-                    <td class="no-border"><g:link action="show" id="${genericOperationInstance.id}">${genericOperationInstance.name}</g:link></td>
+                    <td class="no-border"><g:link action="show" id="${genericOperationInstance.id}">${genericOperationInstance}</g:link></td>
 
                     <td class="no-border">${genericOperationInstance.accountType?.name}</td>
 

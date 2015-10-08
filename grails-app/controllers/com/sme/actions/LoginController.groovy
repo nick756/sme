@@ -10,11 +10,13 @@ class LoginController {
             def newLocale = new Locale(params.lang)
             RCU.getLocaleResolver(request).setLocale(request, response, newLocale)
             session.locale = newLocale
-            //println "Locale set: " + newLocale
+            println "Locale set: " + newLocale
         }
         else {
             //println "Locale remains unchanged"
         }
+        
+        println "Current Locale: ${session.locale}"
     }
     
     def process = {LoginCommand cmd ->
