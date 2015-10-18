@@ -101,4 +101,17 @@ class UserController {
             '*'{ render status: NOT_FOUND }
         }
     }
+    
+    /**
+     *  Printing list of users
+     */
+    
+    def report() {
+        if(!session?.user) {
+            redirect controller: 'login', action: 'index'
+            return
+        }
+        
+        [usersList: User.list()]
+    }
 }

@@ -563,10 +563,36 @@ th:hover, tr:hover {
 .action-header {
     width: 100%; 
     background: #D0E8F4; 
-    display: inline-block; 
+    display: inline-block;
     text-align: right; 
     border-bottom: 0px solid #6285C7; 
     border-top: 0px solid #6285C7; 
     padding: 5px 0;    
+}
+
+/*
+ *  Error Message Styles
+ */
+
+.error-message {
+    width: 99%;
+    background: #ffdfdf;
+    text-align: center;
+    padding: 10px 5px;
+    color: #a00000;
+    margin-top: 5px;
+    font-size: 14pt;
+    font-family: 'Muli', sans-serif;
+}
+
+.success-message {
+    width: 99%;
+    background: #dfffdf;
+    text-align: center;
+    padding: 10px 5px;
+    color: #00a000;
+    margin-top: 5px;
+    font-size: 14pt;
+    font-family: 'Muli', sans-serif;
 }
 

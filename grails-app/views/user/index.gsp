@@ -12,7 +12,9 @@
 		<div class="nav" role="navigation">
 			<ul>
 				<g:link style="float: left;" controller="adminHome" action="index" params="['max': params.max, 'offset': params.offset]"><img class="image-link" style="margin-left: 5px;" src="${resource(dir: 'images', file: 'arrow_left.png')}" title="<g:message code='actions.back'/>"/></g:link>
+                                
 				<li><g:link class="create" action="create"><g:message code="default.new.label" args="[entityName]" /></g:link></li>
+                                <g:link style="float: right;" target="_blank" controller="user" action="report"><img class="image-link" style="margin-left: 5px;" src="${resource(dir: 'images', file: 'printer.png')}" title="<g:message code='actions.print'/>"/></g:link>
 			</ul>
 		</div>
 		<div id="list-user" class="content scaffold-list" role="main">

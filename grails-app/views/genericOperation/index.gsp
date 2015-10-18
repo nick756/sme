@@ -11,7 +11,7 @@
             <div class="message" role="status">${flash.message}</div>
         </g:if>
         <table class="righted-content" style="background: #fff; border: none;">
-            <caption style="background: #fff;">List of Operation Types</caption>
+            <caption style="background: #fff;"><g:message code="genericOperation.list"/></caption>
             <tr>
 
                 <g:sortableColumn property="code" title="${message(code: 'genericOperation.code.label', default: 'Code')}" />

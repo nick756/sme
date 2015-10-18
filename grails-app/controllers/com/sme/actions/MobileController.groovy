@@ -134,6 +134,15 @@ class MobileController {
         def oplist = []                 //  List of ProfileLink instances
         def profileName = "N/A"
         
+        def language
+        
+        if(!params.language) {
+            language = 'ms'
+        }
+        else {
+            language = params.language
+        }
+        
         if(!mobileSessionService.validateTimeout(userID)) {
             
             if(Environment.current == Environment.DEVELOPMENT) {
@@ -182,7 +191,7 @@ class MobileController {
                                
                                     operation {
                                         code(opinstance?.code)
-                                        name(opinstance?.name)
+                                        name(opinstance?.toString(language))
                                         inbound(opinstance?.inbound)
                                         outbound(opinstance?.outbound)
                                         type(opinstance?.accountType?.name)
@@ -330,6 +339,12 @@ class MobileController {
         def recordList  = []
         def errorCode   = 0
         
+        def language = 'ms'
+        
+        if(params?.language) {
+            language = params.language
+        }
+        
         if(Environment.current == Environment.DEVELOPMENT) {
             println ''
             println "${new Date().format('dd/MM/yyyy HH:mm:ss')} ${user?.login}: operation LISTTRANSACTIONS from ${request.getRemoteAddr()}"
@@ -396,7 +411,7 @@ class MobileController {
                             record {
                                 tranCode    (recInstance?.id)
                                 date        (recInstance?.transactionDate.format('dd/MM/yyyy'))
-                                type        (recInstance?.operationType)
+                                type        (recInstance?.operationType.toString(language))
                                 amount      (recInstance?.transactionAmount)
                                 descr       (recInstance?.transactionRemarks)
                                 operator    (recInstance?.operator)

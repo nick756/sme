@@ -457,8 +457,8 @@ th a:link, th a:visited {
 }
 
 th a:hover, th a:focus {
-	/*color: #333333;*/
-        font-weight: bold;
+	color: #a0a0a0;
+        /*font-weight: bold;*/
 }
 
 th.sortable a {

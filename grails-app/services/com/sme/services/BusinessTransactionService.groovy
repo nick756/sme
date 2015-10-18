@@ -19,7 +19,7 @@ class BusinessTransactionService {
         if(company) {
             def newTransaction = new BusinessTransaction(
                 operationType:      GenericOperation.findByCode(code),
-                transactionDate:    date,
+                transactionDate:    date.clearTme(),
                 transactionAmount:  amount,
                 transactionRemarks: description,
                 operator:           "${operator?.name}",
@@ -55,7 +55,7 @@ class BusinessTransactionService {
         if(company) {
             def newTransaction = new BusinessTransaction(
                 operationType:      GenericOperation.findByCode(code),
-                transactionDate:    date,
+                transactionDate:    date.clearTime(),
                 transactionAmount:  amount,
                 transactionRemarks: description,
                 operator:           "${operator?.name}",
@@ -83,9 +83,13 @@ class BusinessTransactionService {
      */
     @Transactional (readOnly = true)
     def getTransactions(Business company, Date from, Date till) {
+        from.clearTime()
+        till.clearTime()
+        
         BusinessTransaction.createCriteria().list() {
             eq('company', company)
-            between('transactionDate', from, till + 1)
+            ge('transactionDate', from)
+            le('transactiondate', till)
             
             and {
                 order('transactionDate', 'asc')
@@ -112,7 +116,8 @@ class BusinessTransactionService {
         
         result = BusinessTransaction.createCriteria().list() {
             eq('company', company)
-            between('transactionDate', dateFrom, dateTill + 1)
+            ge('transactionDate', dateFrom)
+            le('transactionDate', dateTill)
             isNull('statement')
         }
         

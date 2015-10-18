@@ -20,6 +20,7 @@ class LoginController {
     }
     
     def process = {LoginCommand cmd ->
+        Locale locale
         
         if(session?.user) {
             render(view: 'index')
@@ -33,10 +34,19 @@ class LoginController {
                     if(session?.user) {
                         session.setMaxInactiveInterval(-1)
                         
+                        if(session.locale.toString() == 'ms') {
+                            locale = new Locale('ms')
+                        }
+                        else {
+                            locale = new Locale('en')
+                        }
+                        
                         switch (session?.user.role.code) {
-                            case 1: redirect(controller: 'adminHome')
+                            case 1: session.locale = locale
+                                    redirect(controller: 'adminHome')
                                     break
                             case 2: session.company = session?.user.company
+                                    session.locale = locale
                                     redirect(controller: 'smehome')
                                     break
                         }

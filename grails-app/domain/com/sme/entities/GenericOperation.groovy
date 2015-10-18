@@ -46,6 +46,46 @@ class GenericOperation {
         sort 'code'
     }
     
+    //  For Mobile Interface only
+    
+    public String toString(String lang) {
+        def out = '';
+        
+        switch(lang) {
+        case 'ms':
+            if(this.code < 1000) {
+                if(this.inbound) {
+                    out = "MASUK: ${name}"
+                }
+                else {
+                    out = "KELUAR: ${name}"
+                }
+            }
+            else {
+                out = name
+            }
+            break
+                
+        case 'en':
+            if(this.code < 1000) {
+                if(this.inbound) {
+                    out = "IN: ${name_EN}"
+                }
+                else {
+                    out = "OUT: ${name_EN}"
+                }           
+            }
+            else {
+                out = name_EN
+            }
+            break
+        }
+        
+        return out
+    }
+    
+    //  Web Interface only
+    
     public String toString() {
         def session = RequestContextHolder.currentRequestAttributes().getSession()
         def out = ''

@@ -755,8 +755,15 @@ class BootStrap {
          *  Unconditional verification and updates for changes
          * ********************************************************************/
         
+        println ''
+        println '**************************************************************'
+        println '         VERIFICATION OF MIGRATION ASPECTS'
+        println '**************************************************************'
+        println ''
+        
         updateGenericOperationTypes()
         createTransactionsPeers()
+        translateOperationTypes()
     }
 
     
@@ -1220,11 +1227,10 @@ class BootStrap {
     void updateGenericOperationTypes() {
         println ''
         println 'Updating list of Generic Operations'
-        
+
         def updates = 0
-        def operations = GenericOperation.list()
         
-        println "Total items found: ${operations.size()}"
+        
         
         def cashHandOp = GenericOperation.findByCode(1000)
         def cashBankOp = GenericOperation.findByCode(1010)
@@ -1295,6 +1301,34 @@ class BootStrap {
             println '... Cash Deposit exists'
         }
         
+        if(!GenericOperation.findByCode(8)) {
+            def opCode8 = new GenericOperation(
+                code:           8,
+                name:           'Pembelian Peralatan Ofis',
+                name_EN:        'Purchase of Office Equipment',
+                inbound:        false,
+                outbound:       true,
+                accountType:    AccountType.findByCode(4),
+                group:          CFGroup.findByCode(4),
+                actual:         1,
+                mirrorCash:     cashHandOp,
+                mirrorBank:     cashBankOp
+            )
+            
+            if(opCode8.validate()) {
+                opCode8.save(flush: true)
+                println "*** Operation with Code 8 has been added"
+            }
+            else {
+                opCode8 = null
+                println '*** Creation of Operation with Code 8 failed'
+            }
+            
+        }
+        
+        def operations = GenericOperation.list()
+        println "Total items found: ${operations.size()}"
+        
         operations.each {
             switch(it?.code) {
             case [1, 2, 3, 4, 5, 14]:
@@ -1344,7 +1378,7 @@ class BootStrap {
     
     void createTransactionsPeers() {
         println ''
-        println 'Verification of created BusinessTransaction inctances'
+        println 'Verification of created BusinessTransaction inctances:'
         
         def transactions = BusinessTransaction.list()
         def cashBankType = GenericOperation.findByCode(1010)
@@ -1374,4 +1408,538 @@ class BootStrap {
             }
         }
     }   //  End of 'createTransactionPeers()'
+    
+    /***************************************************************************
+     *  Adding English Translation to Operation Types
+     **************************************************************************/
+    
+    void translateOperationTypes() {
+        def opType
+        int counter = 0
+        
+        println ''
+        println 'Adding English Translation to Operation Types:'
+        
+        opType = GenericOperation.findByCode(1000)
+        
+        if(opType == null) {
+            println 'No instance for Code: 1000'
+        }
+        
+        if(opType.name_EN == null || opType.name_EN == '') {
+            opType.name_EN = 'Cash in Hands'
+            opType.save()
+            counter++
+        }
+        
+        opType = GenericOperation.findByCode(1010)
+
+        if(opType == null) {
+            println 'No instance for Code: 1010'
+        }
+        
+        if(opType.name_EN == null || opType.name_EN == '') {
+            opType.name_EN = 'Cash at Bank'
+            opType.save()
+            counter++
+        }
+        
+        opType = GenericOperation.findByCode(1020)
+        
+        if(opType == null) {
+            println 'No instance for Code: 1020'
+        }
+        
+        if(opType.name_EN == null || opType.name_EN == '') {
+            opType.name_EN = 'Cash Withdrawal'
+            opType.save()
+            counter++
+        } 
+        
+        opType = GenericOperation.findByCode(1030)
+        
+        if(opType == null) {
+            println 'No instance for Code: 1030'
+        }
+        
+        if(opType.name_EN == null || opType.name_EN == '') {
+            opType.name_EN = 'Cash Deposit to Bank'
+            opType.save()
+            counter++
+        }
+        
+        //  In and Out Operations
+        
+        opType = GenericOperation.findByCode(1)
+        
+        if(opType == null) {
+            println 'No instance for Code: 1'
+        }
+        
+        if(opType.name_EN == null || opType.name_EN == '') {
+            opType.name_EN = 'Additional Capital'
+            opType.save()
+            counter++
+        }
+        
+        opType = GenericOperation.findByCode(2)
+        
+        if(opType == null) {
+            println 'No instance for Code: 2'
+        }
+        
+        if(opType.name_EN == null || opType.name_EN == '') {
+            opType.name_EN = 'Advances from Directors'
+            opType.save()
+            counter++
+        } 
+        
+        opType = GenericOperation.findByCode(3)
+        
+        if(opType == null) {
+            println 'No instance for Code: 3'
+        }
+        
+        if(opType.name_EN == null || opType.name_EN == '') {
+            opType.name_EN = 'Capital Injection'
+            opType.save()
+            counter++
+        }
+        
+        opType = GenericOperation.findByCode(4)
+        
+        if(opType == null) {
+            println 'No instance for Code: 4'
+        }        
+        
+        if(opType.name_EN == null || opType.name_EN == '') {
+            opType.name_EN = 'Grant Received'
+            opType.save()
+            counter++
+        }
+        
+        opType = GenericOperation.findByCode(5)
+        
+        if(opType == null) {
+            println 'No instance for Code: 5'
+        }        
+        
+        if(opType.name_EN == null || opType.name_EN == '') {
+            opType.name_EN = 'Loan Received'
+            opType.save()
+            counter++
+        } 
+        
+        opType = GenericOperation.findByCode(6)
+        
+        if(opType == null) {
+            println 'No instance for Code: 6'
+        }        
+        
+        if(opType.name_EN == null || opType.name_EN == '') {
+            opType.name_EN = 'Purchase of Vehicle'
+            opType.save()
+            counter++
+        }
+        
+        opType = GenericOperation.findByCode(7)
+        
+        if(opType == null) {
+            println 'No instance for Code: 7'
+        }
+        
+        
+        if(opType.name_EN == null || opType.name_EN == '') {
+            opType.name_EN = 'Purchase of Plants and Machineries'
+            opType.save()
+            counter++
+        }
+        
+        opType = GenericOperation.findByCode(8)
+        
+        if(opType == null) {
+            println '*** No instance for Code: 8'
+            println '... skipped'
+        }
+        else {
+            if(opType.name_EN == null || opType.name_EN == '') {
+                opType.name_EN = 'Purchase of Office Equipment'
+                opType.save()
+                counter++
+            } 
+        }
+        
+        opType = null
+        opType = GenericOperation.findByCode(9)
+        
+        if(opType == null) {
+            println 'No instance for Code: 9'
+        }
+        
+        
+        if(opType.name_EN == null || opType.name_EN == '') {
+            opType.name_EN = 'Loan Repayment'
+            opType.save()
+            counter++
+        }
+        
+        opType = GenericOperation.findByCode(10)
+        
+        if(opType == null) {
+            println 'No instance for Code: 10'
+        }        
+        
+        if(opType.name_EN == null || opType.name_EN == '') {
+            opType.name_EN = 'Renovations'
+            opType.save()
+            counter++
+        }
+        
+        opType = GenericOperation.findByCode(11)
+        
+        if(opType == null) {
+            println 'No instance for Code: 12'
+        }        
+        
+        if(opType.name_EN == null || opType.name_EN == '') {
+            opType.name_EN = 'Purchase of Furniture/Fittings'
+            opType.save()
+            counter++
+        } 
+        
+        opType = GenericOperation.findByCode(14)
+        
+        if(opType == null) {
+            println '*** No instance for Code: 14'
+            println '... skipped'
+        }         
+        else {
+            if(opType.name_EN == null || opType.name_EN == '') {
+                opType.name_EN = 'Sales'
+                opType.save()
+                counter++
+            }
+        }
+        
+        opType = GenericOperation.findByCode(15)
+        
+        if(opType == null) {
+            println '*** No instance for Code: 15'
+            println '... skipped'
+        }         
+        else {        
+        
+            if(opType.name_EN == null || opType.name_EN == '') {
+                opType.name_EN = 'Raw Materials'
+                opType.save()
+                counter++
+            }
+        }
+        
+        opType = GenericOperation.findByCode(16)
+        
+        if(opType == null) {
+            println '*** No instance for Code: 16'
+            println '... skipped'
+        }         
+        else {         
+            if(opType.name_EN == null || opType.name_EN == '') {
+                opType.name_EN = 'Wages'
+                opType.save()
+                counter++
+            } 
+        }
+        
+        opType = GenericOperation.findByCode(17)
+        
+        if(opType == null) {
+            println '*** No instance for Code: 17'
+            println '... skipped'
+        }         
+        else {         
+            if(opType.name_EN == null || opType.name_EN == '') {
+                opType.name_EN = 'Carriage Inwards'
+                opType.save()
+                counter++
+            }
+        }
+        
+        opType = GenericOperation.findByCode(18)
+        
+        if(opType == null) {
+            println '*** No instance for Code: 18'
+            println '... skipped'
+        }         
+        else {         
+            if(opType.name_EN == null || opType.name_EN == '') {
+                opType.name_EN = 'Production Cost'
+                opType.save()
+                counter++
+            }
+        }
+        
+        opType = GenericOperation.findByCode(19)
+        
+        if(opType == null) {
+            println '*** No instance for Code: 19'
+            println '... skipped'
+        }         
+        else {         
+            if(opType.name_EN == null || opType.name_EN == '') {
+                opType.name_EN = 'Accomodation Cost'
+                opType.save()
+                counter++
+            } 
+        }
+        
+        opType = GenericOperation.findByCode(20)
+        
+        if(opType == null) {
+            println '*** No instance for Code: 20'
+            println '... skipped'
+        }         
+        else {         
+            if(opType.name_EN == null || opType.name_EN == '') {
+                opType.name_EN = 'Advertisement'
+                opType.save()
+                counter++
+            }
+        }
+        
+        opType = GenericOperation.findByCode(21)
+        
+        if(opType == null) {
+            println '*** No instance for Code: 21'
+            println '... skipped'
+        }         
+        else {         
+            if(opType.name_EN == null || opType.name_EN == '') {
+                opType.name_EN = 'Bank Charges'
+                opType.save()
+                counter++
+            }
+        }
+        
+        opType = GenericOperation.findByCode(22)
+        
+        if(opType == null) {
+            println '*** No instance for Code: 22'
+            println '... skipped'
+        }         
+        else {         
+            if(opType.name_EN == null || opType.name_EN == '') {
+                opType.name_EN = 'Entertainment'
+                opType.save()
+                counter++
+            } 
+        }
+        
+        opType = GenericOperation.findByCode(23)
+        
+        if(opType == null) {
+            println '*** No instance for Code: 23'
+            println '... skipped'
+        }         
+        else {         
+            if(opType.name_EN == null || opType.name_EN == '') {
+                opType.name_EN = 'EPF and SOCSO'
+                opType.save()
+                counter++
+            }
+        }
+        
+        opType = GenericOperation.findByCode(24)
+        
+        if(opType == null) {
+            println '*** No instance for Code: 24'
+            println '... skipped'
+        }         
+        else {         
+            if(opType.name_EN == null || opType.name_EN == '') {
+                opType.name_EN = 'Legal Fees'
+                opType.save()
+                counter++
+            }
+        }
+        
+        opType = GenericOperation.findByCode(25)
+        
+        if(opType == null) {
+            println '*** No instance for Code: 25'
+            println '... skipped'
+        }         
+        else {         
+            if(opType.name_EN == null || opType.name_EN == '') {
+                opType.name_EN = 'Maintenance of Office and Equipment'
+                opType.save()
+                counter++
+            } 
+        }
+        
+        opType = GenericOperation.findByCode(26)
+        
+        if(opType == null) {
+            println '*** No instance for Code: 26'
+            println '... skipped'
+        }         
+        else {         
+            if(opType.name_EN == null || opType.name_EN == '') {
+                opType.name_EN = 'Maintenance of Vehicle'
+                opType.save()
+                counter++
+            }
+        }
+        
+        opType = GenericOperation.findByCode(27)
+        
+        if(opType.name_EN == null || opType.name_EN == '') {
+            opType.name_EN = 'Marketing and Promotion'
+            opType.save()
+            counter++
+        }
+        
+        opType = GenericOperation.findByCode(28)
+        
+        if(opType == null) {
+            println '*** No instance for Code: 28'
+            println '... skipped'
+        }         
+        else {         
+            if(opType.name_EN == null || opType.name_EN == '') {
+                opType.name_EN = 'Medical Expenses'
+                opType.save()
+                counter++
+            } 
+        }
+        
+        opType = GenericOperation.findByCode(29)
+        
+        if(opType == null) {
+            println '*** No instance for Code: 29'
+            println '... skipped'
+        }         
+        else {         
+            if(opType.name_EN == null || opType.name_EN == '') {
+                opType.name_EN = 'Office Expenses'
+                opType.save()
+                counter++
+            }
+        }
+        
+        opType = GenericOperation.findByCode(30)
+        
+        if(opType == null) {
+            println '*** No instance for Code: 30'
+            println '... skipped'
+        }         
+        else {         
+            if(opType.name_EN == null || opType.name_EN == '') {
+                opType.name_EN = 'Printing and Stationaries'
+                opType.save()
+                counter++
+            }
+        }
+        
+        opType = GenericOperation.findByCode(31)
+        
+        if(opType == null) {
+            println '*** No instance for Code: 31'
+            println '... skipped'
+        }         
+        else {         
+            if(opType.name_EN == null || opType.name_EN == '') {
+                opType.name_EN = 'Rental of Premises'
+                opType.save()
+                counter++
+            } 
+        }
+        
+        opType = GenericOperation.findByCode(32)
+        
+        if(opType == null) {
+            println '*** No instance for Code: 32'
+            println '... skipped'
+        }         
+        else {         
+            if(opType.name_EN == null || opType.name_EN == '') {
+                opType.name_EN = 'Salaries and Allowances'
+                opType.save()
+                counter++
+            }
+        }
+        
+        opType = GenericOperation.findByCode(33)
+        
+        if(opType == null) {
+            println '*** No instance for Code: 33'
+            println '... skipped'
+        }         
+        else {         
+            if(opType.name_EN == null || opType.name_EN == '') {
+                opType.name_EN = 'Pantry Expenses'
+                opType.save()
+                counter++
+            }
+        }
+        
+        opType = GenericOperation.findByCode(34)
+        
+        if(opType == null) {
+            println '*** No instance for Code: 34'
+            println '... skipped'
+        }         
+        else {         
+            if(opType.name_EN == null || opType.name_EN == '') {
+                opType.name_EN = 'Telephone, Fax and Internet'
+                opType.save()
+                counter++
+            } 
+        }
+        
+        opType = GenericOperation.findByCode(35)
+        
+        if(opType == null) {
+            println '*** No instance for Code: 35'
+            println '... skipped'
+        }         
+        else {         
+            if(opType.name_EN == null || opType.name_EN == '') {
+                opType.name_EN = 'Travelling Cost'
+                opType.save()
+                counter++
+            }
+        }
+        
+        opType = GenericOperation.findByCode(36)
+        
+        if(opType == null) {
+            println '*** No instance for Code: 36'
+            println '... skipped'
+        }         
+        else {         
+            if(opType.name_EN == null || opType.name_EN == '') {
+                opType.name_EN = 'Water and Electricity'
+                opType.save()
+                counter++
+            }
+        }
+        
+        opType = GenericOperation.findByCode(37)
+        
+        if(opType == null) {
+            println '*** No instance for Code: 37'
+            println '... skipped'
+        }         
+        else { 
+            if(opType.name_EN == null || opType.name_EN == '') {
+                opType.name_EN = 'Sales Return'
+                opType.save()
+                counter++
+            }
+        }
+        
+        println '...completed'
+        println "${counter} Records were added translation"
+        
+    }   //  End of 'translateOperationTypes()'
 }

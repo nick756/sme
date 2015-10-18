@@ -18,9 +18,12 @@
             <label class="edit-form mand"><g:message code="genericOperation.code.label"/></label>
             <g:textField class="text-input" name="name" value="${genericOperationInstance?.code}"/>
             <br/>            
-            <label class="edit-form mand"><g:message code="genericOperation.name.label"/></label>
+            <label class="edit-form mand"><g:message code="genericOperation.name.label"/> (MY)</label>
             <g:textField class="text-input" name="name" value="${genericOperationInstance?.name}"/>
             <br/>
+            <label class="edit-form mand"><g:message code="genericOperation.name.label"/> (EN)</label>
+            <g:textField class="text-input" name="name" value="${genericOperationInstance?.name_EN}"/>
+            <br/>            
             <label class="edit-form mand"><g:message code="genericOperation.accounttype.label"/></label>
             <g:textField class="text-input" name="name" value="${genericOperationInstance?.accountType?.name}"/>
             <br/>
