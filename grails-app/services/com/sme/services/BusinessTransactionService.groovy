@@ -19,7 +19,7 @@ class BusinessTransactionService {
         if(company) {
             def newTransaction = new BusinessTransaction(
                 operationType:      GenericOperation.findByCode(code),
-                transactionDate:    date.clearTme(),
+                transactionDate:    date.clearTime(),
                 transactionAmount:  amount,
                 transactionRemarks: description,
                 operator:           "${operator?.name}",
@@ -89,7 +89,7 @@ class BusinessTransactionService {
         BusinessTransaction.createCriteria().list() {
             eq('company', company)
             ge('transactionDate', from)
-            le('transactiondate', till)
+            le('transactionDate', till)
             
             and {
                 order('transactionDate', 'asc')

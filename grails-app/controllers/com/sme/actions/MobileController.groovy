@@ -22,12 +22,18 @@ class MobileController {
 
     def index() { }
 
+    /**
+     *  TODO: Fetching list of Operations upon login and given language parameter
+     */
     def login() {
         def opStatus = 0;
         def user
         def userID  
         def login = params?.name
         def passw = params?.passw
+        
+        //  Trigger of fetching Operations list
+        def language = params.language ?: 'ms'
 
         boolean failure = false
         def descr
