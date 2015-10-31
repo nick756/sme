@@ -36,69 +36,101 @@ printHtmlPart(6)
 invokeTag('message','g',11,['code':("actions.transaction.add")],-1)
 printHtmlPart(7)
 })
-invokeTag('link','g',11,['style':("float: right; margin-right: 5px;"),'action':("create"),'params':(['max': params.max, 'offset': params.offset, 'id': businessInstance?.id])],2)
+invokeTag('link','g',11,['style':("float: right; margin-right: 5px;"),'action':("create"),'params':(['max': params.max, 'offset': params.offset])],2)
 printHtmlPart(8)
-invokeTag('message','g',14,['code':("default.application.transactionslist")],-1)
+if(true && (errMessage != null)) {
 printHtmlPart(9)
-invokeTag('message','g',17,['code':("businesstransaction.date.label")],-1)
+expressionOut.print(errMessage)
 printHtmlPart(10)
-invokeTag('message','g',18,['code':("businesstransaction.type.label")],-1)
-printHtmlPart(10)
-invokeTag('message','g',19,['code':("businesstransaction.amount.label")],-1)
-printHtmlPart(10)
-invokeTag('message','g',20,['code':("businesstransaction.remarks.label")],-1)
-printHtmlPart(10)
-invokeTag('message','g',21,['code':("businesstransaction.operator.label")],-1)
+}
+printHtmlPart(1)
+if(true && (successMsg != null)) {
 printHtmlPart(11)
+expressionOut.print(successMsg)
+printHtmlPart(12)
+expressionOut.print(msgDetails)
+printHtmlPart(10)
+}
+printHtmlPart(13)
+invokeTag('message','g',20,['code':("default.application.transactionslist")],-1)
+printHtmlPart(14)
+invokeTag('message','g',23,['code':("businesstransaction.date.label")],-1)
+printHtmlPart(15)
+invokeTag('message','g',24,['code':("businesstransaction.type.label")],-1)
+printHtmlPart(15)
+invokeTag('message','g',25,['code':("businesstransaction.amount.label")],-1)
+printHtmlPart(15)
+invokeTag('message','g',26,['code':("businesstransaction.remarks.label")],-1)
+printHtmlPart(16)
+invokeTag('message','g',27,['code':("businesstransaction.operator.label")],-1)
+printHtmlPart(17)
 loop:{
 int index = 0
 for( transInstance in (transactions) ) {
-printHtmlPart(12)
+printHtmlPart(18)
 if(true && (new Integer(params.offset) > 0)) {
-printHtmlPart(13)
-invokeTag('set','g',26,['var':("offset"),'value':(new Integer(params.offset))],-1)
-printHtmlPart(13)
+printHtmlPart(19)
+invokeTag('set','g',33,['var':("offset"),'value':(new Integer(params.offset))],-1)
+printHtmlPart(19)
 }
 else {
-invokeTag('set','g',28,['var':("offset"),'value':(0)],-1)
+invokeTag('set','g',35,['var':("offset"),'value':(0)],-1)
 }
-printHtmlPart(14)
+printHtmlPart(20)
 expressionOut.print((index % 2) == 0 ? 'even' : 'odd')
-printHtmlPart(15)
+printHtmlPart(21)
 expressionOut.print(offset + index + 1)
-printHtmlPart(16)
+printHtmlPart(22)
 expressionOut.print(formatDate(format:'dd/MM/yyyy', date:transInstance?.transactionDate))
-printHtmlPart(17)
-expressionOut.print(transInstance?.operationType)
-printHtmlPart(18)
-invokeTag('formatNumber','g',34,['number':(transInstance?.transactionAmount),'format':("#,##0.00")],-1)
-printHtmlPart(17)
+printHtmlPart(23)
+expressionOut.print(transInstance?.operationType.toString())
+printHtmlPart(24)
+invokeTag('formatNumber','g',41,['number':(transInstance?.transactionAmount),'format':("#,##0.00")],-1)
+printHtmlPart(23)
 expressionOut.print(transInstance?.transactionRemarks)
-printHtmlPart(17)
+printHtmlPart(25)
 expressionOut.print(transInstance?.operator)
-printHtmlPart(19)
+printHtmlPart(26)
+createTagBody(3, {->
+printHtmlPart(27)
+expressionOut.print(resource(dir: 'images', file: 'icons/report_delete16x16.png'))
+printHtmlPart(6)
+invokeTag('message','g',46,['code':("actions.transaction.delete")],-1)
+printHtmlPart(28)
+})
+invokeTag('link','g',47,['action':("delete"),'params':(['max': params.max, 'offset': params.offset, 'id': transInstance.id]),'onclick':("return confirm('Are you sure?')")],3)
+printHtmlPart(29)
+createTagBody(3, {->
+printHtmlPart(27)
+expressionOut.print(resource(dir: 'images', file: 'icons/report_next16x16.png'))
+printHtmlPart(6)
+invokeTag('message','g',51,['code':("actions.edit")],-1)
+printHtmlPart(28)
+})
+invokeTag('link','g',52,['action':("edit"),'params':(['max': params.max, 'offset': params.offset, 'id_edit': transInstance.id])],3)
+printHtmlPart(30)
 index++
 }
 }
-printHtmlPart(20)
-invokeTag('paginate','g',42,['total':(counter ?: 0)],-1)
-printHtmlPart(21)
-invokeTag('message','g',45,['code':("default.application.totalrecords")],-1)
-printHtmlPart(22)
+printHtmlPart(31)
+invokeTag('paginate','g',59,['total':(counter ?: 0)],-1)
+printHtmlPart(32)
+invokeTag('message','g',62,['code':("default.application.totalrecords")],-1)
+printHtmlPart(33)
 expressionOut.print(counter)
-printHtmlPart(23)
+printHtmlPart(34)
 })
-invokeTag('captureBody','sitemesh',47,[:],1)
-printHtmlPart(24)
+invokeTag('captureBody','sitemesh',64,[:],1)
+printHtmlPart(35)
 }
 public static final Map JSP_TAGS = new HashMap()
 protected void init() {
 	this.jspTags = JSP_TAGS
 }
 public static final String CONTENT_TYPE = 'text/html;charset=UTF-8'
-public static final long LAST_MODIFIED = 1442317917129L
+public static final long LAST_MODIFIED = 1445159769569L
 public static final String EXPRESSION_CODEC = 'html'
 public static final String STATIC_CODEC = 'none'
-public static final String OUT_CODEC = 'html'
+public static final String OUT_CODEC = 'none'
 public static final String TAGLIB_CODEC = 'none'
 }

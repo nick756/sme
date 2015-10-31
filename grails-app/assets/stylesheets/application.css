@@ -446,8 +446,9 @@ table.righted-content th.lefted {
 	border: none;
 }
 
+
 table {
-	border-top: 1px solid #DFDFDF;
+	border-top: 0px solid #DFDFDF;
 	border-collapse: collapse;
 	width: 100%;
 	margin-bottom: 1em;

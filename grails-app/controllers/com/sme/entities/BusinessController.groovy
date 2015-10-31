@@ -24,16 +24,20 @@ class BusinessController {
     def create() {
         respond new Business(params)
     }
+    
+    def createinstance() {
+        respond new Business(params)
+    }
 
-    @Transactional
+    @Transactional(readOnly = true)
     def save(Business businessInstance) {
         if (businessInstance == null) {
             notFound()
             return
         }
 
-        if (businessInstance.hasErrors()) {
-            respond businessInstance.errors, view:'create'
+        if (!businessInstance.validate()) {
+            respond businessInstance.errors, view:'createinstance'
             return
         }
 

@@ -17,17 +17,24 @@
                 <label class="edit-form mand"><g:message code="business.name.label"/></label>
                 <g:textField class="text-input" name="name" value="${businessInstance?.name}"/>
                 <br/>
+                <label class="edit-form mand"><g:message code="business.industry.label"/></label>
+                <g:select class="select-list" name="industry.id" from="${Industry.list()}" value="${businessInstance?.industry?.id}" optionKey="id"/>
+                <br/>                
                 <label class="edit-form mand"><g:message code="business.profile.label"/></label>
                 <g:select class="select-list" name="profile.id" from="${GenericProfile.list()}" value="${businessInstance?.profile?.id}" optionKey="id"/>
+                <br/><br/>
+
+                <label class="edit-form"><g:message code="business.acccountno.label" default="Account Number"/></label>
+                <g:textField class="text-input" name="accountNo" value="${businessInstance?.accountNo}"/>
                 <br/>
                 <label class="edit-form mand"><g:message code="business.regNumber.label" default="ROC Number"/></label>
                 <g:textField class="text-input" name="regNumber" value="${businessInstance?.regNumber}"/>
                 <br/>
-                <label class="edit-form mand"><g:message code="business.industry.label"/></label>
-                <g:select class="select-list" name="industry.id" from="${Industry.list()}" value="${businessInstance?.industry?.id}" optionKey="id"/>
-                <br/>
                 <label class="edit-form"><g:message code="business.incorpDate.label" default="Incorp Date"/></label>
                 <g:datePicker class="select-list" name="incorpDate" value="${businessInstance?.incorpDate}" precision="day"/>
+                <br/>
+                <label class="edit-form"><g:message code="business.registrationdate.label" default="Registration Date"/></label>
+                <g:datePicker class="select-list" name="registrationDate" value="${businessInstance?.registrationDate}" noSelection="${['': '--']}" default="none" precision="day"/>
                 <!--g:textField class="text-input" name="incorpDate" value="${formatDate(format:'dd/MM/yyyy', date:businessInstance?.incorpDate)}"/-->
                 <br/>                
                 <label class="edit-form"><g:message code="business.address.label" default="Address"/></label>

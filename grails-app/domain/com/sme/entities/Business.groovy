@@ -5,8 +5,10 @@ class Business implements Serializable {
     Date lastUpdated
     
     String name
+    String accountNo
     String regNumber
     Date incorpDate
+    Date registrationDate
     String address
     String city
     
@@ -23,6 +25,7 @@ class Business implements Serializable {
     
     static constraints = {
         name        (blank: false)
+        accountNo   nullable: true, blank: true
         regNumber   (blank: false)
         industry    nullable: true
         incorpDate  (nullable: true)
@@ -36,10 +39,11 @@ class Business implements Serializable {
         
         businessTransactions    nullable: true
         statements              nullable: true
+        registrationDate        nullable: true, blank: true
     }
     
     static mapping = {
-        autoTimestamp false
+        autoTimestamp true
     }
     
     public String toString() {

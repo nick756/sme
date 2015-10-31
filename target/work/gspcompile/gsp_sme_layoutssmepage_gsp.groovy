@@ -73,26 +73,35 @@ invokeTag('link','g',51,['controller':("smehome"),'action':("index"),'class':("t
 printHtmlPart(22)
 createTagBody(2, {->
 printHtmlPart(19)
-expressionOut.print(resource(dir: 'images', file: 'date_settings_white.png'))
+expressionOut.print(resource(dir: 'images', file: 'statement_white.png'))
 printHtmlPart(23)
-invokeTag('message','g',57,['code':("sme.captions.profile"),'default':("Profile")],-1)
+invokeTag('message','g',57,['code':("sme.captions.statements"),'default':("Profile")],-1)
 printHtmlPart(21)
 })
-invokeTag('link','g',58,['controller':("smehome"),'action':("profile"),'class':("tile"),'style':("color: white;")],2)
+invokeTag('link','g',58,['controller':("smestatement"),'action':("index"),'class':("tile"),'style':("color: white;")],2)
+printHtmlPart(24)
+createTagBody(2, {->
+printHtmlPart(19)
+expressionOut.print(resource(dir: 'images', file: 'date_settings_white.png'))
+printHtmlPart(23)
+invokeTag('message','g',64,['code':("sme.captions.profile"),'default':("Profile")],-1)
+printHtmlPart(21)
+})
+invokeTag('link','g',65,['controller':("smehome"),'action':("profile"),'class':("tile"),'style':("color: white;")],2)
 printHtmlPart(24)
 createTagBody(2, {->
 printHtmlPart(19)
 expressionOut.print(resource(dir: 'images', file: 'bill.png'))
 printHtmlPart(23)
-invokeTag('message','g',64,['code':("default.application.billing"),'default':("Billing")],-1)
+invokeTag('message','g',71,['code':("default.application.billing"),'default':("Billing")],-1)
 printHtmlPart(21)
 })
-invokeTag('link','g',65,['controller':("smehome"),'action':("index"),'class':("tile"),'style':("color: white;")],2)
+invokeTag('link','g',72,['controller':("smehome"),'action':("index"),'class':("tile"),'style':("color: white;")],2)
 printHtmlPart(25)
-invokeTag('layoutBody','g',70,[:],-1)
+invokeTag('layoutBody','g',77,[:],-1)
 printHtmlPart(26)
 })
-invokeTag('captureBody','sitemesh',72,[:],1)
+invokeTag('captureBody','sitemesh',79,[:],1)
 printHtmlPart(27)
 }
 public static final Map JSP_TAGS = new HashMap()
@@ -100,9 +109,9 @@ protected void init() {
 	this.jspTags = JSP_TAGS
 }
 public static final String CONTENT_TYPE = 'text/html;charset=UTF-8'
-public static final long LAST_MODIFIED = 1442814435616L
+public static final long LAST_MODIFIED = 1444831910862L
 public static final String EXPRESSION_CODEC = 'html'
 public static final String STATIC_CODEC = 'none'
-public static final String OUT_CODEC = 'html'
+public static final String OUT_CODEC = 'none'
 public static final String TAGLIB_CODEC = 'none'
 }

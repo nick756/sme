@@ -19,7 +19,7 @@
             Android Smartphone, then <br/>
             install application.<br/>
             <br/><br/><br/>
-            <a href="${resource(dir: 'images', file: 'SME_13.10.2015.apk')}">SIFAR Mobile</a>
+            <a href="${resource(dir: 'images', file: 'SME_24.10.2015_2.apk')}">SIFAR Mobile</a>
         </div>
     </body>
 </html>

@@ -18,6 +18,9 @@
             <label class="edit-form"><g:message code="business.name.label"/></label>
             <g:textField class="text-input" name="name" value="${businessInstance?.name}" readonly="true"/>
             <br/>
+            <label class="edit-form"><g:message code="business.accountno.label"/></label>
+            <g:textField class="text-input" name="accountNo" value="${businessInstance?.accountNo}" readonly="true"/>
+            <br/>            
             <label class="edit-form"><g:message code="business.profile.label"/></label>
             <g:textField class="text-input" name="name" value="${businessInstance?.profile?.name}" readonly="true"/>
             <br/>            

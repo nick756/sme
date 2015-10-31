@@ -36,6 +36,7 @@ class CashFlowStatement {
     static mapping = {
         sort    'year'
         sort    'month'
+        transactions sort: 'transactionDate'
     } 
     
     public String toString() {

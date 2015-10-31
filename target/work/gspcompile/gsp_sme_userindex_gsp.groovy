@@ -1,4 +1,3 @@
-import com.sme.entities.User
 import org.codehaus.groovy.grails.plugins.metadata.GrailsPlugin
 import org.codehaus.groovy.grails.web.pages.GroovyPage
 import org.codehaus.groovy.grails.web.taglib.*
@@ -13,103 +12,79 @@ Writer out = getOut()
 Writer expressionOut = getExpressionOut()
 registerSitemeshPreprocessMode()
 printHtmlPart(0)
-printHtmlPart(1)
 createTagBody(1, {->
-printHtmlPart(2)
-invokeTag('captureMeta','sitemesh',6,['gsp_sm_xmlClosingForEmptyTag':(""),'name':("layout"),'content':("adminpage")],-1)
-printHtmlPart(2)
-invokeTag('set','g',7,['var':("entityName"),'value':(message(code: 'user.label', default: 'User'))],-1)
-printHtmlPart(2)
+printHtmlPart(1)
+invokeTag('captureMeta','sitemesh',3,['gsp_sm_xmlClosingForEmptyTag':(""),'http-equiv':("Content-Type"),'content':("text/html; charset=UTF-8")],-1)
+printHtmlPart(1)
+invokeTag('captureMeta','sitemesh',4,['gsp_sm_xmlClosingForEmptyTag':(""),'name':("layout"),'content':("adminpage")],-1)
+printHtmlPart(1)
 createTagBody(2, {->
-createTagBody(3, {->
-invokeTag('message','g',8,['code':("default.list.label"),'args':([entityName])],-1)
+createClosureForHtmlPart(2, 3)
+invokeTag('captureTitle','sitemesh',5,[:],3)
 })
-invokeTag('captureTitle','sitemesh',8,[:],3)
-})
-invokeTag('wrapTitleTag','sitemesh',8,[:],2)
+invokeTag('wrapTitleTag','sitemesh',5,[:],2)
 printHtmlPart(3)
 })
-invokeTag('captureHead','sitemesh',9,[:],1)
+invokeTag('captureHead','sitemesh',6,[:],1)
 printHtmlPart(3)
 createTagBody(1, {->
 printHtmlPart(4)
-invokeTag('message','g',11,['code':("default.link.skip.label"),'default':("Skip to content&hellip;")],-1)
+createTagBody(2, {->
 printHtmlPart(5)
-createTagBody(2, {->
+expressionOut.print(resource(dir: 'images', file: 'add_record.png'))
 printHtmlPart(6)
-expressionOut.print(resource(dir: 'images', file: 'arrow_left.png'))
+invokeTag('message','g',9,['code':("actions.user.add")],-1)
 printHtmlPart(7)
-invokeTag('message','g',14,['code':("actions.back")],-1)
+})
+invokeTag('link','g',9,['controller':("user"),'action':("create"),'params':(['max': params.max, 'offset': params.offset])],2)
 printHtmlPart(8)
-})
-invokeTag('link','g',14,['style':("float: left;"),'controller':("adminHome"),'action':("index"),'params':(['max': params.max, 'offset': params.offset])],2)
-printHtmlPart(9)
 createTagBody(2, {->
-invokeTag('message','g',15,['code':("default.new.label"),'args':([entityName])],-1)
+printHtmlPart(9)
+expressionOut.print(resource(dir: 'images', file: 'printer.png'))
+printHtmlPart(6)
+invokeTag('message','g',10,['code':("actions.print")],-1)
+printHtmlPart(7)
 })
-invokeTag('link','g',15,['class':("create"),'action':("create")],2)
+invokeTag('link','g',10,['style':("float: right;"),'target':("_blank"),'controller':("user"),'action':("report")],2)
 printHtmlPart(10)
-invokeTag('message','g',19,['code':("default.list.label"),'args':([entityName])],-1)
+invokeTag('message','g',13,['code':("user.list")],-1)
 printHtmlPart(11)
-if(true && (flash.message)) {
+invokeTag('sortableColumn','g',15,['property':("name"),'title':(message(code: 'user.name.label', default: 'Name'))],-1)
 printHtmlPart(12)
-expressionOut.print(flash.message)
+invokeTag('sortableColumn','g',16,['property':("login"),'title':(message(code: 'user.login.label', default: 'Login'))],-1)
 printHtmlPart(13)
-}
+invokeTag('message','g',17,['code':("user.company")],-1)
 printHtmlPart(14)
-invokeTag('sortableColumn','g',27,['property':("name"),'title':(message(code: 'user.name.label', default: 'Name'))],-1)
-printHtmlPart(15)
-invokeTag('sortableColumn','g',29,['property':("login"),'title':(message(code: 'user.login.label', default: 'Login'))],-1)
-printHtmlPart(15)
-invokeTag('sortableColumn','g',31,['property':("passw"),'title':(message(code: 'user.passw.label', default: 'Passw'))],-1)
-printHtmlPart(15)
-invokeTag('sortableColumn','g',33,['property':("contactNo"),'title':(message(code: 'user.contactNo.label', default: 'Contact No'))],-1)
-printHtmlPart(15)
-invokeTag('sortableColumn','g',35,['property':("email"),'title':(message(code: 'user.email.label', default: 'Email'))],-1)
-printHtmlPart(16)
-invokeTag('message','g',37,['code':("user.role.label"),'default':("Role")],-1)
-printHtmlPart(17)
 loop:{
 int i = 0
 for( userInstance in (userInstanceList) ) {
-printHtmlPart(18)
+printHtmlPart(15)
 expressionOut.print((i % 2) == 0 ? 'even' : 'odd')
-printHtmlPart(19)
-createTagBody(3, {->
-expressionOut.print(fieldValue(bean: userInstance, field: "name"))
-})
-invokeTag('link','g',46,['action':("show"),'id':(userInstance.id)],3)
-printHtmlPart(20)
-expressionOut.print(fieldValue(bean: userInstance, field: "login"))
-printHtmlPart(20)
-expressionOut.print(fieldValue(bean: userInstance, field: "passw"))
-printHtmlPart(20)
-expressionOut.print(fieldValue(bean: userInstance, field: "contactNo"))
-printHtmlPart(20)
-expressionOut.print(fieldValue(bean: userInstance, field: "email"))
-printHtmlPart(20)
-expressionOut.print(fieldValue(bean: userInstance, field: "role"))
-printHtmlPart(21)
+printHtmlPart(16)
+expressionOut.print(userInstance?.name)
+printHtmlPart(17)
+expressionOut.print(userInstance?.login)
+printHtmlPart(17)
 expressionOut.print(userInstance?.company?.name)
-printHtmlPart(22)
+printHtmlPart(18)
 i++
 }
 }
-printHtmlPart(23)
-invokeTag('paginate','g',64,['total':(userInstanceCount ?: 0)],-1)
-printHtmlPart(24)
+printHtmlPart(19)
+invokeTag('paginate','g',28,['total':(userInstanceCount ?: 0)],-1)
+printHtmlPart(20)
 })
-invokeTag('captureBody','sitemesh',67,[:],1)
-printHtmlPart(25)
+invokeTag('captureBody','sitemesh',30,[:],1)
+printHtmlPart(21)
 }
 public static final Map JSP_TAGS = new HashMap()
 protected void init() {
 	this.jspTags = JSP_TAGS
 }
 public static final String CONTENT_TYPE = 'text/html;charset=UTF-8'
-public static final long LAST_MODIFIED = 1442283074375L
+public static final long LAST_MODIFIED = 1445767188372L
 public static final String EXPRESSION_CODEC = 'html'
 public static final String STATIC_CODEC = 'none'
-public static final String OUT_CODEC = 'html'
+public static final String OUT_CODEC = 'none'
 public static final String TAGLIB_CODEC = 'none'
 }

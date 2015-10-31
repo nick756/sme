@@ -14,6 +14,51 @@ class UserController {
         params.max = Math.min(max ?: 10, 100)
         respond User.list(params), model:[userInstanceCount: User.count()]
     }
+    
+    def list(Integer max) {
+        params.max = Math.min(max ?: 10, 100)
+        
+        def userInstanceList
+        def searchByName = ''
+        def searchByLogin = ''
+        def searchByCompany = ''
+        
+        if(params.search_name) {
+            searchByName = params.search_name
+        }
+        
+        if(params.search_login) {
+            searchByLogin = params.search_login
+        }
+        
+        if(params.search_company) {
+            searchByCompany = params.search_company
+        }
+        
+        userInstanceList = User.createCriteria().list(params) {
+            if(searchByName != '') {
+                ilike('name', "%${searchByName}%")
+            }
+            
+            if(searchByLogin != '') {
+                ilike('login', "%${searchByLogin}%")
+            }
+            
+            if(searchByCompany != '') {
+                company {
+                    ilike('name', "%${searchByCompany}%")
+                }
+            }
+        }
+        
+        [
+            userInstanceList: userInstanceList,
+            userInstanceCount: userInstanceList.totalCount,
+            searchByName: searchByName,
+            searchByLogin: searchByLogin,
+            searchByCompany: searchByCompany
+        ]
+    }
 
     def show(User userInstance) {
         respond userInstance

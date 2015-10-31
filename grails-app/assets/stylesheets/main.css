@@ -44,7 +44,7 @@ body {
         left: 2%;
         font-size: 10pt;
 	/*max-width: 960px;*/
-	overflow-x: hidden; /* prevents box-shadow causing a horizontal scrollbar in firefox when viewport < 960px wide */
+	/*overflow-x: hidden; /* prevents box-shadow causing a horizontal scrollbar in firefox when viewport < 960px wide */
 	/* 
         -moz-box-shadow: 0 0 0.3em #255b17;
 	-webkit-box-shadow: 0 0 0.3em #255b17;
@@ -142,10 +142,12 @@ img {
 .nav {
 	background-color: #efefef;
 	padding: 0.5em 0.75em;
+        /*
 	   -moz-box-shadow: 0 0 3px 1px #aaaaaa;
 	-webkit-box-shadow: 0 0 3px 1px #aaaaaa;
 	        box-shadow: 0 0 3px 1px #aaaaaa;
 	zoom: 1;
+        */
 }
 
 .nav ul {
@@ -406,16 +408,17 @@ input:invalid:focus, select:invalid:focus, textarea:invalid:focus {
 /* TABLES */
 
 table {
-	border-top: 1px solid #DFDFDF;
+	border-top: 0px solid #DFDFDF;
 	border-collapse: collapse;
-	width: 100%;
-	margin-bottom: 1em;
+	width: 99%;
+	margin-bottom: 0;
 }
 
 tr {
 	border: 0;
 }
 
+/*
 tr>td:first-child, tr>th:first-child {
 	padding-left: 1.25em;
 }
@@ -424,12 +427,14 @@ tr>td:last-child, tr>th:last-child {
 	padding-right: 1.25em;
 }
 
+
 td, th {
 	line-height: 1.5em;
 	padding: 0.5em 0.6em;
 	text-align: left;
 	vertical-align: top;
 }
+
 
 th {
 	background-color: #efefef;
@@ -446,6 +451,7 @@ th {
 thead th {
 	white-space: nowrap;
 }
+*/
 
 th a {
 	display: block;

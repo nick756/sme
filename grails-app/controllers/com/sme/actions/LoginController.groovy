@@ -34,7 +34,11 @@ class LoginController {
                     if(session?.user) {
                         session.setMaxInactiveInterval(-1)
                         
-                        if(session.locale.toString() == 'ms') {
+                        def currentLocale = RCU.getLocale(request)
+                        
+                        println "Login process: Locale = ${currentLocale.toString()}"
+                        
+                        if(currentLocale.toString() == 'ms') {
                             locale = new Locale('ms')
                         }
                         else {

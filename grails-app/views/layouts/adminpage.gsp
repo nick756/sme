@@ -4,10 +4,11 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title><g:layoutTitle default="SME"/></title>
+        <link rel="shortcut icon" href="${assetPath(src: 'favicon_1.ico')}" type="image/x-icon">
         <link rel="stylesheet" href="${resource(dir:'stylesheets',file:'application.css')}" />
-    <asset:javascript src="application.js"/>
-    <asset:javascript src="jquery-1.11.1.js"/>
-    <asset:javascript src="jquery-ui-1.10.3.custom.js"/>
+        <asset:javascript src="application.js"/>
+        <asset:javascript src="jquery-1.11.1.js"/>
+        <asset:javascript src="jquery-ui-1.10.3.custom.js"/>
     <link href='http://fonts.googleapis.com/css?family=Poiret+One|Muli|Economica|Quicksand|Jura|Orbitron' rel='stylesheet' type='text/css'>
 
     <g:layoutHead/>
@@ -47,7 +48,7 @@
             </g:link> 
         </div>
         <div class="menu-pane-row">
-            <g:link controller="user" action="index" class="tile" style="color: white;">
+            <g:link controller="user" action="list" class="tile" style="color: white;">
                 <img src="${resource(dir: 'images', file: 'customers.png')}">
                 <br/>
                 <g:message code="user.list"/>

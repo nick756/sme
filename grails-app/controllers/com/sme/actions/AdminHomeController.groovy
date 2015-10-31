@@ -3,6 +3,7 @@ package com.sme.actions
 import com.sme.entities.*
 import java.text.*
 import grails.util.Environment
+import grails.transaction.Transactional
 
 class AdminHomeController {
 
@@ -10,9 +11,12 @@ class AdminHomeController {
     def cashFlowService
     def messageSource
     
-    //def messageSource
-    
     def index(Integer max) {
+        
+        def resultList
+        def filterName = ''
+        def filterAccount = ''
+        def filterCity = ''
         
         if(!session?.user) {
             redirect (controller: 'login')
@@ -22,10 +26,40 @@ class AdminHomeController {
         params.offset = params.offset ?: 0
         params.max = params.max ?: 10
         
+        if(params.filterName) {
+            filterName = params.filterName
+        }
+        
+        if(params.filterAccount) {
+            filterAccount = params.filterAccount
+        }
+        
+        if(params.filterCity) {
+            filterCity = params.filterCity
+        }
+        
+        resultList = Business.createCriteria().list(params) {
+            if(filterName != '') {
+                ilike('name', "%${filterName}%")
+            }
+            
+            if(filterAccount != '') {
+                ilike('accountNo', "${filterAccount}%")
+            }
+            
+            if(filterCity != '') {
+                ilike('city', "%${filterCity}%")
+            }
+        }
+        
         //  TODO:   check passed 'offset' when returning from Transactions List,
         //          can be beyond the range
         
-        [businesses: Business.list(params), businessInstanceCount: Business.count()]
+        [
+            businesses: resultList, 
+            businessInstanceCount: resultList.totalCount,
+            params: params
+        ]
     }
     
     def show() {
@@ -46,6 +80,25 @@ class AdminHomeController {
         }
         
         [businessInstance: Business.get(params?.id)]
+    }
+    
+    def createinstance() {
+        respond new Business(params)
+    }
+    
+    def save() {
+        def businessInstance = new Business(params)
+        
+        if(!businessInstance.validate()) {
+            respond businessInstance.errors, view: 'createinstance'
+            println "New Business: errors"
+            return
+        }
+        else {
+            businessInstance.save(flush: true)
+        }
+        
+        redirect action: 'index'
     }
     
     /**
@@ -371,6 +424,8 @@ class AdminHomeController {
                 operationType {
                     eq('group', group)
                 }
+                
+                order('transactionDate')
             }
             
             groupsMap.put(group, transactionsGroup)

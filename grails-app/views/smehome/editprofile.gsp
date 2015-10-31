@@ -31,6 +31,9 @@
                 <label class="edit-form mand"><g:message code="business.name.label"/></label>
                 <g:textField class="text-input" name="name" value="${businessInstance?.name}"/>
                 <br/>
+                <label class="edit-form"><g:message code="business.accountno.label"/></label>
+                <g:textField class="text-input" name="accountNo" value="${businessInstance?.accountNo}"/>
+                <br/>                
                 <label class="edit-form mand"><g:message code="business.profile.label"/></label>
                 <g:select class="select-list" name="profile.id" from="${GenericProfile.list()}" value="${businessInstance?.profile?.id}" optionKey="id"/>
                 <br/>
