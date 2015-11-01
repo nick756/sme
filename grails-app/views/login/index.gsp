@@ -23,6 +23,7 @@
             </g:if>
             <g:else>
                 <h3 style="font-weight: normal;"><g:message code="actions.login.logged" /> ${session?.user?.name}</h3>
+                <h3 style="font-weight: normal;"><g:message code="actions.login.suggest"/></h3>
                 <g:link class="log-out-link" controller="login" action="logout">
                     <span class="log-out-link">
                         <g:message code="actions.login.logout" />

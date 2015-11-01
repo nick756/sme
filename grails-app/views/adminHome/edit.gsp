@@ -31,7 +31,7 @@
                 <g:textField class="text-input" name="regNumber" value="${businessInstance?.regNumber}"/>
                 <br/>
                 <label class="edit-form"><g:message code="business.incorpDate.label" default="Incorp Date"/></label>
-                <g:datePicker class="select-list" name="incorpDate" value="${businessInstance?.incorpDate}" precision="day"/>
+                <g:datePicker class="select-list" name="incorpDate" value="${businessInstance?.incorpDate}" noSelection="${['': '--']}" default="none" precision="day"/>
                 <br/>
                 <label class="edit-form"><g:message code="business.registrationdate.label" default="Registration Date"/></label>
                 <g:datePicker class="select-list" name="registrationDate" value="${businessInstance?.registrationDate}" noSelection="${['': '--']}" default="none" precision="day"/>

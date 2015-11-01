@@ -3,8 +3,8 @@ package com.sme.entities
 import org.springframework.web.context.request.RequestContextHolder
 
 /**
-Generic Operations (Operation Types) assignable 
-to a Generic Profile
+ *  Generic Operations (Operation Types) assignable 
+ *  to a Generic Profile
  */
 class GenericOperation {
     Integer code
@@ -13,6 +13,12 @@ class GenericOperation {
     
     boolean inbound
     boolean outbound
+    
+    /**
+     *  Indicator whether it is a nominal (auto-created) operation or not:
+     *  1   Real Operation, to be reflected in List
+     *  0   Peer Operation, not reflected in List of Transactions
+     */
     Integer actual
     
     //  Operation Types for double entry creation
@@ -52,33 +58,33 @@ class GenericOperation {
         def out = '';
         
         switch(lang) {
-        case 'ms':
-            if(this.code < 1000) {
-                if(this.inbound) {
-                    out = "MASUK: ${name}"
+            case 'ms':
+                if(this.code < 1000) {
+                    if(this.inbound) {
+                        out = "MASUK: ${name}"
+                    }
+                    else {
+                        out = "KELUAR: ${name}"
+                    }
                 }
                 else {
-                    out = "KELUAR: ${name}"
+                    out = name
                 }
-            }
-            else {
-                out = name
-            }
-            break
-                
-        case 'en':
-            if(this.code < 1000) {
-                if(this.inbound) {
-                    out = "IN: ${name_EN}"
+                break
+
+            case 'en':
+                if(this.code < 1000) {
+                    if(this.inbound) {
+                        out = "IN: ${name_EN}"
+                    }
+                    else {
+                        out = "OUT: ${name_EN}"
+                    }           
                 }
                 else {
-                    out = "OUT: ${name_EN}"
-                }           
-            }
-            else {
-                out = name_EN
-            }
-            break
+                    out = name_EN
+                }
+                break
         }
         
         return out
