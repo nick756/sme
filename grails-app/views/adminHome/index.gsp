@@ -10,7 +10,7 @@
             display: inline-block; text-align: right; 
             border-bottom: 0px solid #6285C7; 
             border-top: 0px solid #6285C7; padding: 5px 0;">
-            
+            <g:link style="float: right;" target="_blank" controller="report" action="companieslist" params="['filterName': params?.filterName, 'filterAccount': params?.filterAccount, 'filterCity': params?.filterCity]"><img class="image-link" style="margin-left: 5px;" src="${resource(dir: 'images', file: 'printer.png')}" title="<g:message code='actions.print'/>"/></g:link>
             <g:link 
                 controller="adminHome" action="createinstance" 
                 params="['max': params.max, 'offset': params.offset]">
