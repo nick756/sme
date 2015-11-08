@@ -33,7 +33,10 @@
                 <label class="edit-form mand"><g:message code="business.profile.label"/></label>
                 <g:select class="select-list" name="profile.id" from="${GenericProfile.list()}" value="${businessInstance?.profile?.id}" optionKey="id"/>
                 <br/><br/>
-
+                
+                <label class="edit-form"><g:message code="business.bank.label"/></label>
+                <g:select class="select-list" name="bank?.id" from="${LendingAgency.list()}" value="${businessInstance?.bank?.id}" optionKey="id" noSelection="['':'']" default="none"/>
+                <br/>
                 <label class="edit-form"><g:message code="business.acccountno.label" default="Account Number"/></label>
                 <g:textField class="text-input" name="accountNo" value="${businessInstance?.accountNo}"/>
                 <br/>

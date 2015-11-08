@@ -128,7 +128,6 @@ class SmehomeController {
         if (businessTransactionInstance.hasErrors()) {
             if(Environment.current == Environment.DEVELOPMENT) {
                 println 'Error during Error verification:'
-                println businessTransactionInstance.errors
             }
             
             respond businessTransactionInstance.errors, view:'create'

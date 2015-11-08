@@ -751,6 +751,16 @@ class BootStrap {
             emulateTransactions()
         }
         
+        if(!LendingAgency.list()) {
+            new LendingAgency (
+                code:           1,
+                name:           'Bank Simpanan Nasional',
+                shortName:      'BSN',
+                city:           'Kuala Lumpur',
+                contactEmail:   'info@mail.com'
+            ).save(flush: true)
+        }
+        
         /***********************************************************************
          *  Unconditional verification and updates for changes
          * ********************************************************************/

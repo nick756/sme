@@ -11,7 +11,15 @@
         <div class="action-header">
             <g:link style="float: left; margin-left: 5px;" action="index" params="['max': params.max, 'offset': params.offset, 'id': businessInstance?.id]"><img class="image-link" style="margin-left: 5px;" src="${resource(dir: 'images', file: 'arrow_left.png')}" title="<g:message code='actions.back'/>"/></g:link>
         </div> 
-
+        
+        <g:hasErrors bean="${businessTransactionInstance}">
+        <ul class="errors" role="alert">
+                <g:eachError bean="${businessTransactionInstance}" var="error">
+                <li <g:if test="${error in org.springframework.validation.FieldError}">data-field-id="${error.field}"</g:if>><g:message error="${error}"/></li>
+                </g:eachError>
+        </ul>
+        </g:hasErrors>
+            
         <div class="edit-form-box">
             <g:form action="save" method="POST" >
                 <g:hiddenField name="operator" value="${session?.user.name}"/>

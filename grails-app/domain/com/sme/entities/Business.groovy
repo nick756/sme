@@ -15,6 +15,7 @@ class Business implements Serializable {
     State           state
     Industry        industry
     GenericProfile  profile
+    LendingAgency   bank
     
     static hasMany = [
         users: User,
@@ -40,13 +41,15 @@ class Business implements Serializable {
         businessTransactions    nullable: true
         statements              nullable: true
         registrationDate        nullable: true, blank: true
+        bank                    nullable: true
     }
     
     static mapping = {
         autoTimestamp true
+        sort 'name'
     }
     
     public String toString() {
-        regNumber + " " + name
+        "${regNumber} ${name}"
     }
 }

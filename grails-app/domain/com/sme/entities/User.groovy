@@ -1,9 +1,10 @@
 package com.sme.entities
 
-/*
-The only Entity for managing access to the System, conditional navigation
-by User.role
- */
+/**
+ *  The only Entity for managing access to the System, conditional navigation
+ *  by User.role via a single entry point. All supported Roles are exclusive,
+ *  a User can be assigned a single Role only.
+ **/
 class User implements Serializable {
 
     static transients = [
@@ -24,8 +25,9 @@ class User implements Serializable {
     String passwNew
     String passwRep
     
-    UserRole role
-    Business company    //  Must be presented if role.code == 2
+    UserRole        role
+    Business        company     //  Must be presented if role.code == 2
+    LendingAgency   bank        //  Must be presented if role.code == 3
     
     static constraints = {
         name        nullable: false
@@ -38,7 +40,10 @@ class User implements Serializable {
         passwNew    nullable: true, blank: true
         passwRep    nullable: true, blank: true
         company     nullable: true, validator: {value, obj ->
-                    return !(value == null && obj.role?.code == 2)
+            return !(value == null && obj.role?.code == 2)
+        }
+        bank        nullable: true, validator: {value, obj ->
+            return !(value == null && obj.role?.code == 3)
         }
     }
     

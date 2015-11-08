@@ -32,6 +32,7 @@ class BusinessTransaction {
         statement               nullable: true
         cash                    nullable: true, blank: true  //  For compatibility
         peer                    nullable: true
+        transactionAmount       validator: {it > 0}
     }
     
     public String toString() {

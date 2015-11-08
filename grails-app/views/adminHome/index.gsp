@@ -6,20 +6,12 @@
         <title>SIFAR</title>
     </head>
     <body>
-        <div style="width: 100%; background: #D0E8F4; 
-            display: inline-block; text-align: right; 
-            border-bottom: 0px solid #6285C7; 
-            border-top: 0px solid #6285C7; padding: 5px 0;">
-            <g:link style="float: right;" target="_blank" controller="report" action="companieslist" params="['filterName': params?.filterName, 'filterAccount': params?.filterAccount, 'filterCity': params?.filterCity]"><img class="image-link" style="margin-left: 5px;" src="${resource(dir: 'images', file: 'printer.png')}" title="<g:message code='actions.print'/>"/></g:link>
-            <g:link 
-                controller="adminHome" action="createinstance" 
-                params="['max': params.max, 'offset': params.offset]">
-                    <img class="image-link" 
-                        style="margin-right: 5px;" 
-                        src="${resource(dir: 'images', file: 'add_record.png')}" 
-                        title="<g:message code='actions.business.add'/>"
-                    />
-            </g:link>
+        <div class="action-header">
+            
+            <g:link style="float: right;"controller="agency" action="index" params="['filterName': params?.filterName, 'filterAccount': params?.filterAccount, 'filterCity': params?.filterCity]"><img class="image-link" style="margin-right: 5px;" src="${resource(dir: 'images', file: 'add_cloud.png')}" title="<g:message code='lendingAgency.add.caption'/>"/></g:link>
+            <g:link style="float: right;" target="_blank" controller="report" action="companieslist" params="['filterName': params?.filterName, 'filterAccount': params?.filterAccount, 'filterCity': params?.filterCity]"><img class="image-link" style="margin-right: 5px;" src="${resource(dir: 'images', file: 'printer.png')}" title="<g:message code='actions.print'/>"/></g:link>
+            <g:link style="float: right;" controller="adminHome" action="createinstance" params="['max': params.max, 'offset': params.offset]"><img class="image-link" style="margin-right: 5px;" src="${resource(dir: 'images', file: 'add_record.png')}" title="<g:message code='actions.business.add'/>"/></g:link>
+            
         </div>
         <table class="righted-content">
             <caption><g:message code="business.caption"/></caption>
@@ -41,7 +33,7 @@
             <tr>
                 <th>No</th>
                 <g:sortableColumn property="name" title="${message(code: 'business.name.label')}" params="['filterName': params?.filterName, 'filterAccount': params?.filterAccount, 'filterCity': params.filterCity]"/>
-                <th><g:message code="business.accountno.label"/></th>
+                <g:sortableColumn property="accountNo" title="${message(code: 'business.accountno.label')}" params="['filterName': params?.filterName, 'filterAccount': params?.filterAccount, 'filterCity': params.filterCity]"/>
                 <th><g:message code="business.registrationdate.label"/></th>
                 <th><g:message code="business.city.label"/></th>
                 <th><g:message code="business.userscount.label"/></th>

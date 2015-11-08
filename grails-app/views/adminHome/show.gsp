@@ -26,6 +26,9 @@
             <label class="edit-form"><g:message code="business.profile.label"/></label>
             <g:textField class="text-input" name="name" value="${businessInstance?.profile?.name}" readonly="true"/>
             <br/><br/>
+            <label class="edit-form"><g:message code="business.bank.label"/></label>
+            <g:textField class="text-input" name="bank?.id" value="${businessInstance?.bank?.name}" readonly="true"/>
+            <br/>            
             <label class="edit-form"><g:message code="business.accountno.label" default="Account"/></label>
             <g:textField class="text-input" name="regNumber" value="${businessInstance?.accountNo}" readonly="true"/>
             <br/>
