@@ -136,7 +136,7 @@ class BootStrap {
                 actual: 1,
                 mirrorCash: opCashHand,
                 mirrorBank: opCashBank
-            ).save()
+            ).save(flush: true)
             
             new GenericOperation(
                 code: 2,
@@ -148,7 +148,7 @@ class BootStrap {
                 actual: 1,
                 mirrorCash: opCashHand,
                 mirrorBank: opCashBank                
-            ).save()       
+            ).save(flush: true)       
             
             new GenericOperation(
                 code: 3,
@@ -160,7 +160,7 @@ class BootStrap {
                 actual: 1,
                 mirrorCash: opCashHand,
                 mirrorBank: opCashBank                
-            ).save()    
+            ).save(flush: true)    
             
             new GenericOperation(
                 code: 4,
@@ -172,7 +172,7 @@ class BootStrap {
                 actual: 1,
                 mirrorCash: opCashHand,
                 mirrorBank: opCashBank                
-            ).save()    
+            ).save(flush: true)    
             
             new GenericOperation(
                 code: 5,
@@ -184,7 +184,7 @@ class BootStrap {
                 actual: 1,
                 mirrorCash: opCashHand,
                 mirrorBank: opCashBank                
-            ).save()     
+            ).save(flush: true)     
             
             new GenericOperation(
                 code: 6,
@@ -196,7 +196,7 @@ class BootStrap {
                 actual: 1,
                 mirrorCash: opCashHand,
                 mirrorBank: opCashBank                
-            ).save() 
+            ).save(flush: true) 
             
             new GenericOperation(
                 code: 7,
@@ -208,7 +208,7 @@ class BootStrap {
                 actual: 1,
                 mirrorCash: opCashHand,
                 mirrorBank: opCashBank                
-            ).save()    
+            ).save(flush: true)    
             
             new GenericOperation(
                 code: 8,
@@ -220,7 +220,7 @@ class BootStrap {
                 actual: true,
                 mirrorCash: opCashHand,
                 mirrorBank: opCashBank                
-            ).save()  
+            ).save(flush: true)  
             
             new GenericOperation(
                 code: 9,
@@ -232,7 +232,7 @@ class BootStrap {
                 actual: 1,
                 mirrorCash: opCashHand,
                 mirrorBank: opCashBank                
-            ).save() 
+            ).save(flush: true) 
             
             new GenericOperation(
                 code: 10,
@@ -244,7 +244,7 @@ class BootStrap {
                 actual: 1,
                 mirrorCash: opCashHand,
                 mirrorBank: opCashBank                
-            ).save() 
+            ).save(flush: true) 
             
             new GenericOperation(
                 code: 11,
@@ -256,7 +256,7 @@ class BootStrap {
                 actual: 1,
                 mirrorCash: opCashHand,
                 mirrorBank: opCashBank                
-            ).save()             
+            ).save(flush: true)             
             
             new GenericOperation(
                 code: 14,
@@ -268,7 +268,7 @@ class BootStrap {
                 actual: 1,
                 mirrorCash: opCashHand,
                 mirrorBank: opCashBank                
-            ).save()     
+            ).save(flush: true)     
             
             new GenericOperation(
                 code: 15,
@@ -280,7 +280,7 @@ class BootStrap {
                 actual: 1,
                 mirrorCash: opCashHand,
                 mirrorBank: opCashBank                
-            ).save() 
+            ).save(flush: true) 
             
             new GenericOperation(
                 code: 16,
@@ -292,7 +292,7 @@ class BootStrap {
                 actual: 1,
                 mirrorCash: opCashHand,
                 mirrorBank: opCashBank
-            ).save() 
+            ).save(flush: true) 
             
             new GenericOperation(
                 code: 17,
@@ -304,7 +304,7 @@ class BootStrap {
                 actual: 1,
                 mirrorCash: opCashHand,
                 mirrorBank: opCashBank                
-            ).save()  
+            ).save(flush: true)  
             
             new GenericOperation(
                 code: 18,
@@ -316,7 +316,7 @@ class BootStrap {
                 actual: 1,
                 mirrorCash: opCashHand,
                 mirrorBank: opCashBank                
-            ).save() 
+            ).save(flush: true) 
             
             new GenericOperation(
                 code: 19,
@@ -328,7 +328,7 @@ class BootStrap {
                 actual: 1,
                 mirrorCash: opCashHand,
                 mirrorBank: opCashBank                
-            ).save() 
+            ).save(flush: true) 
             
             new GenericOperation(
                 code: 20,
@@ -340,7 +340,7 @@ class BootStrap {
                 actual: 1,
                 mirrorCash: opCashHand,
                 mirrorBank: opCashBank                
-            ).save() 
+            ).save(flush: true) 
             
             new GenericOperation(
                 code: 21,
@@ -352,7 +352,7 @@ class BootStrap {
                 actual: 1,
                 mirrorCash: opCashHand,
                 mirrorBank: opCashBank                
-            ).save()
+            ).save(flush: true)
             
             new GenericOperation(
                 code: 22,
@@ -364,7 +364,7 @@ class BootStrap {
                 actual: 1,
                 mirrorCash: opCashHand,
                 mirrorBank: opCashBank                
-            ).save()
+            ).save(flush: true)
             
             new GenericOperation(
                 code: 23,
@@ -376,7 +376,7 @@ class BootStrap {
                 actual: 1,
                 mirrorCash: opCashHand,
                 mirrorBank: opCashBank                
-            ).save()
+            ).save(flush: true)
             
             new GenericOperation(
                 code: 24,
@@ -388,7 +388,7 @@ class BootStrap {
                 actual: 1,
                 mirrorCash: opCashHand,
                 mirrorBank: opCashBank                
-            ).save() 
+            ).save(flush: true) 
             
             new GenericOperation(
                 code: 25,
@@ -400,7 +400,7 @@ class BootStrap {
                 actual: 1,
                 mirrorCash: opCashHand,
                 mirrorBank: opCashBank                
-            ).save() 
+            ).save(flush: true) 
             
             new GenericOperation(
                 code: 26,
@@ -412,7 +412,7 @@ class BootStrap {
                 actual: 1,
                 mirrorCash: opCashHand,
                 mirrorBank: opCashBank                
-            ).save()
+            ).save(flush: true)
             
             new GenericOperation(
                 code: 27,
@@ -424,7 +424,7 @@ class BootStrap {
                 actual: 1,
                 mirrorCash: opCashHand,
                 mirrorBank: opCashBank                
-            ).save() 
+            ).save(flush: true) 
             
             new GenericOperation(
                 code: 28,
@@ -436,7 +436,7 @@ class BootStrap {
                 actual: 1,
                 mirrorCash: opCashHand,
                 mirrorBank: opCashBank                
-            ).save() 
+            ).save(flush: true) 
             
             new GenericOperation(
                 code: 29,
@@ -460,7 +460,7 @@ class BootStrap {
                 actual: 1,
                 mirrorCash: opCashHand,
                 mirrorBank: opCashBank                
-            ).save()
+            ).save(flush: true)
             
             new GenericOperation(
                 code: 31,
@@ -472,7 +472,7 @@ class BootStrap {
                 actual: 1,
                 mirrorCash: opCashHand,
                 mirrorBank: opCashBank                
-            ).save() 
+            ).save(flush: true) 
             
             new GenericOperation(
                 code: 32,
@@ -484,7 +484,7 @@ class BootStrap {
                 actual: 1,
                 mirrorCash: opCashHand,
                 mirrorBank: opCashBank                
-            ).save()
+            ).save(flush: true)
             
             new GenericOperation(
                 code: 33,
@@ -508,7 +508,7 @@ class BootStrap {
                 actual: 1,
                 mirrorCash: opCashHand,
                 mirrorBank: opCashBank                
-            ).save() 
+            ).save(flush: true) 
             
             new GenericOperation(
                 code: 35,
@@ -520,7 +520,7 @@ class BootStrap {
                 actual: 1,
                 mirrorCash: opCashHand,
                 mirrorBank: opCashBank                
-            ).save() 
+            ).save(flush: true) 
             
             new GenericOperation(
                 code: 36,
@@ -532,7 +532,7 @@ class BootStrap {
                 actual: 1,
                 mirrorCash: opCashHand,
                 mirrorBank: opCashBank                
-            ).save()  
+            ).save(flush: true)  
             
             new GenericOperation(
                 code: 37,
@@ -544,7 +544,7 @@ class BootStrap {
                 actual: 1,
                 mirrorCash: opCashHand,
                 mirrorBank: opCashBank                
-            ).save()            
+            ).save(flush: true)            
             
             println "Total " + GenericOperation.count() + " instances created"
         }
@@ -590,7 +590,7 @@ class BootStrap {
                 regNumber: "12345-A",
                 industry: industry1,
                 city: "Kuala Lumpur"
-            ).save()
+            ).save(flush: true)
             
             new Business(
                 dateCreated: new Date(),
@@ -598,7 +598,7 @@ class BootStrap {
                 regNumber: "12346-A",
                 industry: industry2,
                 city: "Kuala Lumpur"
-            ).save() 
+            ).save(flush: true) 
             
             new Business(
                 dateCreated: new Date(),
@@ -614,9 +614,10 @@ class BootStrap {
                 regNumber: "12347-A",
                 industry: industry2,
                 city: "Kuala Lumpur"
-            ).save() 
+            ).save(flush: true) 
             
             println "\nList of Businesses created: " + Business.count() + " instances"
+            println Business.list()
             
             parseBusinessFile();
         }
@@ -660,12 +661,12 @@ class BootStrap {
             new GenericProfile(
                 code: 2,
                 name: 'Food Manufacturing Activities'
-            ).save()   
+            ).save(flush: true)   
                 
             new GenericProfile(
                 code: 3,
                 name: 'Restorant/Food Stall Operations'
-            ).save()                 
+            ).save(flush: true)                 
                 
             println ""
             println "\nGeneric Profiles created: ${GenericProfile.count()} instances"
@@ -748,7 +749,7 @@ class BootStrap {
         //  Emulation of Business Transactions
         
         if(!BusinessTransaction.list()) {
-            emulateTransactions()
+            //emulateTransactions()
         }
         
         if(!LendingAgency.list()) {
