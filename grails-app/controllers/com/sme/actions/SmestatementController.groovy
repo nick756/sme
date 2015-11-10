@@ -210,11 +210,17 @@ class SmestatementController {
             transactions = BusinessTransaction.findAllByStatement(statement)
             
             transactions.each {transaction ->
+                println "Removing ${transaction}"
                 statement.removeFromTransactions(transaction)
+                
             }
             
             statement.save(flush: true)
             company.removeFromStatements(statement)
+            //company.save(flush: true)
+            
+            println "Deleted Statement ${statement.id}: ${statement}"
+            println "Transactions in Statement: ${statement?.transactions}"
             statement.delete(flush: true)
         }
 

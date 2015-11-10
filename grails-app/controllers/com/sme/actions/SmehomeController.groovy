@@ -40,15 +40,15 @@ class SmehomeController {
         transactions = BusinessTransaction.createCriteria().list(params) {
             eq('company', company) 
             
-            or {
-                isNotNull('peer')
-                operationType {
-                    or {
-                        eq('code', 1020)
-                        eq('code', 1030)
-                    }
-                }
-            }
+//            or {
+//                //isNotNull('peer')
+//                operationType {
+//                    or {
+//                        eq('code', 1020)
+//                        eq('code', 1030)
+//                    }
+//                }
+//            }
             
             and {
                 order('transactionDate', 'desc')

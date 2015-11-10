@@ -199,7 +199,7 @@ class BusinessTransactionService {
             cash:               mode            
         ).save(flush: true)
         
-        source.peer = peer.id
+        source.peer = peer?.id
         source.save(flush: true)
     }
 }

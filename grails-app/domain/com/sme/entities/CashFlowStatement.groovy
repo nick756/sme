@@ -34,6 +34,7 @@ class CashFlowStatement {
     }
     
     static mapping = {
+        version true
         sort    'year'
         sort    'month'
         transactions sort: 'transactionDate'

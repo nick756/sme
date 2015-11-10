@@ -95,9 +95,14 @@ class GenericOperation {
     public String toString() {
         def session = RequestContextHolder.currentRequestAttributes().getSession()
         def out = ''
+        def locl = 'en'
+        
+        if(session) {
+            locl = session.locale.toString()
+        }
         
         if(this.code < 1000) {
-            if(session.locale.toString() == 'ms') {
+            if(locl == 'ms') {
                 if(this.inbound) {
                     out = "MASUK: ${name}"
                 }
@@ -115,7 +120,7 @@ class GenericOperation {
             }
         }
         else {
-            if(session.locale.toString() == 'ms') {
+            if(locl == 'ms') {
                 out = name
             }
             else {
