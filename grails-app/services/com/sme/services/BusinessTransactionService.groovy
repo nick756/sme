@@ -147,8 +147,8 @@ class BusinessTransactionService {
             println "--- ${new Date().format('dd/MM/yyyy HH:mm:ss')} - BusinessTransactionService.createPeer ---"
             println "Mode of Payment    : ${mode}"
             println "Actual Transaction : ${source.operationType.actual}"
-            println "Cash case          : ${source?.operationType?.mirrorCash}"
-            println "Bank case          : ${source?.operationType?.mirrorBank}"
+            println "Cash case          : ${source?.operationType?.mirrorCash.toString('en')}"
+            println "Bank case          : ${source?.operationType?.mirrorBank.toString('en')}"
         }
         
         if(source?.operationType.inbound && source?.operationType.code < 1000) {
@@ -186,7 +186,7 @@ class BusinessTransactionService {
         if(Environment.current == Environment.DEVELOPMENT) {        
             println 'After Processing:'
             println "Amount Peer   : ${amountPeer}"
-            println "Operation     : ${peerType}"
+            println "Operation     : ${peerType.toString('en')}"
         }
         
         peer = new BusinessTransaction(
