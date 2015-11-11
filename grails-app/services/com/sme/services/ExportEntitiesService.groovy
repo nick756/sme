@@ -175,24 +175,4 @@ class ExportEntitiesService {
         
         return counter
     }
-    
-    def getBackupSize() {
-        Long size = 0
-        File file
-        
-        def files = [
-            'profiles.txt',
-            "businesses.txt",
-            "users.txt",
-            "operations.txt",
-            "transactions.txt"
-        ]
-        
-        files.each {fileName ->
-            file = new File("${path}${fileName}")
-            size += file.length()
-        }
-        
-        return size
-    }
 }

@@ -322,10 +322,6 @@ class SmehomeController {
             eq('month', monthTrans)
         }
         
-        if(peerID > 0) {
-            peer = BusinessTransaction.get(peerID)
-        }
-        
         if(Environment.current == Environment.DEVELOPMENT) {
             println "--- ${new Date().format("dd/MM/yyyy HH:mm:ss")} ${session.user.login}: method ${params.controller}/${params.action}"
             println "Received Instance : ${businessTransactionInstance}"
@@ -348,8 +344,6 @@ class SmehomeController {
         if(peer) {
             company.removeFromBusinessTransactions(peer)
             peer.delete flush: true
-            
-            println "Peer ${peer} was successfully deleted"
         }
         
         successMessage = message(code: 'businesstransaction.delete.success')
