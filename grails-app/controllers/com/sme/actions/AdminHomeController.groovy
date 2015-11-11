@@ -9,6 +9,7 @@ class AdminHomeController {
 
     def businessTransactionService
     def cashFlowService
+    def exportEntitiesService
     def messageSource
     
     def index(Integer max) {
@@ -467,5 +468,22 @@ class AdminHomeController {
 
         redirect action: 'listtransactions', params: ['id': businessInstance.id]
     }
+    
+    //  Exporting entities in CSV format
 
+    def export() {
+        def busiCount = exportEntitiesService.exportBusinesses()
+        def userCount = exportEntitiesService.exportUsers()
+        def tranCount = exportEntitiesService.exportTransactions()
+        def profCount = exportEntitiesService.exportProfiles()
+        def operCount = exportEntitiesService.exportOperations()
+        
+        [
+            busiCount: busiCount,
+            userCount: userCount,
+            tranCount: tranCount,
+            profCount: profCount,
+            operCount: operCount
+        ]
+    }
 }

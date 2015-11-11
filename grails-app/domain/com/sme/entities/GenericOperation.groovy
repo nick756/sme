@@ -25,6 +25,10 @@ class GenericOperation {
     GenericOperation mirrorCash
     GenericOperation mirrorBank
     
+    //  Attributes to be used during import/export operations
+    Integer mirrorCashCode
+    Integer mirrorBankCode
+    
     AccountType accountType
     CFGroup     group
     
@@ -40,6 +44,9 @@ class GenericOperation {
         mirrorCash  nullable: true
         mirrorBank  nullable: true
         actual      nullable: true, blank: true
+        
+        mirrorCashCode  nullable: true
+        mirrorBankCode  nullable: true
 
         //  Values of inbound and outbound cannot coincide
         inbound     nullable: false
