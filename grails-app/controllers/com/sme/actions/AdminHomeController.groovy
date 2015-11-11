@@ -478,19 +478,12 @@ class AdminHomeController {
         def profCount = exportEntitiesService.exportProfiles()
         def operCount = exportEntitiesService.exportOperations()
         
-        new BackupHistory(
-            backupDate: new Date(),
-            operator:   session.user?.name,
-            size:       exportEntitiesService.getBackupSize()
-        ).save(flush: true)
-        
         [
             busiCount: busiCount,
             userCount: userCount,
             tranCount: tranCount,
             profCount: profCount,
-            operCount: operCount,
-            history:   BackupHistory.list() 
+            operCount: operCount
         ]
     }
 }

@@ -62,9 +62,9 @@ class BootStrap {
         if(GenericOperation.list().size() == 0) {
             println "\n... creating list of Generic Operation Types"
             
-            //            def filePath = "resources/operations.txt"
-            //            def fileContent = grailsApplication.mainContext.getResource("classpath:$filePath").file
-            //            def count = 0;   
+//            def filePath = "resources/operations.txt"
+//            def fileContent = grailsApplication.mainContext.getResource("classpath:$filePath").file
+//            def count = 0;   
             def path = "C:/export/operations.txt"
             def fileContent = new File("${path}").text
             
@@ -156,6 +156,49 @@ class BootStrap {
             println "List of Industries created: " + Industry.count() + " instances"
         }
         
+        if(Business.list().size() == 10000) {       //  Disabled
+            def industry1 = Industry.findByCode(1)
+            def industry2 = Industry.findByCode(2)
+            def industry3 = Industry.findByCode(3)
+            def industry4 = Industry.findByCode(4)
+            
+            new Business(
+                dateCreated: new Date(),
+                name: "Amortization Services Sdn Bhd",
+                regNumber: "12345-A",
+                industry: industry1,
+                city: "Kuala Lumpur"
+            ).save()
+            
+            new Business(
+                dateCreated: new Date(),
+                name: "Voluntary Services Sdn Bhd",
+                regNumber: "12346-A",
+                industry: industry2,
+                city: "Kuala Lumpur"
+            ).save() 
+            
+            new Business(
+                dateCreated: new Date(),
+                name: "Superior Constructors Sdn Bhd",
+                regNumber: "12345-B",
+                industry: industry4,
+                city: "Melaka"
+            ).save()
+            
+            new Business(
+                dateCreated: new Date(),
+                name: "Outstanding Design Sdn Bhd",
+                regNumber: "12347-A",
+                industry: industry2,
+                city: "Kuala Lumpur"
+            ).save() 
+            
+            println "\nList of Businesses created: " + Business.count() + " instances"
+            
+            //parseBusinessFile();
+        }
+        
         //  Creation of default Business Profiles
             
         if(GenericProfile.list().size() == 0) {
@@ -216,6 +259,7 @@ class BootStrap {
         /***********************************************************************
          *  Importing/Restoring Business instances
          * ********************************************************************/
+        
         if(Business.list().size() == 0) {
             def pathBusiness = "C:/export/businesses.txt"
             def file = new File("${pathBusiness}")
@@ -231,7 +275,6 @@ class BootStrap {
             println ''
             println '------------- Import of Businesses -----------------'
             println "File size: ${file.length()} bytes"
-            println '----------------------------------------------------'
             
             content.splitEachLine('#') {fields ->
                 industry = null
@@ -241,13 +284,14 @@ class BootStrap {
                 
                 println "Processing ${++count} Record: ${fields[3]}"
                 
-                try {
-                    intID = new Integer(fields[0])
-                }
-                catch(Exception e) {
-                    println "************* Problem: ***********************"
-                    println "${fields[0]} -- ${fields[1]} -- ${fields[2]} -- ${fields[3]}"
-                    println '**********************************************'
+                if(fields[0] != 'null') {
+                    try {
+                        intID = new Integer(fields[0])
+                    }
+                    catch(Exception e) {
+                        println "************* Problem:"
+                        println "${fields[0]} -- ${fields[1]} -- ${fields[2]} -- ${fields[3]}"
+                    }
                 }
                 
                 if(fields[1] != 'null') {
@@ -267,14 +311,14 @@ class BootStrap {
                 }
                 
                 new Business(
-                    internalID:         intID,
-                    name:               fields[3],
-                    accountNo:          fields[4] == 'null' ? '':fields[4],
-                    regNumber:          fields[5] == 'null' ? '':fields[5],
-                    incorpDate:         incorpDate,
+                    internalID: intID,
+                    name:       fields[3],
+                    accountNo:  fields[4],
+                    regNumber:  fields[5],
+                    incorpDate: incorpDate,
                     registrationDate:   registrationDate,
-                    address:            fields[8] == 'null' ? '':fields[8],
-                    city:               fields[9] == 'null' ? '':fields[9],
+                    address:            fields[8],
+                    city:               fields[9],
                     industry:           industry,
                     profile:            profile
                 ).save(flush: true)
@@ -285,7 +329,7 @@ class BootStrap {
         
         //  Creating default Users
         
-        if(User.list().size() == 10000) {
+        if(User.list().size() == 0) {
             
             userRole = UserRole.findByCode(1)
             
@@ -349,6 +393,12 @@ class BootStrap {
             Business.get(1).addToUsers(vlad)
             println "${Business.get(1).name}: ${Business.get(1).users}"            
         }        
+
+        //  Emulation of Business Transactions
+        
+        if(!BusinessTransaction.list()) {
+            //emulateTransactions()
+        }
         
         if(!LendingAgency.list()) {
             new LendingAgency (
@@ -360,167 +410,23 @@ class BootStrap {
             ).save(flush: true)
         }
         
-        //  Importing Users
-        if(!User.list()) {
-            importUsers()
-        }
+        /***********************************************************************
+         *  Unconditional verification and updates for changes
+         * ********************************************************************/
         
-        if(BusinessTransaction.list().size() == 0) {
-            importTransactions()
-        }
+        println ''
+        println '**************************************************************'
+        println '         VERIFICATION OF MIGRATION ASPECTS'
+        println '**************************************************************'
+        println ''
+        
+        //updateGenericOperationTypes()
+        //createTransactionsPeers()
+        //translateOperationTypes()
     }
 
     
     def destroy = {
-    }
-    
-    /**
-     *  Importing Users from backup file
-     */
-    void importUsers() {
-        println ''
-        println '**************** IMPORT OF USER INSTANCES ********************'
-        
-        def path    = "C:/export/users.txt"
-        def file    = new File("${path}")
-        def content = file.text
-        def businessInstance
-        def roleInstance
-        Integer businessID
-        Integer roleID
-        Integer counter = 0
-        
-        println "File size: ${file.length()} bytes"
-        println '**************************************************************'
-        
-        content.splitEachLine('#') {fields ->
-            businessInstance = null
-            roleInstance     = null
-            ++counter
-            
-            try {
-                businessID = new Integer(fields[0])
-            }
-            catch(Exception e) {
-                println "*** Issue detected: Business ID not found at Line ${counter}"
-                println "*** ${fields[0]} -- ${fields[1]} -- ${fields[2]} -- ${fields[3]}"
-            }
-            
-            if(businessID > 0) {
-                businessInstance = Business.findByInternalID(businessID)
-            }
-            
-            if(!businessInstance && businessID > 0) {
-                println "*** Issue detected: Business Instance not found at Line ${counter}"
-                println "*** ${fields[0]} -- ${fields[1]} -- ${fields[2]} -- ${fields[3]}"              
-            }
-            
-            try {
-                roleID = new Integer(fields[1])
-            }
-            catch(Exception e) {
-                println "*** Issue detected: Role ID not found at Line ${counter}"
-                println "*** ${fields[0]} -- ${fields[1]} -- ${fields[2]} -- ${fields[3]}"              
-            }
-            
-            roleInstance = UserRole.findByCode(roleID)
-            
-            new User(
-                name:       fields[2],
-                login:      fields[3],
-                passw:      fields[4],
-                contactNo:  fields[5] == 'null' ? '':fields[5],
-                email:      fields[6] == 'null' ? '':fields[6],
-                role:       roleInstance,
-                company:    businessInstance
-            ).save(flush: true)
-        }
-    }
-    /**
-     *  Restore of Transactions backup
-     */
-    void importTransactions() {
-        println ''
-        println '****************** IMPORT OF TRANSACTIONS ********************'
-        
-        def path    = "C:/export/transactions.txt"
-        def file    = new File("${path}")
-        def content = file.text
-        def company
-        Date transDate
-        boolean correct 
-        GenericOperation oper
-        def transAmount
-        
-        Integer count = 0
-        
-        println "File size: ${file.length()} bytes"
-        println ''
-        
-        content.splitEachLine('#') {fields ->
-            correct = true
-            company = null
-            oper    = null
-            ++count
-
-            try {
-                company = Business.findByInternalID(new Integer(fields[0]))
-            }
-            catch(Exception e) {
-                company = null
-                correct = false
-                println '******* Problem detected: Business not found *********'
-                println "Line ${count}: Business ID = ${fields[0]}"
-                println "Amount: ${fields[3]} Date: ${fields[2]}"
-                println '***************** Skipped ****************************'
-            }
-            
-            try {
-                oper = GenericOperation.findByCode(new Integer(fields[1]))
-            }
-            catch(Exception e) {
-                company = null
-                correct = false
-                println '*** Problem detected: GenericOperation not found *****'
-                println "Line ${count}: Oper ID = ${fields[1]}"
-                println "Amount: ${fields[3]} Date: ${fields[2]}"
-                println '***************** Skipped ****************************'                
-            }
-            
-            try {
-                transDate = new Date().parse("dd/MM/yyyy", fields[2])
-            }
-            catch(Exception e) {
-                company = null
-                correct = false
-                println '**** Problem detected: transactionDate not found *****'
-                println "Line ${count}: Business ID = ${fields[0]}"
-                println "Amount: ${fields[3]} Date: ${fields[2]}"
-                println '***************** Skipped ****************************'                  
-            }
-            
-            transAmount = new Double(fields[3])
-            
-            if(transAmount > 0) {
-                def transInstance = new BusinessTransaction(
-                    operationType:      oper,
-                    transactionDate:    transDate,
-                    transactionAmount:  transAmount,
-                    transactionRemarks: fields[4],
-                    operator:           fields[5],
-                    cash:               new Integer(fields[6]),
-                    company:            company
-                ).save(flush: true)
-            
-                businessTransactionService.createPeer(transInstance, false)
-            }
-            else {
-                println "*** Zero Transaction at ${count} Line: ${fields[2]} - ${fields[3]} SKIPPED"
-            }
-        }
-        
-        println ''
-        println "Transactions import completed: ${count} Records processed"
     }
     
     /**

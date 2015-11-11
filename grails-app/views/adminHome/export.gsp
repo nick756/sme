@@ -25,18 +25,5 @@
             <g:textField class="text-input" name="name" value="${tranCount}" readonly="true"/>
             <br/>
         </div>
-        <table class="righted-content">
-            <caption>Backup History of current Database</caption>
-            <th>No</th>
-            <th>Date/Time</th>
-            <th>Backup Size</th>
-            <g:each in="${history}" var="record" status="index">
-                <tr class="${(index % 2) == 0 ? 'even' : 'odd'}">
-                    <td class="no-border centered">${index + 1}</td>
-                    <td class="no-border centered"><g:formatDate format="dd/MM/yyyy HH:mm" date="${record.backupDate}"/></td>
-                    <td class="no-border"><g:formatNumber format="#,##0" number="${record.size}"/> bytes</td>
-                </tr>
-            </g:each>
-        </table>
     </body>
 </html>

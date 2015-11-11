@@ -136,13 +136,13 @@ class BusinessTransactionService {
     /***************************************************************************
      *  Creation of peer for the given Transaction
      **************************************************************************/
-    def createPeer(BusinessTransaction source, boolean verbolize = true) {
+    def createPeer(BusinessTransaction source) {
         def mode = source?.cash
         BusinessTransaction peer
-        BigDecimal          amountPeer
+        BigDecimal amountPeer
         def peerType
         
-        if(Environment.current == Environment.DEVELOPMENT && verbolize == true) {
+        if(Environment.current == Environment.DEVELOPMENT) {
             println ''
             println "--- ${new Date().format('dd/MM/yyyy HH:mm:ss')} - BusinessTransactionService.createPeer ---"
             println "Mode of Payment    : ${mode}"
@@ -183,7 +183,7 @@ class BusinessTransactionService {
             }
         }
         
-        if(Environment.current == Environment.DEVELOPMENT && verbolize == true) {        
+        if(Environment.current == Environment.DEVELOPMENT) {        
             println 'After Processing:'
             println "Amount Peer   : ${amountPeer}"
             println "Operation     : ${peerType.toString('en')}"
@@ -197,15 +197,7 @@ class BusinessTransactionService {
             operator:           source?.operator,
             company:            source?.company,
             cash:               mode            
-        )
-        
-        if(!peer.validate()) {
-            println "*** ${new Date().format('dd/MM/yyyy HH:mm:ss')} - BusinessTransactionService.createPeer ***"
-            println "Peer Validation Errors: "
-            println peer.errors
-        }
-        
-        peer.save(flush: true)
+        ).save(flush: true)
         
         source.peer = peer?.id
         source.save(flush: true)
