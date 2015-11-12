@@ -1,12 +1,14 @@
 *.iws
 *Db.properties
 *Db.script
+*Db.*
 .settings
 stacktrace.log
 /*.zip
 /plugin.xml
 /*.log
 /*DB.*
+/*Db.*
 /cobertura.ser
 .DS_Store
 /target/
