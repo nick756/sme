@@ -199,7 +199,8 @@ class ExportEntitiesService {
             "businesses.txt",
             "users.txt",
             "operations.txt",
-            "transactions.txt"
+            "transactions.txt",
+            "agencies.txt"
         ]
         
         files.each {fileName ->
