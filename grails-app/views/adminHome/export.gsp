@@ -29,7 +29,7 @@
             <br/>
         </div>
         <table class="righted-content">
-            <caption>Backup History of current Database instance</caption>
+            <caption>Backup History of current Database</caption>
             <th>No</th>
             <th>Date/Time</th>
             <th>Backup Size</th>
