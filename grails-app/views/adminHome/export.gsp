@@ -15,6 +15,9 @@
             <label class="edit-form" style="width: 350px;">Exported Profile Records</label>
             <g:textField class="text-input" name="name" value="${profCount}" readonly="true"/>
             <br/>
+            <label class="edit-form" style="width: 350px;">Exported Agency/Bank Records</label>
+            <g:textField class="text-input" name="name" value="${agenCount}" readonly="true"/>
+            <br/>            
             <label class="edit-form" style="width: 350px;">Exported Companies</label>
             <g:textField class="text-input" name="name" value="${busiCount}" readonly="true"/>
             <br/>
@@ -26,7 +29,7 @@
             <br/>
         </div>
         <table class="righted-content">
-            <caption>Backup History of current Database</caption>
+            <caption>Backup History of current Database instance</caption>
             <th>No</th>
             <th>Date/Time</th>
             <th>Backup Size</th>

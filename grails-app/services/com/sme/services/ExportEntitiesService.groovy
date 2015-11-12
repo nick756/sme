@@ -34,7 +34,14 @@ class ExportEntitiesService {
                 line += "${business.accountNo}#${business.regNumber}#"
                 line += "${business?.incorpDate?.format('dd/MM/yyyy')}#"
                 line += "${business?.registrationDate?.format('dd/MM/yyyy')}#"
-                line += "${business.address}#${business.city}"
+                line += "${business.address}#${business.city}#"
+                
+                if(business.bank) {
+                    line += "${business.bank?.code}"
+                }
+                else {
+                    line += "0"
+                }
                 
                 line = line.replaceAll("\n", '')
                 line = line.replaceAll("\r", '')
@@ -67,7 +74,14 @@ class ExportEntitiesService {
                 line += "${record.login}#"
                 line += "${record.passw}#"
                 line += "${record?.contactNo}#"
-                line += "${record?.email}"
+                line += "${record?.email}#"
+                
+                if(record.bank) {
+                    line += "${record.bank?.code}"
+                }
+                else {
+                    line += "0"
+                }
                 
                 line = line.replaceAll('\n', '')
                 out.println line
@@ -185,7 +199,8 @@ class ExportEntitiesService {
             "businesses.txt",
             "users.txt",
             "operations.txt",
-            "transactions.txt"
+            "transactions.txt",
+            "agencies.txt"
         ]
         
         files.each {fileName ->
@@ -194,5 +209,31 @@ class ExportEntitiesService {
         }
         
         return size
+    }
+    
+    def exportAgencies() {
+        def fileName = 'agencies.txt'
+        def counter = 0
+        def line 
+        
+        def agencies = LendingAgency.list()
+        
+        new File("${path}${fileName}").withWriter() {out ->
+            agencies.each {agency ->
+                ++counter 
+                
+                line  = "${agency.code}#"
+                line += "${agency.name}#"
+                line += "${agency.shortName}#"
+                line += "${agency.address}#"
+                line += "${agency.city}#"
+                line += "${agency.contactPhone}#"
+                line += "${agency.contactEmail}"
+                
+                out.println line
+            }
+        }
+        
+        return counter
     }
 }

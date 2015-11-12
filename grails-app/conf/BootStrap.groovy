@@ -57,16 +57,18 @@ class BootStrap {
             println "Total ${CFGroup.count()} instances created"
         }
         
-        //  Restoring list og GenericOperation from backup file
-        //  --------------------------------------------------------------------
+        /***********************************************************************
+         * Restoring list of GenericOperation from backup file
+         **********************************************************************/
         if(GenericOperation.list().size() == 0) {
-            println "\n... creating list of Generic Operation Types"
-            
-            //            def filePath = "resources/operations.txt"
-            //            def fileContent = grailsApplication.mainContext.getResource("classpath:$filePath").file
-            //            def count = 0;   
+            println "******** IMPORT OF GENERIC OPERATION INSTANCES ***********"
+ 
             def path = "C:/export/operations.txt"
-            def fileContent = new File("${path}").text
+            def file = new File("${path}")
+            def fileContent = file.text
+            
+            println "File Size: ${file.length()} bytes"
+            println '**********************************************************'
             
             fileContent.splitEachLine('#') {fields ->
                 def accountType = AccountType.findByCode(fields[1])
@@ -213,9 +215,43 @@ class BootStrap {
             }
         }
         
+        if(!LendingAgency.list()) {
+            new LendingAgency (
+                code:           1,
+                name:           'Bank Simpanan Nasional',
+                shortName:      'BSN',
+                city:           'Kuala Lumpur',
+                contactEmail:   'info@mail.com'
+            ).save(flush: true)
+        }
+        
         /***********************************************************************
          *  Importing/Restoring Business instances
          * ********************************************************************/
+        if(Business.list().size() == 0) {
+            importBusinesses()
+        }
+        
+        /***********************************************************************
+         *  Import of saved Users
+         * ********************************************************************/
+        if(!User.list()) {
+            importUsers()
+        }
+        
+        if(BusinessTransaction.list().size() == 0) {
+            importTransactions()
+        }
+    }
+
+    
+    def destroy = {
+    }
+    
+    /***************************************************************************
+     *  Import of previously saved instances of Business
+     **************************************************************************/
+    void importBusinesses() {
         if(Business.list().size() == 0) {
             def pathBusiness = "C:/export/businesses.txt"
             def file = new File("${pathBusiness}")
@@ -223,23 +259,26 @@ class BootStrap {
             
             def industry    = null
             def profile     = null
+            def agency      = null
+            
             Date registrationDate   = null
             Date incorpDate         = null
             Integer count = 0
             Integer intID
             
             println ''
-            println '------------- Import of Businesses -----------------'
+            println '******************* Import of Businesses *****************'
             println "File size: ${file.length()} bytes"
-            println '----------------------------------------------------'
+            println '**********************************************************'
             
             content.splitEachLine('#') {fields ->
-                industry = null
-                profile  = null
-                incorpDate = null
-                registrationDate = null
+                industry            = null
+                profile             = null
+                incorpDate          = null
+                registrationDate    = null
+                agency              = null
                 
-                println "Processing ${++count} Record: ${fields[3]}"
+                System.out.print "Processing ${++count} Record: ${fields[3]}\r"
                 
                 try {
                     intID = new Integer(fields[0])
@@ -254,7 +293,7 @@ class BootStrap {
                     profile = GenericProfile.findByCode(new Integer(fields[1]))
                 }
                 
-                if(fields[2] != 'null' && fields[2] != 0) {
+                if(fields[2] != 'null' && fields[2] != '0') {
                     industry = Industry.findByCode(new Integer(fields[2]))
                 }
                 
@@ -264,6 +303,10 @@ class BootStrap {
                 
                 if(fields[7] != 'null') {
                     registrationDate = new Date().parse("dd/MM/yyyy", fields[7])
+                }
+                
+                if(fields[10] != '0') {
+                    agency = LendingAgency.findByCode(new Integer(fields[10]))
                 }
                 
                 new Business(
@@ -276,107 +319,18 @@ class BootStrap {
                     address:            fields[8] == 'null' ? '':fields[8],
                     city:               fields[9] == 'null' ? '':fields[9],
                     industry:           industry,
-                    profile:            profile
+                    profile:            profile,
+                    bank:               agency
                 ).save(flush: true)
             }
             
-            println "Total instance imported: ${Business.list().size()}"
-        }
-        
-        //  Creating default Users
-        
-        if(User.list().size() == 10000) {
-            
-            userRole = UserRole.findByCode(1)
-            
-            println "\nUser Role selected: " + userRole
-            
-            def user = new com.sme.entities.User (
-                dateCreated: new Date(),
-                name: "Nikolay",
-                login: "nick",
-                passw: "1234"
-            )
-            
-            user.role = userRole
-            user.save()
-            
-            new User(
-                dateCreated: new Date(),
-                name: 'Mohar',
-                login: 'mohar',
-                passw: '1234',
-                role: userRole
-            ).save()
-            
-            println "User ${user?.name} created"
-            
-            //  Creating Operators and assigning to a Company
-            
-            def vlad = new User(
-                name: 'Vladimir Gundartsev',
-                login: 'vlad',
-                passw: '1234',
-                role: UserRole.findByCode(2),
-                company: Business.get(1)
-            ).save(flush: true)
-        
-            def opUser1 = new User(
-                name: 'Andreano Choppolo',
-                login: 'andrea',
-                passw: '1234',
-                role: UserRole.findByCode(2),
-                company: Business.get(2)
-            ).save(flush: true)
-        
-            def opUser2 = new User(
-                name: 'Nikolay',
-                login: 'nick_sme',
-                passw: '1234',
-                role: UserRole.findByCode(2),
-                company: Business.get(2)
-            ).save(flush: true)          
-        
-            println ''
-            println 'SME Operator Users created:'
-        
-            def inst = Business.get(2)
-            inst.addToUsers(opUser1)
-            inst.addToUsers(opUser2)
-        
-            println "${inst?.name}: ${inst?.users}"
-        
-            Business.get(1).addToUsers(vlad)
-            println "${Business.get(1).name}: ${Business.get(1).users}"            
-        }        
-        
-        if(!LendingAgency.list()) {
-            new LendingAgency (
-                code:           1,
-                name:           'Bank Simpanan Nasional',
-                shortName:      'BSN',
-                city:           'Kuala Lumpur',
-                contactEmail:   'info@mail.com'
-            ).save(flush: true)
-        }
-        
-        //  Importing Users
-        if(!User.list()) {
-            importUsers()
-        }
-        
-        if(BusinessTransaction.list().size() == 0) {
-            importTransactions()
+            println "Total instance imported: ${Business.list().size()}"        
         }
     }
-
     
-    def destroy = {
-    }
-    
-    /**
+    /***************************************************************************
      *  Importing Users from backup file
-     */
+     **************************************************************************/
     void importUsers() {
         println ''
         println '**************** IMPORT OF USER INSTANCES ********************'
@@ -386,8 +340,11 @@ class BootStrap {
         def content = file.text
         def businessInstance
         def roleInstance
+        def bankInstance
+        
         Integer businessID
         Integer roleID
+        Integer bankID
         Integer counter = 0
         
         println "File size: ${file.length()} bytes"
@@ -396,6 +353,7 @@ class BootStrap {
         content.splitEachLine('#') {fields ->
             businessInstance = null
             roleInstance     = null
+            bankInstance     = null
             ++counter
             
             try {
@@ -425,6 +383,18 @@ class BootStrap {
             
             roleInstance = UserRole.findByCode(roleID)
             
+            try {
+                bankID = new Integer(fields[7])
+            }
+            catch(Exception e) {
+                println "*** Issue detected: Bank ID not found at Line ${counter}"
+                println "*** ${fields[0]} -- ${fields[1]} -- ${fields[2]} -- ${fields[3]}"                 
+            }
+            
+            if(bankID > 0) {
+                bankInstance = LendingAgency.findByCode(bankID)
+            }
+            
             new User(
                 name:       fields[2],
                 login:      fields[3],
@@ -432,13 +402,15 @@ class BootStrap {
                 contactNo:  fields[5] == 'null' ? '':fields[5],
                 email:      fields[6] == 'null' ? '':fields[6],
                 role:       roleInstance,
-                company:    businessInstance
+                company:    businessInstance,
+                bank:       bankInstance
             ).save(flush: true)
         }
     }
-    /**
+    
+    /***************************************************************************
      *  Restore of Transactions backup
-     */
+     **************************************************************************/
     void importTransactions() {
         println ''
         println '****************** IMPORT OF TRANSACTIONS ********************'
@@ -455,7 +427,7 @@ class BootStrap {
         Integer count = 0
         
         println "File size: ${file.length()} bytes"
-        println ''
+        println '**************************************************************'
         
         content.splitEachLine('#') {fields ->
             correct = true
@@ -1124,43 +1096,6 @@ class BootStrap {
         
         println "Total Operations updated: ${updates}"
     }   //  End of 'updateGenericOperationTypes'
-    
-    /***************************************************************************
-     *  Verifying and updating existing BusinessTransaction instances
-     **************************************************************************/
-    
-    void createTransactionsPeers() {
-        println ''
-        println 'Verification of created BusinessTransaction inctances:'
-        
-        def transactions = BusinessTransaction.list()
-        def cashBankType = GenericOperation.findByCode(1010)
-        
-        println "Total Records found: ${transactions.size()}"
-        
-        transactions.each {transaction ->
-            if(transaction?.cash == null) {
-                transaction.cash = 0 // Default value
-                transaction.save()
-                
-                println "Defaulted to Bank Operation: ${transaction}"
-            }
-            
-            //  Correcting 'Cash at Bank' entries
-            
-            if(transaction.operationType?.code == 13) {
-                transaction.operationType = cashBankType
-                transaction.save(flush: true)
-                
-                println "Corrected Transaction: ${transaction} to Code 1010"
-            }
-            
-            if(transaction.operationType.actual > 0 && transaction?.peer == null) {
-                println "Peer missing for: ${transaction}"
-                businessTransactionService.createPeer(transaction)
-            }
-        }
-    }   //  End of 'createTransactionPeers()'
     
     /***************************************************************************
      *  Adding English Translation to Operation Types

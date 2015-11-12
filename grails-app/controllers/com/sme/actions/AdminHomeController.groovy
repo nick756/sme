@@ -477,6 +477,7 @@ class AdminHomeController {
         def tranCount = exportEntitiesService.exportTransactions()
         def profCount = exportEntitiesService.exportProfiles()
         def operCount = exportEntitiesService.exportOperations()
+        def agenCount = exportEntitiesService.exportAgencies()
         
         new BackupHistory(
             backupDate: new Date(),
@@ -490,6 +491,7 @@ class AdminHomeController {
             tranCount: tranCount,
             profCount: profCount,
             operCount: operCount,
+            agenCount: agenCount,
             history:   BackupHistory.list() 
         ]
     }

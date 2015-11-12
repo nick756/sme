@@ -5,7 +5,6 @@ class LendingAgency implements Serializable {
     Integer code
     String name
     String shortName
-    //String shartName
     String address
     String city
     String contact
