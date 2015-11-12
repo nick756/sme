@@ -406,6 +406,8 @@ class BootStrap {
                 bank:       bankInstance
             ).save(flush: true)
         }
+        
+        println "Users import completed: imported ${User.list().size()} Records"
     }
     
     /***************************************************************************
