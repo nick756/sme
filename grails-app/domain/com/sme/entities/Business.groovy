@@ -3,6 +3,7 @@ package com.sme.entities
 class Business implements Serializable {
     Date dateCreated
     Date lastUpdated
+    Integer internalID
     
     String name
     String accountNo
@@ -26,6 +27,7 @@ class Business implements Serializable {
     
     static constraints = {
         name        (blank: false)
+        internalID  nullable: true, blank: true
         accountNo   nullable: true, blank: true
         regNumber   (blank: false)
         industry    nullable: true

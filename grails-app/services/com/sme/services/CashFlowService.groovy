@@ -115,6 +115,7 @@ class CashFlowService {
                         break
                     case 6:
                         cashBank += it.transactionAmount
+                        break
                 }
             }
             

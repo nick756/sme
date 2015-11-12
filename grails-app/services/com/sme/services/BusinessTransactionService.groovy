@@ -136,19 +136,19 @@ class BusinessTransactionService {
     /***************************************************************************
      *  Creation of peer for the given Transaction
      **************************************************************************/
-    def createPeer(BusinessTransaction source) {
+    def createPeer(BusinessTransaction source, boolean verbolize = true) {
         def mode = source?.cash
         BusinessTransaction peer
-        BigDecimal amountPeer
+        BigDecimal          amountPeer
         def peerType
         
-        if(Environment.current == Environment.DEVELOPMENT) {
+        if(Environment.current == Environment.DEVELOPMENT && verbolize == true) {
             println ''
             println "--- ${new Date().format('dd/MM/yyyy HH:mm:ss')} - BusinessTransactionService.createPeer ---"
             println "Mode of Payment    : ${mode}"
             println "Actual Transaction : ${source.operationType.actual}"
-            println "Cash case          : ${source?.operationType?.mirrorCash}"
-            println "Bank case          : ${source?.operationType?.mirrorBank}"
+            println "Cash case          : ${source?.operationType?.mirrorCash.toString('en')}"
+            println "Bank case          : ${source?.operationType?.mirrorBank.toString('en')}"
         }
         
         if(source?.operationType.inbound && source?.operationType.code < 1000) {
@@ -183,10 +183,10 @@ class BusinessTransactionService {
             }
         }
         
-        if(Environment.current == Environment.DEVELOPMENT) {        
+        if(Environment.current == Environment.DEVELOPMENT && verbolize == true) {        
             println 'After Processing:'
             println "Amount Peer   : ${amountPeer}"
-            println "Operation     : ${peerType}"
+            println "Operation     : ${peerType.toString('en')}"
         }
         
         peer = new BusinessTransaction(
@@ -197,9 +197,17 @@ class BusinessTransactionService {
             operator:           source?.operator,
             company:            source?.company,
             cash:               mode            
-        ).save(flush: true)
+        )
         
-        source.peer = peer.id
+        if(!peer.validate()) {
+            println "*** ${new Date().format('dd/MM/yyyy HH:mm:ss')} - BusinessTransactionService.createPeer ***"
+            println "Peer Validation Errors: "
+            println peer.errors
+        }
+        
+        peer.save(flush: true)
+        
+        source.peer = peer?.id
         source.save(flush: true)
     }
 }

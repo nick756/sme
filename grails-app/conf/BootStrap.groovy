@@ -57,496 +57,75 @@ class BootStrap {
             println "Total ${CFGroup.count()} instances created"
         }
         
+        /***********************************************************************
+         * Restoring list of GenericOperation from backup file
+         **********************************************************************/
         if(GenericOperation.list().size() == 0) {
-            println "\n... creating list of Generic Operation Types"
+            println "******** IMPORT OF GENERIC OPERATION INSTANCES ***********"
+ 
+            def path = "C:/export/operations.txt"
+            def file = new File("${path}")
+            def fileContent = file.text
             
-            /*******************************************************************
-             *  Mirroring rules (actual = true only)
-             *  
-             *  Outbound:
-             *  -   Operation (+)
-             *  -   Bank/Cash (-)
-             *  
-             *  Inbound:
-             *  -   Operation (+)
-             *  -   Bank/Cash (+)
-             *  
-             *  For Transactions with code >= 1000, flag 'cash' is ignored,
-             *  must follow specific rules.
-             * ****************************************************************/
-
-            //  Previous codes: 12, 13
-            //  No mirroring
+            println "File Size: ${file.length()} bytes"
+            println '**********************************************************'
             
-            def opCashHand = new GenericOperation(
-                code:           1000,
-                name:           'Cash in Hands',
-                inbound:        false,
-                outbound:       true,
-                accountType:    AccountType.findByCode(5),
-                group:          CFGroup.findByCode(5),
-                actual:         0
-            ).save(flush: true) 
+            fileContent.splitEachLine('#') {fields ->
+                def accountType = AccountType.findByCode(fields[1])
+                def group = CFGroup.findByCode(fields[2])
+                Integer cashCode
+                Integer bankCode
+                
+                if(fields[8] != 'null') {
+                    cashCode = new Integer(fields[8])
+                }
+                else {
+                    cashCode = 0
+                }
+                
+                if(fields[9] != 'null') {
+                    bankCode = new Integer(fields[9])
+                }
+                else {
+                    bankCode = 0
+                }
+                
+                new GenericOperation(
+                    code:           fields[0],
+                    name:           fields[3],
+                    name_EN:        fields[4],
+                    inbound:        fields[5],
+                    outbound:       fields[6],
+                    actual:         fields[7],
+                    mirrorCashCode: cashCode,
+                    mirrorBankCode: bankCode,
+                    accountType:    accountType,
+                    group:          group
+                ).save(flush: true)
+            }
             
-            def opCashBank = new GenericOperation(
-                code: 1010,
-                name: 'Cash at Bank',
-                inbound: false,
-                outbound: true,
-                accountType: AccountType.findByCode(5),
-                group: CFGroup.findByCode(6),
-                actual: 0
-            ).save(flush: true)            
+            println "Total " + GenericOperation.count() + " instances restored from file"
+            println "... updating peer settings"
             
-            //  Mirrored Operations (hidden)
+            def opList = GenericOperation.createCriteria().list() {
+                order('code')
+            }
             
-            def opCashWith = new GenericOperation(
-                code: 1020,
-                name: 'Cash Withdrawal',
-                inbound: false,
-                outbound: true,
-                accountType: AccountType.findByCode(5),
-                group: CFGroup.findByCode(5),
-                actual: 0,
-                mirrorCash: opCashBank
-            ).save(flush: true)   
-            
-            //  Mirrored with Cash in Hands (1000) (negative)
-            
-            def opCashDepo = new GenericOperation(
-                code: 1030,
-                name: 'Cash Deposit to Bank',
-                inbound: false,
-                outbound: true,
-                accountType: AccountType.findByCode(5),
-                group: CFGroup.findByCode(6),
-                actual: 0,
-                mirrorCash: opCashHand
-            ).save(flush: true)
-            
-            //  Standard Operations
-            
-            new GenericOperation(
-                code: 1,
-                name: 'Additional Capital',
-                inbound: true,
-                outbound: false,
-                accountType: AccountType.findByCode(1),
-                group: CFGroup.findByCode(1),
-                actual: 1,
-                mirrorCash: opCashHand,
-                mirrorBank: opCashBank
-            ).save()
-            
-            new GenericOperation(
-                code: 2,
-                name: 'Advance from Directors',
-                inbound: true,
-                outbound: false,
-                accountType: AccountType.findByCode(1),
-                group: CFGroup.findByCode(1),
-                actual: 1,
-                mirrorCash: opCashHand,
-                mirrorBank: opCashBank                
-            ).save()       
-            
-            new GenericOperation(
-                code: 3,
-                name: 'Capital Injection',
-                inbound: true,
-                outbound: false,
-                accountType: AccountType.findByCode(1),
-                group: CFGroup.findByCode(1),
-                actual: 1,
-                mirrorCash: opCashHand,
-                mirrorBank: opCashBank                
-            ).save()    
-            
-            new GenericOperation(
-                code: 4,
-                name: 'Grant Received',
-                inbound: true,
-                outbound: false,
-                accountType: AccountType.findByCode(8),
-                group: CFGroup.findByCode(1),
-                actual: 1,
-                mirrorCash: opCashHand,
-                mirrorBank: opCashBank                
-            ).save()    
-            
-            new GenericOperation(
-                code: 5,
-                name: 'Loan Received',
-                inbound: true,
-                outbound: false,
-                accountType: AccountType.findByCode(3),
-                group: CFGroup.findByCode(1),
-                actual: 1,
-                mirrorCash: opCashHand,
-                mirrorBank: opCashBank                
-            ).save()     
-            
-            new GenericOperation(
-                code: 6,
-                name: 'Purchase of Vehicle',
-                inbound: false,
-                outbound: true,
-                accountType: AccountType.findByCode(4),
-                group: CFGroup.findByCode(4),
-                actual: 1,
-                mirrorCash: opCashHand,
-                mirrorBank: opCashBank                
-            ).save() 
-            
-            new GenericOperation(
-                code: 7,
-                name: 'Purchase of Plants and Machineries',
-                inbound: false,
-                outbound: true,
-                accountType: AccountType.findByCode(4),
-                group: CFGroup.findByCode(4),
-                actual: 1,
-                mirrorCash: opCashHand,
-                mirrorBank: opCashBank                
-            ).save()    
-            
-            new GenericOperation(
-                code: 8,
-                name: 'Purchase of Office Equipment',
-                inbound: false,
-                outbound: true,
-                accountType: AccountType.findByCode(4),
-                group: CFGroup.findByCode(4),
-                actual: true,
-                mirrorCash: opCashHand,
-                mirrorBank: opCashBank                
-            ).save()  
-            
-            new GenericOperation(
-                code: 9,
-                name: 'Loan Repayment',
-                inbound: false,
-                outbound: true,
-                accountType: AccountType.findByCode(3),
-                group: CFGroup.findByCode(4),
-                actual: 1,
-                mirrorCash: opCashHand,
-                mirrorBank: opCashBank                
-            ).save() 
-            
-            new GenericOperation(
-                code: 10,
-                name: 'Renovations',
-                inbound: false,
-                outbound: true,
-                accountType: AccountType.findByCode(4),
-                group: CFGroup.findByCode(4),
-                actual: 1,
-                mirrorCash: opCashHand,
-                mirrorBank: opCashBank                
-            ).save() 
-            
-            new GenericOperation(
-                code: 11,
-                name: 'Purchase of Furniture/Fittings',
-                inbound: false,
-                outbound: true,
-                accountType: AccountType.findByCode(4),
-                group: CFGroup.findByCode(4),
-                actual: 1,
-                mirrorCash: opCashHand,
-                mirrorBank: opCashBank                
-            ).save()             
-            
-            new GenericOperation(
-                code: 14,
-                name: 'Sales',
-                inbound: true,
-                outbound: false,
-                accountType: AccountType.findByCode(7),
-                group: CFGroup.findByCode(1),
-                actual: 1,
-                mirrorCash: opCashHand,
-                mirrorBank: opCashBank                
-            ).save()     
-            
-            new GenericOperation(
-                code: 15,
-                name: 'Raw Materials',
-                inbound: false,
-                outbound: true,
-                accountType: AccountType.findByCode(6),
-                group: CFGroup.findByCode(2),
-                actual: 1,
-                mirrorCash: opCashHand,
-                mirrorBank: opCashBank                
-            ).save() 
-            
-            new GenericOperation(
-                code: 16,
-                name: 'Wages',
-                inbound: false,
-                outbound: true,
-                accountType: AccountType.findByCode(6),
-                group: CFGroup.findByCode(2),
-                actual: 1,
-                mirrorCash: opCashHand,
-                mirrorBank: opCashBank
-            ).save() 
-            
-            new GenericOperation(
-                code: 17,
-                name: 'Carriage Inwards',
-                inbound: false,
-                outbound: true,
-                accountType: AccountType.findByCode(6),
-                group: CFGroup.findByCode(2),
-                actual: 1,
-                mirrorCash: opCashHand,
-                mirrorBank: opCashBank                
-            ).save()  
-            
-            new GenericOperation(
-                code: 18,
-                name: 'Production Cost',
-                inbound: false,
-                outbound: true,
-                accountType: AccountType.findByCode(9),
-                group: CFGroup.findByCode(2),
-                actual: 1,
-                mirrorCash: opCashHand,
-                mirrorBank: opCashBank                
-            ).save() 
-            
-            new GenericOperation(
-                code: 19,
-                name: 'Accommodation Cost',
-                inbound: false,
-                outbound: true,
-                accountType: AccountType.findByCode(9),
-                group: CFGroup.findByCode(3),
-                actual: 1,
-                mirrorCash: opCashHand,
-                mirrorBank: opCashBank                
-            ).save() 
-            
-            new GenericOperation(
-                code: 20,
-                name: 'Advertisement',
-                inbound: false,
-                outbound: true,
-                accountType: AccountType.findByCode(9),
-                group: CFGroup.findByCode(3),
-                actual: 1,
-                mirrorCash: opCashHand,
-                mirrorBank: opCashBank                
-            ).save() 
-            
-            new GenericOperation(
-                code: 21,
-                name: 'Bank Charges',
-                inbound: false,
-                outbound: true,
-                accountType: AccountType.findByCode(9),
-                group: CFGroup.findByCode(3),
-                actual: 1,
-                mirrorCash: opCashHand,
-                mirrorBank: opCashBank                
-            ).save()
-            
-            new GenericOperation(
-                code: 22,
-                name: 'Entertainment',
-                inbound: false,
-                outbound: true,
-                accountType: AccountType.findByCode(9),
-                group: CFGroup.findByCode(3),
-                actual: 1,
-                mirrorCash: opCashHand,
-                mirrorBank: opCashBank                
-            ).save()
-            
-            new GenericOperation(
-                code: 23,
-                name: 'EPF and SOCSO',
-                inbound: false,
-                outbound: true,
-                accountType: AccountType.findByCode(9),
-                group: CFGroup.findByCode(3),
-                actual: 1,
-                mirrorCash: opCashHand,
-                mirrorBank: opCashBank                
-            ).save()
-            
-            new GenericOperation(
-                code: 24,
-                name: 'Legal Fees',
-                inbound: false,
-                outbound: true,
-                accountType: AccountType.findByCode(9),
-                group: CFGroup.findByCode(3),
-                actual: 1,
-                mirrorCash: opCashHand,
-                mirrorBank: opCashBank                
-            ).save() 
-            
-            new GenericOperation(
-                code: 25,
-                name: 'Maintenance of Office and Equipment',
-                inbound: false,
-                outbound: true,
-                accountType: AccountType.findByCode(9),
-                group: CFGroup.findByCode(3),
-                actual: 1,
-                mirrorCash: opCashHand,
-                mirrorBank: opCashBank                
-            ).save() 
-            
-            new GenericOperation(
-                code: 26,
-                name: 'Maintenance of Vehicle',
-                inbound: false,
-                outbound: true,
-                accountType: AccountType.findByCode(9),
-                group: CFGroup.findByCode(3),
-                actual: 1,
-                mirrorCash: opCashHand,
-                mirrorBank: opCashBank                
-            ).save()
-            
-            new GenericOperation(
-                code: 27,
-                name: 'Marketing and Promotion',
-                inbound: false,
-                outbound: true,
-                accountType: AccountType.findByCode(9),
-                group: CFGroup.findByCode(3),
-                actual: 1,
-                mirrorCash: opCashHand,
-                mirrorBank: opCashBank                
-            ).save() 
-            
-            new GenericOperation(
-                code: 28,
-                name: 'Medical Expenses',
-                inbound: false,
-                outbound: true,
-                accountType: AccountType.findByCode(9),
-                group: CFGroup.findByCode(3),
-                actual: 1,
-                mirrorCash: opCashHand,
-                mirrorBank: opCashBank                
-            ).save() 
-            
-            new GenericOperation(
-                code: 29,
-                name: 'Office Expenses',
-                inbound: false,
-                outbound: true,
-                accountType: AccountType.findByCode(9),
-                group: CFGroup.findByCode(3),
-                actual: 1,
-                mirrorCash: opCashHand,
-                mirrorBank: opCashBank                
-            ).save()
-            
-            new GenericOperation(
-                code: 30,
-                name: 'Printing and Stationaries',
-                inbound: false,
-                outbound: true,
-                accountType: AccountType.findByCode(9),
-                group: CFGroup.findByCode(3),
-                actual: 1,
-                mirrorCash: opCashHand,
-                mirrorBank: opCashBank                
-            ).save()
-            
-            new GenericOperation(
-                code: 31,
-                name: 'Rental of Premise',
-                inbound: false,
-                outbound: true,
-                accountType: AccountType.findByCode(9),
-                group: CFGroup.findByCode(3),
-                actual: 1,
-                mirrorCash: opCashHand,
-                mirrorBank: opCashBank                
-            ).save() 
-            
-            new GenericOperation(
-                code: 32,
-                name: 'Salaries and Allowances',
-                inbound: false,
-                outbound: true,
-                accountType: AccountType.findByCode(9),
-                group: CFGroup.findByCode(3),
-                actual: 1,
-                mirrorCash: opCashHand,
-                mirrorBank: opCashBank                
-            ).save()
-            
-            new GenericOperation(
-                code: 33,
-                name: 'Pantry Expenses',
-                inbound: false,
-                outbound: true,
-                accountType: AccountType.findByCode(9),
-                group: CFGroup.findByCode(3),
-                actual: 1,
-                mirrorCash: opCashHand,
-                mirrorBank: opCashBank                
-            ).save()
-            
-            new GenericOperation(
-                code: 34,
-                name: 'Telephone, Fax and Internet',
-                inbound: false,
-                outbound: true,
-                accountType: AccountType.findByCode(9),
-                group: CFGroup.findByCode(3),
-                actual: 1,
-                mirrorCash: opCashHand,
-                mirrorBank: opCashBank                
-            ).save() 
-            
-            new GenericOperation(
-                code: 35,
-                name: 'Travelling Cost',
-                inbound: false,
-                outbound: true,
-                accountType: AccountType.findByCode(9),
-                group: CFGroup.findByCode(3),
-                actual: 1,
-                mirrorCash: opCashHand,
-                mirrorBank: opCashBank                
-            ).save() 
-            
-            new GenericOperation(
-                code: 36,
-                name: 'Water and Electricity',
-                inbound: false,
-                outbound: true,
-                accountType: AccountType.findByCode(9),
-                group: CFGroup.findByCode(3),
-                actual: 1,
-                mirrorCash: opCashHand,
-                mirrorBank: opCashBank                
-            ).save()  
-            
-            new GenericOperation(
-                code: 37,
-                name: 'Sales return',
-                inbound: false,
-                outbound: true,
-                accountType: AccountType.findByCode(9),
-                group: CFGroup.findByCode(3),
-                actual: 1,
-                mirrorCash: opCashHand,
-                mirrorBank: opCashBank                
-            ).save()            
-            
-            println "Total " + GenericOperation.count() + " instances created"
+            opList.each {operation ->
+                print "Processing ${operation.code}: ${operation.name_EN}"
+                
+                if(operation.mirrorCashCode > 0) {
+                    def mirrorCash = GenericOperation.findByCode(operation.mirrorCashCode)
+                    operation.mirrorCash = mirrorCash
+                    print " ... cash mirror added ${mirrorCash.code}"
+                }
+                if(operation.mirrorBankCode > 0) {
+                    def mirrorBank = GenericOperation.findByCode(operation.mirrorBankCode)
+                    operation.mirrorBank = mirrorBank
+                    print " ... bank mirror added ${mirrorBank.code}"
+                }
+                
+            }
         }
         
         //  Initiating list of States
@@ -560,6 +139,7 @@ class BootStrap {
             
             new com.sme.entities.UserRole(code: 1, name: "Administrator").save()
             new com.sme.entities.UserRole(code: 2, name: "SME Operator").save() 
+            new com.sme.entities.UserRole(code: 3, name: "Bank/Agency Operator").save() 
             
             println ""
             println "User Role Instances created: ${UserRole.count()}"
@@ -576,49 +156,6 @@ class BootStrap {
             new Industry(code: 6, name: 'Restorant').save()
             
             println "List of Industries created: " + Industry.count() + " instances"
-        }
-        
-        if(Business.list().size() == 0) {
-            def industry1 = Industry.findByCode(1)
-            def industry2 = Industry.findByCode(2)
-            def industry3 = Industry.findByCode(3)
-            def industry4 = Industry.findByCode(4)
-            
-            new Business(
-                dateCreated: new Date(),
-                name: "Amortization Services Sdn Bhd",
-                regNumber: "12345-A",
-                industry: industry1,
-                city: "Kuala Lumpur"
-            ).save()
-            
-            new Business(
-                dateCreated: new Date(),
-                name: "Voluntary Services Sdn Bhd",
-                regNumber: "12346-A",
-                industry: industry2,
-                city: "Kuala Lumpur"
-            ).save() 
-            
-            new Business(
-                dateCreated: new Date(),
-                name: "Superior Constructors Sdn Bhd",
-                regNumber: "12345-B",
-                industry: industry4,
-                city: "Melaka"
-            ).save()
-            
-            new Business(
-                dateCreated: new Date(),
-                name: "Outstanding Design Sdn Bhd",
-                regNumber: "12347-A",
-                industry: industry2,
-                city: "Kuala Lumpur"
-            ).save() 
-            
-            println "\nList of Businesses created: " + Business.count() + " instances"
-            
-            parseBusinessFile();
         }
         
         //  Creation of default Business Profiles
@@ -678,79 +215,6 @@ class BootStrap {
             }
         }
         
-        //  Creating default Users
-        
-        if(User.list().size() == 0) {
-            
-            userRole = UserRole.findByCode(1)
-            
-            println "\nUser Role selected: " + userRole
-            
-            def user = new com.sme.entities.User (
-                dateCreated: new Date(),
-                name: "Nikolay",
-                login: "nick",
-                passw: "1234"
-            )
-            
-            user.role = userRole
-            user.save()
-            
-            new User(
-                dateCreated: new Date(),
-                name: 'Mohar',
-                login: 'mohar',
-                passw: '1234',
-                role: userRole
-            ).save()
-            
-            println "User ${user?.name} created"
-            
-            //  Creating Operators and assigning to a Company
-            
-            def vlad = new User(
-                name: 'Vladimir Gundartsev',
-                login: 'vlad',
-                passw: '1234',
-                role: UserRole.findByCode(2),
-                company: Business.get(1)
-            ).save(flush: true)
-        
-            def opUser1 = new User(
-                name: 'Andreano Choppolo',
-                login: 'andrea',
-                passw: '1234',
-                role: UserRole.findByCode(2),
-                company: Business.get(2)
-            ).save(flush: true)
-        
-            def opUser2 = new User(
-                name: 'Nikolay',
-                login: 'nick_sme',
-                passw: '1234',
-                role: UserRole.findByCode(2),
-                company: Business.get(2)
-            ).save(flush: true)          
-        
-            println ''
-            println 'SME Operator Users created:'
-        
-            def inst = Business.get(2)
-            inst.addToUsers(opUser1)
-            inst.addToUsers(opUser2)
-        
-            println "${inst?.name}: ${inst?.users}"
-        
-            Business.get(1).addToUsers(vlad)
-            println "${Business.get(1).name}: ${Business.get(1).users}"            
-        }        
-
-        //  Emulation of Business Transactions
-        
-        if(!BusinessTransaction.list()) {
-            emulateTransactions()
-        }
-        
         if(!LendingAgency.list()) {
             new LendingAgency (
                 code:           1,
@@ -762,22 +226,273 @@ class BootStrap {
         }
         
         /***********************************************************************
-         *  Unconditional verification and updates for changes
+         *  Importing/Restoring Business instances
          * ********************************************************************/
+        if(Business.list().size() == 0) {
+            importBusinesses()
+        }
         
-        println ''
-        println '**************************************************************'
-        println '         VERIFICATION OF MIGRATION ASPECTS'
-        println '**************************************************************'
-        println ''
+        /***********************************************************************
+         *  Import of saved Users
+         * ********************************************************************/
+        if(!User.list()) {
+            importUsers()
+        }
         
-        updateGenericOperationTypes()
-        createTransactionsPeers()
-        translateOperationTypes()
+        if(BusinessTransaction.list().size() == 0) {
+            importTransactions()
+        }
     }
 
     
     def destroy = {
+    }
+    
+    /***************************************************************************
+     *  Import of previously saved instances of Business
+     **************************************************************************/
+    void importBusinesses() {
+        if(Business.list().size() == 0) {
+            def pathBusiness = "C:/export/businesses.txt"
+            def file = new File("${pathBusiness}")
+            def content = file.text
+            
+            def industry    = null
+            def profile     = null
+            def agency      = null
+            
+            Date registrationDate   = null
+            Date incorpDate         = null
+            Integer count = 0
+            Integer intID
+            
+            println ''
+            println '******************* Import of Businesses *****************'
+            println "File size: ${file.length()} bytes"
+            println '**********************************************************'
+            
+            content.splitEachLine('#') {fields ->
+                industry            = null
+                profile             = null
+                incorpDate          = null
+                registrationDate    = null
+                agency              = null
+                
+                System.out.print "Processing ${++count} Record: ${fields[3]}\r"
+                
+                try {
+                    intID = new Integer(fields[0])
+                }
+                catch(Exception e) {
+                    println "************* Problem: ***********************"
+                    println "${fields[0]} -- ${fields[1]} -- ${fields[2]} -- ${fields[3]}"
+                    println '**********************************************'
+                }
+                
+                if(fields[1] != 'null') {
+                    profile = GenericProfile.findByCode(new Integer(fields[1]))
+                }
+                
+                if(fields[2] != 'null' && fields[2] != '0') {
+                    industry = Industry.findByCode(new Integer(fields[2]))
+                }
+                
+                if(fields[6] != 'null') {
+                    incorpDate = new Date().parse("dd/MM/yyyy", fields[6])
+                }
+                
+                if(fields[7] != 'null') {
+                    registrationDate = new Date().parse("dd/MM/yyyy", fields[7])
+                }
+                
+                if(fields[10] != '0') {
+                    agency = LendingAgency.findByCode(new Integer(fields[10]))
+                }
+                
+                new Business(
+                    internalID:         intID,
+                    name:               fields[3],
+                    accountNo:          fields[4] == 'null' ? '':fields[4],
+                    regNumber:          fields[5] == 'null' ? '':fields[5],
+                    incorpDate:         incorpDate,
+                    registrationDate:   registrationDate,
+                    address:            fields[8] == 'null' ? '':fields[8],
+                    city:               fields[9] == 'null' ? '':fields[9],
+                    industry:           industry,
+                    profile:            profile,
+                    bank:               agency
+                ).save(flush: true)
+            }
+            
+            println "Total instance imported: ${Business.list().size()}"        
+        }
+    }
+    
+    /***************************************************************************
+     *  Importing Users from backup file
+     **************************************************************************/
+    void importUsers() {
+        println ''
+        println '**************** IMPORT OF USER INSTANCES ********************'
+        
+        def path    = "C:/export/users.txt"
+        def file    = new File("${path}")
+        def content = file.text
+        def businessInstance
+        def roleInstance
+        def bankInstance
+        
+        Integer businessID
+        Integer roleID
+        Integer bankID
+        Integer counter = 0
+        
+        println "File size: ${file.length()} bytes"
+        println '**************************************************************'
+        
+        content.splitEachLine('#') {fields ->
+            businessInstance = null
+            roleInstance     = null
+            bankInstance     = null
+            ++counter
+            
+            try {
+                businessID = new Integer(fields[0])
+            }
+            catch(Exception e) {
+                println "*** Issue detected: Business ID not found at Line ${counter}"
+                println "*** ${fields[0]} -- ${fields[1]} -- ${fields[2]} -- ${fields[3]}"
+            }
+            
+            if(businessID > 0) {
+                businessInstance = Business.findByInternalID(businessID)
+            }
+            
+            if(!businessInstance && businessID > 0) {
+                println "*** Issue detected: Business Instance not found at Line ${counter}"
+                println "*** ${fields[0]} -- ${fields[1]} -- ${fields[2]} -- ${fields[3]}"              
+            }
+            
+            try {
+                roleID = new Integer(fields[1])
+            }
+            catch(Exception e) {
+                println "*** Issue detected: Role ID not found at Line ${counter}"
+                println "*** ${fields[0]} -- ${fields[1]} -- ${fields[2]} -- ${fields[3]}"              
+            }
+            
+            roleInstance = UserRole.findByCode(roleID)
+            
+            try {
+                bankID = new Integer(fields[7])
+            }
+            catch(Exception e) {
+                println "*** Issue detected: Bank ID not found at Line ${counter}"
+                println "*** ${fields[0]} -- ${fields[1]} -- ${fields[2]} -- ${fields[3]}"                 
+            }
+            
+            if(bankID > 0) {
+                bankInstance = LendingAgency.findByCode(bankID)
+            }
+            
+            new User(
+                name:       fields[2],
+                login:      fields[3],
+                passw:      fields[4],
+                contactNo:  fields[5] == 'null' ? '':fields[5],
+                email:      fields[6] == 'null' ? '':fields[6],
+                role:       roleInstance,
+                company:    businessInstance,
+                bank:       bankInstance
+            ).save(flush: true)
+        }
+    }
+    
+    /***************************************************************************
+     *  Restore of Transactions backup
+     **************************************************************************/
+    void importTransactions() {
+        println ''
+        println '****************** IMPORT OF TRANSACTIONS ********************'
+        
+        def path    = "C:/export/transactions.txt"
+        def file    = new File("${path}")
+        def content = file.text
+        def company
+        Date transDate
+        boolean correct 
+        GenericOperation oper
+        def transAmount
+        
+        Integer count = 0
+        
+        println "File size: ${file.length()} bytes"
+        println '**************************************************************'
+        
+        content.splitEachLine('#') {fields ->
+            correct = true
+            company = null
+            oper    = null
+            ++count
+
+            try {
+                company = Business.findByInternalID(new Integer(fields[0]))
+            }
+            catch(Exception e) {
+                company = null
+                correct = false
+                println '******* Problem detected: Business not found *********'
+                println "Line ${count}: Business ID = ${fields[0]}"
+                println "Amount: ${fields[3]} Date: ${fields[2]}"
+                println '***************** Skipped ****************************'
+            }
+            
+            try {
+                oper = GenericOperation.findByCode(new Integer(fields[1]))
+            }
+            catch(Exception e) {
+                company = null
+                correct = false
+                println '*** Problem detected: GenericOperation not found *****'
+                println "Line ${count}: Oper ID = ${fields[1]}"
+                println "Amount: ${fields[3]} Date: ${fields[2]}"
+                println '***************** Skipped ****************************'                
+            }
+            
+            try {
+                transDate = new Date().parse("dd/MM/yyyy", fields[2])
+            }
+            catch(Exception e) {
+                company = null
+                correct = false
+                println '**** Problem detected: transactionDate not found *****'
+                println "Line ${count}: Business ID = ${fields[0]}"
+                println "Amount: ${fields[3]} Date: ${fields[2]}"
+                println '***************** Skipped ****************************'                  
+            }
+            
+            transAmount = new Double(fields[3])
+            
+            if(transAmount > 0) {
+                def transInstance = new BusinessTransaction(
+                    operationType:      oper,
+                    transactionDate:    transDate,
+                    transactionAmount:  transAmount,
+                    transactionRemarks: fields[4],
+                    operator:           fields[5],
+                    cash:               new Integer(fields[6]),
+                    company:            company
+                ).save(flush: true)
+            
+                businessTransactionService.createPeer(transInstance, false)
+            }
+            else {
+                println "*** Zero Transaction at ${count} Line: ${fields[2]} - ${fields[3]} SKIPPED"
+            }
+        }
+        
+        println ''
+        println "Transactions import completed: ${count} Records processed"
     }
     
     /**
@@ -1381,43 +1096,6 @@ class BootStrap {
         
         println "Total Operations updated: ${updates}"
     }   //  End of 'updateGenericOperationTypes'
-    
-    /***************************************************************************
-     *  Verifying and updating existing BusinessTransaction instances
-     **************************************************************************/
-    
-    void createTransactionsPeers() {
-        println ''
-        println 'Verification of created BusinessTransaction inctances:'
-        
-        def transactions = BusinessTransaction.list()
-        def cashBankType = GenericOperation.findByCode(1010)
-        
-        println "Total Records found: ${transactions.size()}"
-        
-        transactions.each {transaction ->
-            if(transaction?.cash == null) {
-                transaction.cash = 0 // Default value
-                transaction.save()
-                
-                println "Defaulted to Bank Operation: ${transaction}"
-            }
-            
-            //  Correcting 'Cash at Bank' entries
-            
-            if(transaction.operationType?.code == 13) {
-                transaction.operationType = cashBankType
-                transaction.save(flush: true)
-                
-                println "Corrected Transaction: ${transaction} to Code 1010"
-            }
-            
-            if(transaction.operationType.actual > 0 && transaction?.peer == null) {
-                println "Peer missing for: ${transaction}"
-                businessTransactionService.createPeer(transaction)
-            }
-        }
-    }   //  End of 'createTransactionPeers()'
     
     /***************************************************************************
      *  Adding English Translation to Operation Types

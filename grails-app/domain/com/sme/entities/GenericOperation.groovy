@@ -25,6 +25,10 @@ class GenericOperation {
     GenericOperation mirrorCash
     GenericOperation mirrorBank
     
+    //  Attributes to be used during import/export operations
+    Integer mirrorCashCode
+    Integer mirrorBankCode
+    
     AccountType accountType
     CFGroup     group
     
@@ -40,6 +44,9 @@ class GenericOperation {
         mirrorCash  nullable: true
         mirrorBank  nullable: true
         actual      nullable: true, blank: true
+        
+        mirrorCashCode  nullable: true
+        mirrorBankCode  nullable: true
 
         //  Values of inbound and outbound cannot coincide
         inbound     nullable: false
@@ -95,9 +102,14 @@ class GenericOperation {
     public String toString() {
         def session = RequestContextHolder.currentRequestAttributes().getSession()
         def out = ''
+        def locl = 'en'
+        
+        if(session) {
+            locl = session.locale.toString()
+        }
         
         if(this.code < 1000) {
-            if(session.locale.toString() == 'ms') {
+            if(locl == 'ms') {
                 if(this.inbound) {
                     out = "MASUK: ${name}"
                 }
@@ -115,7 +127,7 @@ class GenericOperation {
             }
         }
         else {
-            if(session.locale.toString() == 'ms') {
+            if(locl == 'ms') {
                 out = name
             }
             else {
