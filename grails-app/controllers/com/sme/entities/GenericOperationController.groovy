@@ -20,7 +20,11 @@ class GenericOperationController {
     }
 
     def create() {
-        respond new GenericOperation(params)
+        def Mirror = GenericOperation.createCriteria().list(){
+            ge('code', 1000)
+        }
+        
+        respond new GenericOperation(params), model:[Mirror: Mirror]
     }
 
     @Transactional
@@ -31,7 +35,13 @@ class GenericOperationController {
         }
 
         if (genericOperationInstance.hasErrors()) {
-            respond genericOperationInstance.errors, view:'create'
+            def Mirror = GenericOperation.createCriteria().list(){
+                ge('code', 1000)
+            }
+
+            //respond new GenericOperation(params)
+            
+            respond genericOperationInstance.errors, view:'create', model:[Mirror: Mirror]
             return
         }
 
@@ -47,10 +57,14 @@ class GenericOperationController {
     }
 
     def edit(GenericOperation genericOperationInstance) {
-        respond genericOperationInstance
+        def Mirror = GenericOperation.createCriteria().list(){
+            ge('code', 1000)
+        }
+        
+        respond genericOperationInstance, model:[Mirror: Mirror]
     }
 
-    @Transactional
+    //@Transactional
     def update(GenericOperation genericOperationInstance) {
         if (genericOperationInstance == null) {
             notFound()
@@ -58,7 +72,12 @@ class GenericOperationController {
         }
 
         if (genericOperationInstance.hasErrors()) {
-            respond genericOperationInstance.errors, view:'edit'
+            
+            def Mirror = GenericOperation.createCriteria().list(){
+                ge('code', 1000)
+            }
+        
+            respond genericOperationInstance.errors, view:'edit', model:[Mirror: Mirror]
             return
         }
 
