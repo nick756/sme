@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
-<%@page import="com.sme.entities.*" %>
+<%@ page import="com.sme.entities.*" %>
 
 <html>
     <head>
