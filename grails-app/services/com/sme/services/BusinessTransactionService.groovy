@@ -147,8 +147,8 @@ class BusinessTransactionService {
             println "--- ${new Date().format('dd/MM/yyyy HH:mm:ss')} - BusinessTransactionService.createPeer ---"
             println "Mode of Payment    : ${mode}"
             println "Actual Transaction : ${source.operationType.actual}"
-            println "Cash case          : ${source?.operationType?.mirrorCash.toString('en')}"
-            println "Bank case          : ${source?.operationType?.mirrorBank.toString('en')}"
+            println "Cash case          : ${source?.operationType?.mirrorCash?.toString('en')}"
+            println "Bank case          : ${source?.operationType?.mirrorBank?.toString('en')}"
         }
         
         if(source?.operationType.inbound && source?.operationType.code < 1000) {
@@ -186,28 +186,30 @@ class BusinessTransactionService {
         if(Environment.current == Environment.DEVELOPMENT && verbolize == true) {        
             println 'After Processing:'
             println "Amount Peer   : ${amountPeer}"
-            println "Operation     : ${peerType.toString('en')}"
+            println "Operation     : ${peerType?.toString('en')}"
         }
         
-        peer = new BusinessTransaction(
-            operationType:      peerType,
-            transactionDate:    source?.transactionDate,
-            transactionAmount:  amountPeer,
-            transactionRemarks: "(${source?.transactionRemarks})",
-            operator:           source?.operator,
-            company:            source?.company,
-            cash:               mode            
-        )
+        if(peerType) {
+            peer = new BusinessTransaction(
+                operationType:      peerType,
+                transactionDate:    source?.transactionDate,
+                transactionAmount:  amountPeer,
+                transactionRemarks: "(${source?.transactionRemarks})",
+                operator:           source?.operator,
+                company:            source?.company,
+                cash:               mode            
+            )
         
-        if(!peer.validate()) {
-            println "*** ${new Date().format('dd/MM/yyyy HH:mm:ss')} - BusinessTransactionService.createPeer ***"
-            println "Peer Validation Errors: "
-            println peer.errors
+            if(!peer.validate()) {
+                println "*** ${new Date().format('dd/MM/yyyy HH:mm:ss')} - BusinessTransactionService.createPeer ***"
+                println "Peer Validation Errors: "
+                println peer.errors
+            }
+        
+            peer.save(flush: true)
+        
+            source.peer = peer?.id
+            source.save(flush: true)
         }
-        
-        peer.save(flush: true)
-        
-        source.peer = peer?.id
-        source.save(flush: true)
     }
 }

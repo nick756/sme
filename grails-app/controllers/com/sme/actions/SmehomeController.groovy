@@ -31,24 +31,13 @@ class SmehomeController {
         
         params.offset = params.offset ?: 0
         params.max = params.max ?: 10        
-
-        //  TODO:   List of Cash related Operation Types must be revised, with
-        //          TWO more Type added: 1040 & 1050, for managing hiddent
-        //          peers (cash and bank). Automatic entries must use higher
-        //          codes for easier filtering
         
         transactions = BusinessTransaction.createCriteria().list(params) {
             eq('company', company) 
             
-//            or {
-//                //isNotNull('peer')
-//                operationType {
-//                    or {
-//                        eq('code', 1020)
-//                        eq('code', 1030)
-//                    }
-//                }
-//            }
+            operationType {
+                eq('actual', 1)
+            }
             
             and {
                 order('transactionDate', 'desc')

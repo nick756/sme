@@ -62,7 +62,7 @@ class CashFlowService {
         
         if(transactions.size() > 0) {
             transactions.each {item ->
-                if(item?.operationType.actual == 1) {
+                if(item?.operationType.actual == 1 && (item?.operationType?.code != 500 && item?.operationType?.code != 505)) {
                     if(item?.operationType.inbound) {
                         inflow += item?.transactionAmount
                     }
