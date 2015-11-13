@@ -38,11 +38,16 @@
                             <label class="edit-form mand"><g:message code="genericOperation.accounttype.label"/></label>
                             <g:select class="select-list" name="accountType.id" from="${AccountType.list()}" value="${genericOperationInstance?.accountType?.id}" optionKey="id"/>
                             <br/>
+                            
+                            <label class="edit-form mand"><g:message code="genericOperation.group.label"/></label>
+                            <g:select class="select-list" name="group.id" from="${CFGroup.list()}" value="${genericOperationInstance?.group?.id}" optionKey="id"/>
+                            <br/>
+
                             <label class="edit-form mand"><g:message code="genericOperation.mirrorCash.label"/></label>
-                            <g:select class="select-list" name="mirrorCash.id" from="${Mirror}" value="${genericOperationInstance?.mirrorCash?.id}" optionKey="id"/>
+                            <g:select class="select-list" name="mirrorCash.id" from="${Mirror}" value="${genericOperationInstance?.mirrorCash?.id}" optionKey="id" noSelection="['':'']" default="none"/>
                             <br/>
                             <label class="edit-form mand"><g:message code="genericOperation.mirrorBank.label"/></label>
-                            <g:select class="select-list" name="mirrorBank.id" from="${Mirror}" value="${genericOperationInstance?.mirrorBank?.id}" optionKey="id"/>
+                            <g:select class="select-list" name="mirrorBank.id" from="${Mirror}" value="${genericOperationInstance?.mirrorBank?.id}" optionKey="id" noSelection="['':'']" default="none"/>
                             <br/>
                             <label class="edit-form mand"><g:message code="genericOperation.inbound.label"/></label>
                             <g:checkBox name="inbound" value="${genericOperationInstance?.inbound}"/>

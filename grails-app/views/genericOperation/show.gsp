@@ -36,6 +36,11 @@
                         <label class="edit-form mand"><g:message code="genericOperation.accounttype.label"/></label>
                         <g:textField class="text-input" name="accountType.id" value="${genericOperationInstance?.accountType?.name}" readonly="readonly" />
                         <br/>
+                            
+                            <label class="edit-form mand"><g:message code="genericOperation.group.label"/></label>
+                            <g:textField class="text-input" name="group.id" value="${genericOperationInstance?.group?.name}" readonly="readonly" />
+                            <br/>
+
                         <label class="edit-form mand"><g:message code="genericOperation.mirrorCash.label"/></label>
                         <g:textField class="text-input" name="mirrorCash.id" value="${genericOperationInstance?.mirrorCash?.name}" readonly="readonly" />
                         <br/>
@@ -52,28 +57,6 @@
                         <g:textField class="text-input" name="actual" value="${genericOperationInstance?.actual}" readonly="readonly" />
                         <br/>
 
-
-                        <!--<label class="edit-form mand"><g:message code="genericOperation.active.label"/></label>
-
-
-                        <g:if test="${genericOperationInstance?.actual > 0}">
-                        <g:set var="visible" value="${true}"/>
-                        </g:if>
-                        <g:else>
-                            <g:set var="visible" value="${false}"/>
-                        </g:else>
-                        <g:textField class="text-input" name="name" value="${visible}" readonly="readonly" />
-                        <br/>
-
-                        <fieldset class="form">
-                                <g:render template="form"/>
-                        </fieldset>
-                        <fieldset class="buttons">
-                                <g:submitButton name="create" class="save" value="${message(code: 'default.button.create.label', default: 'Create')}" />
-                        </fieldset>
-                        <hr color="#9CC7F2" style="margin-bottom: 10px;"/>
-                        <input type="submit" value="<g:message code='actions.login.submit'/>" class="myButton" />
-                    </g:form>-->
             </div>
 </body>
 </html>
