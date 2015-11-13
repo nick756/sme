@@ -12,18 +12,6 @@
                     
             <h1 class="sub-title">${genericOperationInstance?.name}</h1>
                     <div class="edit-form-box">
-                    <!--<g:if test="${flash.message}">
-                    <div class="message" role="status">${flash.message}</div>
-                    </g:if>
-                    <g:hasErrors bean="${genericOperationInstance}">
-                    <ul class="errors" role="alert">
-                            <g:eachError bean="${genericOperationInstance}" var="error">
-                            <li <g:if test="${error in org.springframework.validation.FieldError}">data-field-id="${error.field}"</g:if>><g:message error="${error}"/></li>
-                            </g:eachError>
-                    </ul>
-                    </g:hasErrors>
-                    <g:form url="[resource:genericOperationInstance, action:'save']" >-->
-
                         <label class="edit-form mand"><g:message code="genericOperation.code.label"/></label>
                         <g:textField class="text-input" name="code" value="${genericOperationInstance?.code}" readonly="readonly" />
                         <br/>            
