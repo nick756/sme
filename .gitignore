@@ -7,6 +7,7 @@ stacktrace.log
 /plugin.xml
 /*.log
 /*DB.*
+/*Db.*
 /cobertura.ser
 .DS_Store
 /target/

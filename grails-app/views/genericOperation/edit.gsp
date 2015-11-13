@@ -1,4 +1,4 @@
-<%@ page import="com.sme.entities.GenericOperation" %>
+<%@ page import="com.sme.entities.*" %>
 <!DOCTYPE html>
 <html>
 	<head>
@@ -7,16 +7,13 @@
 		<title><g:message code="default.edit.label" args="[entityName]" /></title>
 	</head>
 	<body>
-		<a href="#edit-genericOperation" class="skip" tabindex="-1"><g:message code="default.link.skip.label" default="Skip to content&hellip;"/></a>
-		<div class="nav" role="navigation">
-			<ul>
-				<li><g:link class="home" action="show" params="['id': genericOperationInstance?.id]"><g:message code="default.home.label"/></g:link></li>
-				<li><g:link class="list" action="index"><g:message code="genericOperation.list" /></g:link></li>
-				<li><g:link class="create" action="create"><g:message code="default.new.label" args="[entityName]" /></g:link></li>
-			</ul>
-		</div>
-		<div id="edit-genericOperation" class="content scaffold-edit" role="main">
-			<h1><g:message code="default.edit.label" args="[entityName]" /></h1>
+            <div class="action-header">
+                <g:link style="float: left; margin-left: 5px;" controller="genericOperation" action="show" params="['max': params.max, 'offset': params.offset, 'id': genericOperationInstance?.id]"><img class="image-link" style="margin-left: 5px;" src="${resource(dir: 'images', file: 'arrow_left.png')}" title="<g:message code='actions.back'/>"/></g:link>
+            </div> 
+        
+                <h1 class="sub-title"><g:message code="default.edit.label" args="[genericOperationInstance?.name]" /></h1>
+		<!--<div id="create-genericOperation" class="content scaffold-create" role="main">-->
+                <div class="edit-form-box">
 			<g:if test="${flash.message}">
 			<div class="message" role="status">${flash.message}</div>
 			</g:if>
@@ -27,14 +24,57 @@
 				</g:eachError>
 			</ul>
 			</g:hasErrors>
-			<g:form url="[resource:genericOperationInstance, action:'update']" method="PUT" >
-				<g:hiddenField name="version" value="${genericOperationInstance?.version}" />
-				<fieldset class="form">
-					<g:render template="form"/>
-				</fieldset>
-				<fieldset class="buttons">
-					<g:actionSubmit class="save" action="update" value="${message(code: 'default.button.update.label', default: 'Update')}" />
-				</fieldset>
+			<g:form url="[resource:genericOperationInstance, action:'update']"  method="PUT" >
+                            
+                            <label class="edit-form mand"><g:message code="genericOperation.code.label"/></label>
+                            <g:textField class="text-input" name="code" value="${genericOperationInstance?.code}"/>
+                            <br/>            
+                            <label class="edit-form mand"><g:message code="genericOperation.name.label"/> (MY)</label>
+                            <g:textField class="text-input" name="name" value="${genericOperationInstance?.name}"/>
+                            <br/>
+                            <label class="edit-form mand"><g:message code="genericOperation.name.label"/> (EN)</label>
+                            <g:textField class="text-input" name="name_EN" value="${genericOperationInstance?.name_EN}"/>
+                            <br/>
+                            <label class="edit-form mand"><g:message code="genericOperation.accounttype.label"/></label>
+                            <g:select class="select-list" name="accountType.id" from="${AccountType.list()}" value="${genericOperationInstance?.accountType?.id}" optionKey="id"/>
+                            <br/>
+                            <label class="edit-form mand"><g:message code="genericOperation.mirrorCash.label"/></label>
+                            <g:select class="select-list" name="mirrorCash.id" from="${Mirror}" value="${genericOperationInstance?.mirrorCash?.id}" optionKey="id"/>
+                            <br/>
+                            <label class="edit-form mand"><g:message code="genericOperation.mirrorBank.label"/></label>
+                            <g:select class="select-list" name="mirrorBank.id" from="${Mirror}" value="${genericOperationInstance?.mirrorBank?.id}" optionKey="id"/>
+                            <br/>
+                            <label class="edit-form mand"><g:message code="genericOperation.inbound.label"/></label>
+                            <g:checkBox name="inbound" value="${genericOperationInstance?.inbound}"/>
+                            <br/>
+                            <label class="edit-form mand"><g:message code="genericOperation.outbound.label"/></label>
+                            <g:checkBox name="outbound" value="${genericOperationInstance?.outbound}" />
+                            <br/>
+                            <label class="edit-form mand"><g:message code="genericOperation.actual.label"/></label>
+                            <g:textField class="text-input" name="actual" value="${genericOperationInstance?.actual}"/>
+                            <br/>
+                            
+                            
+                            <!--<label class="edit-form mand"><g:message code="genericOperation.active.label"/></label>
+                            
+
+                            <g:if test="${genericOperationInstance?.actual > 0}">
+                            <g:set var="visible" value="${true}"/>
+                            </g:if>
+                            <g:else>
+                                <g:set var="visible" value="${false}"/>
+                            </g:else>
+                            <g:textField class="text-input" name="name" value="${visible}" disabled="true"/>
+                            <br/>
+
+                            <fieldset class="form">
+                                    <g:render template="form"/>
+                            </fieldset>
+                            <fieldset class="buttons">
+                                    <g:submitButton name="create" class="save" value="${message(code: 'default.button.create.label', default: 'Create')}" />
+                            </fieldset>-->
+                            <hr color="#9CC7F2" style="margin-bottom: 10px;"/>
+                            <input type="submit" value="<g:message code='actions.login.submit'/>" class="myButton" />
 			</g:form>
 		</div>
 	</body>
