@@ -23,6 +23,18 @@ class SmehomeController {
         def companyID = session?.company?.id
         def company
         
+        def filterDateFrom = params?.filterDateFrom ?: null
+        def filterDateTill = params?.filterDateTill ?: null
+        
+        def filterOperation = params?.filterOperationType
+        
+        def filterOperationType = null
+        
+        if(params.filterOperation != null && params.filterOperation?.id != "") {
+            //println "...passed: ${params.filterOperationType?.id}"
+            filterOperationType = GenericOperation.get(new Integer(params?.filterOperation?.id))
+        }
+        
         if(!user.isAttached()) {
             user.attach()
         }
@@ -39,6 +51,18 @@ class SmehomeController {
                 eq('actual', 1)
             }
             
+            if(filterDateFrom != null) {
+                ge('transactionDate', filterDateFrom)
+            }
+            
+            if(filterDateTill) {
+                le('transactionDate', filterDateTill)
+            }
+            
+            if(filterOperationType) {
+                eq('operationType', filterOperationType)
+            }
+            
             and {
                 order('transactionDate', 'desc')
                 order('id', 'desc')
@@ -51,6 +75,9 @@ class SmehomeController {
             println ''
             println "-- ${new Date().format("dd/MM/yyyy HH:mm:ss")} ${session.user.login}: Method smehome/index"
             println "Counter : ${counter}"
+            println "filterDateFrom: ${filterDateFrom}"
+            println "${params}"
+            println "Operation Filter: ${filterOperationType} / ${params.filterOperationType?.id}"
         }
         
         [
@@ -59,7 +86,11 @@ class SmehomeController {
             params:         params,
             errMessage:     params.errMessage,
             successMsg:     params.successMsg,
-            msgDetails:     params.msgDetails
+            msgDetails:     params.msgDetails,
+            filterDateFrom: filterDateFrom,
+            filterDateTill: filterDateTill,
+            
+            filterOperation: filterOperationType
         ]
     }
     
@@ -210,7 +241,8 @@ class SmehomeController {
         if(includedList.size() > 0) {
             redirect(action: 'index', params: [
                     offset: params.offset, 
-                    errMessage: message(code: 'businesstransaction.error.alreadyincf')
+                    errMessage: message(code: 'businesstransaction.error.alreadyincf'),
+                    'filterDateFrom': params?.filterDateFrom, 'filterDateTill': params?.filterDateTill, 'filterOperation.id': params?.filterOperation?.id
                 ]
             )
         }
@@ -274,7 +306,7 @@ class SmehomeController {
         msgDetails += "${businessTransactionInstance.transactionRemarks} "
         msgDetails += "${new DecimalFormat('#,##0.00').format(businessTransactionInstance.transactionAmount)}"
         
-        redirect action: 'index', params: [offset: params.offset, successMsg: successMessage, msgDetails: msgDetails]
+        redirect action: 'index', params: [offset: params.offset, successMsg: successMessage, msgDetails: msgDetails, 'filterDateFrom': params?.filterDateFrom, 'filterDateTill': params?.filterDateTill, 'filterOperation.id': params?.filterOperation?.id]
     }
     
     /**
