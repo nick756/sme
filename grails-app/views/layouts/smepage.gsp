@@ -51,6 +51,13 @@
             </g:link> 
         </div>
         <div class="menu-pane-row">
+            <g:link controller="credit" action="index" class="tile" style="color: white;">
+                <img src="${resource(dir: 'images', file: 'data_analysis.png')}">
+                <br/>                
+                <g:message code="sme.captions.credittransactions"/>
+            </g:link> 
+        </div>        
+        <div class="menu-pane-row">
             <g:link controller="smestatement" action="index" class="tile" style="color: white;">
                 <img src="${resource(dir: 'images', file: 'statement_white.png')}">
                 <br/>

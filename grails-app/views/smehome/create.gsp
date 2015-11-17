@@ -8,6 +8,15 @@
         <title>SIFAR</title>
     </head>
     <body>
+<%
+    def operationsList = GenericOperation.createCriteria().list() {
+        or {
+            lt('code', 1000)
+            eq('code', 1020)
+            eq('code', 1030)
+        }
+    }
+%>
         <div class="action-header">
             <g:link style="float: left; margin-left: 5px;" action="index" params="['max': params.max, 'offset': params.offset, 'id': businessInstance?.id]"><img class="image-link" style="margin-left: 5px;" src="${resource(dir: 'images', file: 'arrow_left.png')}" title="<g:message code='actions.back'/>"/></g:link>
         </div> 
@@ -26,7 +35,7 @@
                 <g:hiddenField name="company.id" value="${session?.company.id}"/>
                 
                 <label class="edit-form mand"><g:message code="businesstransaction.type.label"/></label>
-                <g:select class="select-list" name="operationType.id" from="${GenericOperation.list()}" optionKey="id"/>
+                <g:select class="select-list" name="operationType.id" from="${operationsList}" optionKey="id"/>
                 <br/>
                 <label class="edit-form mand"><g:message code="businesstransaction.remarks.label"/></label>
                 <g:textField class="text-input" name="transactionRemarks" value="${businessTransactionInstance?.transactionRemarks}"/>
