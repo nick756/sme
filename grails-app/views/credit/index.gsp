@@ -32,7 +32,7 @@
             <div class="success-message">${successMsg}<br/>${msgDetails}</div>
         </g:if>            
         <table class="righted-content">
-            <caption><g:message code="default.application.transactionslist"/></caption>
+            <caption><g:message code="default.application.credittransactions"/></caption>
             <tr style="background: #d0d0d0;">
                 <td colspan="7" style="border: none; margin: 0; padding: 10px 0; background: #dadada;">
                     <g:form action="index" params="['offset': 0]">
