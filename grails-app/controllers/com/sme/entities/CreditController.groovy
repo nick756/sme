@@ -48,8 +48,15 @@ class CreditController  {
             eq('company', company) 
             
             operationType {
-                ge('code', 2000)
-                lt('code', 3000)
+                or {
+                    and {
+                        ge('code', 2000)
+                        lt('code', 3000)
+                    }
+                    
+                    eq('code', 510)
+                    eq('code', 515)
+                }
             }
             
             if(filterDateFrom != null) {
