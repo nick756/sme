@@ -22,6 +22,7 @@
                 <td class="centered header shaded">Login</td>
                 <td class="centered header shaded">Role</td>
                 <td class="centered header shaded">Email</td>
+                <td class="centered header shaded">Account No</td>
                 <td class="centered header shaded">Business</td>
             </tr>
             <g:each in="${usersList}" status="index" var="userInstance">
@@ -31,6 +32,7 @@
                     <td>${userInstance?.login}</td>
                     <td class="centered">${userInstance?.role?.name}</td>
                     <td>${userInstance?.email}</td>
+                    <td>${userInstance?.company?.accountNo}</td>
                     <td>${userInstance?.company?.name}</td>
                 </tr>
             </g:each>

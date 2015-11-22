@@ -52,6 +52,6 @@ class Business implements Serializable {
     }
     
     public String toString() {
-        "${regNumber} ${name}"
+        "${name}"
     }
 }

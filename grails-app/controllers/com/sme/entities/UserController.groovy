@@ -22,6 +22,7 @@ class UserController {
         def searchByName = ''
         def searchByLogin = ''
         def searchByCompany = ''
+        def searchByAccount = ''
         
         if(params.search_name) {
             searchByName = params.search_name
@@ -34,6 +35,10 @@ class UserController {
         if(params.search_company) {
             searchByCompany = params.search_company
         }
+        
+        if(params.search_account) {
+            searchByAccount = params.search_account
+        }        
         
         userInstanceList = User.createCriteria().list(params) {
             if(searchByName != '') {
@@ -49,6 +54,12 @@ class UserController {
                     ilike('name', "%${searchByCompany}%")
                 }
             }
+            
+            if(searchByAccount != '') {
+                company {
+                    ilike('accountNo', "${searchByAccount}%")
+                }
+            }            
         }
         
         [
@@ -56,7 +67,8 @@ class UserController {
             userInstanceCount: userInstanceList.totalCount,
             searchByName: searchByName,
             searchByLogin: searchByLogin,
-            searchByCompany: searchByCompany
+            searchByCompany: searchByCompany,
+            searchByAccount: searchByAccount
         ]
     }
 
@@ -157,6 +169,50 @@ class UserController {
             return
         }
         
-        [usersList: User.list()]
+        def userInstanceList
+        def searchByName = ''
+        def searchByLogin = ''
+        def searchByCompany = ''
+        def searchByAccount = ''
+        
+        if(params.search_name) {
+            searchByName = params.search_name
+        }
+        
+        if(params.search_login) {
+            searchByLogin = params.search_login
+        }
+        
+        if(params.search_company) {
+            searchByCompany = params.search_company
+        }
+        
+        if(params.search_account) {
+            searchByAccount = params.search_account
+        }        
+        
+        userInstanceList = User.createCriteria().list(params) {
+            if(searchByName != '') {
+                ilike('name', "%${searchByName}%")
+            }
+            
+            if(searchByLogin != '') {
+                ilike('login', "%${searchByLogin}%")
+            }
+            
+            if(searchByCompany != '') {
+                company {
+                    ilike('name', "%${searchByCompany}%")
+                }
+            }
+            
+            if(searchByAccount != '') {
+                company {
+                    ilike('accountNo', "${searchByAccount}%")
+                }
+            }             
+        }        
+        
+        [usersList: userInstanceList]
     }
 }

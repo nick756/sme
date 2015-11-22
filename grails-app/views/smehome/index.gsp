@@ -11,7 +11,11 @@
         
         <%  
             def filterTypeList = GenericOperation.createCriteria().list() {
-                lt('code', 1000)
+                or {
+                    lt('code', 1000)
+                    eq('code', 1020)
+                    eq('code', 1030)
+                }
                 and{
                     order('outbound')
                     order('code')

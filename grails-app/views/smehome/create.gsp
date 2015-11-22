@@ -15,6 +15,10 @@
             eq('code', 1020)
             eq('code', 1030)
         }
+        and {
+            order('outbound')
+            order('code')
+        }
     }
 %>
         <div class="action-header">

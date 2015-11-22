@@ -21,7 +21,10 @@ class GenericOperationController {
 
     def create() {
         def Mirror = GenericOperation.createCriteria().list(){
-            ge('code', 1000)
+            and {
+                ge('code', 1000)
+                le('code', 1010)
+            }
         }
         
         respond new GenericOperation(params), model:[Mirror: Mirror]
@@ -36,7 +39,10 @@ class GenericOperationController {
 
         if (genericOperationInstance.hasErrors()) {
             def Mirror = GenericOperation.createCriteria().list(){
-                ge('code', 1000)
+                and {
+                    ge('code', 1000)
+                    le('code', 1010)
+                }
             }
 
             //respond new GenericOperation(params)
@@ -58,7 +64,10 @@ class GenericOperationController {
 
     def edit(GenericOperation genericOperationInstance) {
         def Mirror = GenericOperation.createCriteria().list(){
-            ge('code', 1000)
+            and {
+                ge('code', 1000)
+                le('code', 1010)
+            }
         }
         
         respond genericOperationInstance, model:[Mirror: Mirror]
@@ -74,7 +83,10 @@ class GenericOperationController {
         if (genericOperationInstance.hasErrors()) {
             
             def Mirror = GenericOperation.createCriteria().list(){
-                ge('code', 1000)
+                and {
+                    ge('code', 1000)
+                    le('code', 1010)
+                }
             }
         
             respond genericOperationInstance.errors, view:'edit', model:[Mirror: Mirror]
