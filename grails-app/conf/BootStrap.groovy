@@ -158,61 +158,73 @@ class BootStrap {
             println "List of Industries created: " + Industry.count() + " instances"
         }
         
-        //  Creation of default Business Profiles
+        /***********************************************************************
+         *  Creation of Genric Profile instances
+         * ********************************************************************/
             
         if(GenericProfile.list().size() == 0) {
-            def prof = new GenericProfile(
+            def prof01 = new GenericProfile(
                 code: 1,
                 name: 'Trading Activities'
             )
+            
+            def prof02 = new GenericProfile(
+                code: 2,
+                name: 'Food Manufacturing Activities'
+            ).save(flush: true)   
                 
-            prof.save(flush: true);
+            def prof03 = new GenericProfile(
+                code: 3,
+                name: 'Restorant/Food Stall Operations'
+            ).save(flush: true)             
                 
+            prof01.save(flush: true);
+
+            def commonList = GenericOperation.createCriteria().list() {
+                or {
+                    lt('code', 1000)
+                    eq('code', 1020)
+                    eq('code', 1030)
+                }
+            }
                
             //  Auto-populating Profile 'Trading Activities'
             
-            GenericOperation.list().each {operationType ->
-                prof.addToOperations(
+            commonList.each {item ->
+                prof01.addToOperations(
                     new ProfileLink(
-                        operation: operationType,
-                        profile: prof,
+                        operation: item,
+                        profile: prof01,
                         active: true
                     )
                 )
+                
+                prof02.addToOperations(
+                    new ProfileLink(
+                        operation: item,
+                        profile: prof02,
+                        active: true
+                    )
+                )
+                
+                prof03.addToOperations(
+                    new ProfileLink(
+                        operation: item,
+                        profile: prof03,
+                        active: true
+                    )
+                )                
             }
                 
-            //            for(int i = 0; i < 36; i++) {
-            //                
-            //                if(i != 11 && i != 12) {
-            //                    prof.addToOperations(
-            //                        new ProfileLink(
-            //                            operation: GenericOperation.findByCode(i + 1),
-            //                            profile: prof,
-            //                            active: true
-            //                        ).save(flush: true)
-            //                    ) 
-            //                }
-            //            }
-                
-            new GenericProfile(
-                code: 2,
-                name: 'Food Manufacturing Activities'
-            ).save()   
-                
-            new GenericProfile(
-                code: 3,
-                name: 'Restorant/Food Stall Operations'
-            ).save()                 
+            prof01.save(flush: true)  
+            prof02.save(flush: true)
+            prof03.save(flush: true)
                 
             println ""
-            println "\nGeneric Profiles created: ${GenericProfile.count()} instances"
-            println "Profile \'${prof.name}\' has been added Operations:"
-            def list = prof.getOperations().asList().sort{it.operation.code}
-                
-            list.each {
-                println "- ${String.format('%1$4s', it?.operation?.code)} ${it?.operation?.name}"
-                //println "- " + it?.operation?.code + " " + it?.operation?.name
-            }
+            println "Generic Profiles created: ${GenericProfile.count()} instances"
+            println "Operations assigned to ${prof01.name}: ${prof01?.operations.asList().size()}"
+            println "Operations assigned to ${prof02.name}: ${prof02?.operations.asList().size()}"
+            println "Operations assigned to ${prof03.name}: ${prof03?.operations.asList().size()}"
         }
         
         if(!LendingAgency.list()) {
