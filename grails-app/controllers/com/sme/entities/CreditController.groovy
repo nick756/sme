@@ -104,8 +104,15 @@ class CreditController  {
     
     def create() {
         def opList = GenericOperation.createCriteria().list(){
-            ge('code', 2000)
-            lt('code', 3000)
+                or {
+                    and {
+                        ge('code', 2000)
+                        lt('code', 3000)
+                    }
+                    
+                    eq('code', 510)
+                    eq('code', 515)
+                }
         }
         
         respond new BusinessTransaction(params), model:[opList: opList]
@@ -238,8 +245,15 @@ class CreditController  {
         //  Summary
         
         def opList = GenericOperation.createCriteria().list(){
-            ge('code', 2000)
-            lt('code', 3000)
+                or {
+                    and {
+                        ge('code', 2000)
+                        lt('code', 3000)
+                    }
+                    
+                    eq('code', 510)
+                    eq('code', 515)
+                }
         }
         
         def yearTrans = transactionInstance.transactionDate.year - 100 + 2000
