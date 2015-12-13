@@ -99,7 +99,13 @@ class ExportEntitiesService {
         
         def transactions = BusinessTransaction.createCriteria().list() {
             operationType {
-                eq('actual', 1)
+                or {
+                    eq('actual', 1)
+                    eq('code', 1020)
+                    eq('code', 1030)
+                    eq('code', 2000)
+                    eq('code', 2005)
+                }
             }
             
             order('transactionDate')

@@ -99,7 +99,7 @@ class BusinessTransactionService {
     }
     
     /**
-     *  Checking available Transactions for PNL Statement: PNLStatement instance
+     *  Checking available Transactions for Cash Flow Statement: CF Statement instance
      *  must be checked prior to calling this method, to avoid duplicates
      */
     @Transactional (readOnly = true)
@@ -119,6 +119,10 @@ class BusinessTransactionService {
             ge('transactionDate', dateFrom)
             le('transactionDate', dateTill)
             isNull('statement')
+            
+            operationType {
+                lt('code', 2000)
+            }
         }
         
         if(Environment.current == Environment.DEVELOPMENT) {
