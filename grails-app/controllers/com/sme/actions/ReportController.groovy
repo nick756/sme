@@ -48,4 +48,18 @@ class ReportController {
             businesslist: result
         ]
     }
+    
+    /**
+     *  Structured Report on Credit Operations for a given Business. Called only
+     *  from SME Group. Grouping is done by prefixes entered into 'description'
+     *  field of BusinessTransactions: identified by token '::' with following
+     *  triming. Defualt GSP page 'creditreport' is to be used for displaying (in
+     *  new window).
+     *  
+     *  Passed Parameters (as on 14/12/2015):
+     *  -   businessID
+     **/
+    def creditreport() {
+        
+    }
 }
