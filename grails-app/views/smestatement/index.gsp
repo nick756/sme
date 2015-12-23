@@ -13,6 +13,12 @@
         <title>SIFAR</title>
     </head>
     <body>
+        <div class="tabs-container">
+            <ul class="tabs-sec">
+                <li class="selected-item">Cash Flow Statement</li>
+                <li class="unselected-item"><g:link action="income"><g:message code="pnlstatement.page.label"/></g:link></li>
+            </ul>
+        </div>
         <div class="action-header">
             <g:link style="float: right; margin-right: 5px;" action="delete" params="['max': params.max, 'offset': params.offset]" onclick="return confirm('Are you sure?');"><img class="image-link" style="margin-left: 5px;" src="${resource(dir: 'images', file: 'data_delete.png')}" title="<g:message code='actions.delete'/>"/></g:link>
             <g:link style="float: right; margin-right: 5px;" action="create" params="['max': params.max, 'offset': params.offset]"><img class="image-link" style="margin-left: 5px;" src="${resource(dir: 'images', file: 'add_record.png')}" title="<g:message code='actions.add'/>"/></g:link>

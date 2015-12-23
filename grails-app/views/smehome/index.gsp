@@ -33,7 +33,7 @@
         </g:if>            
         <table class="righted-content">
             <caption><g:message code="default.application.transactionslist"/></caption>
-            <tr style="background: #d0d0d0;">
+            <tr style="background: #aaa393;">
                 <td colspan="7" style="border: none; margin: 0; padding: 10px 0; background: #dadada;">
                     <g:form action="index" params="['offset': 0]">
                         <label class="edit-form"><g:message code="filter.dateFrom.label"/></label>

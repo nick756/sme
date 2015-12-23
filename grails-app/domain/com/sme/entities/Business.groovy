@@ -19,10 +19,10 @@ class Business implements Serializable {
     LendingAgency   bank
     
     static hasMany = [
-        users: User,
-        businessTransactions: BusinessTransaction,
-        statements: CashFlowStatement
-        
+        users:                  User,
+        businessTransactions:   BusinessTransaction,
+        statements:             CashFlowStatement,
+        pnlStatements:          PNLStatement
     ]
     
     static constraints = {
@@ -42,6 +42,7 @@ class Business implements Serializable {
         
         businessTransactions    nullable: true
         statements              nullable: true
+        pnlStatements           nullable: true    
         registrationDate        nullable: true, blank: true
         bank                    nullable: true
     }

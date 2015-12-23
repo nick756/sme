@@ -7,16 +7,22 @@ class PNLStatement {
     Date dateCreated
     Date lastUpdated
     
-    Integer month
+    //  Period the PNL Statement is calculated for
     Integer year
+    Integer month
+    Date    dateFrom
+    Date    dateTill
+    boolean fullYear    
     
-    BigDecimal openingBalance       //  Cumulative amount (result from past period)
-    BigDecimal inboundAmount        //  Inflow amount
-    BigDecimal outboundAmount       //  Outflow amount
-    BigDecimal resultAmount         //  Nett amount (difference in - out)
+    BigDecimal grossProfit
+    BigDecimal otherIncome
+    BigDecimal expenses
+    BigDecimal taxation
+    BigDecimal netProfitBT  //  Before Tax
+    BigDecimal netProfitAT  //  After Tax
     
-    static belongsTo = [company: Business]
-    static hasMany = [busTransactions: BusinessTransaction]
+    static belongsTo    = [company: Business]
+    static hasMany      = [sections: PNLSection]
 
     static constraints = {
         dateCreated nullable: true
@@ -24,13 +30,10 @@ class PNLStatement {
     }
     
     static mapping = {
-        sort    'year'
-        sort    'month'
+        sort 'dateFrom'
     }
     
     public String toString() {
-        String.format('%1$2s', month).replace(' ', '0') + " " +
-        String.format('%1$4s', year) + " PNL: " +
-        (new DecimalFormat('#,##0.00')).format(resultAmount)
+        "${dateFrom.format('dd/MM/yyyy')}-${dateTill.format('dd/MM/yyyy')}: ${new DecimalFormat('#,##0.00').format(netProfitAT)}"
     }
 }

@@ -13,6 +13,7 @@ class SmestatementController {
 
     def businessTransactionService
     def cashFlowService
+    def incomeStatementService
     
     def index() { 
         if(!session.user) {
@@ -225,5 +226,179 @@ class SmestatementController {
         }
 
         redirect action: 'index', params: [params: params]        
+    }
+    
+    /***************************************************************************
+     *  Methods related to PNL Statements for a Business instance
+     **************************************************************************/
+    
+    //  Similar to 'index' action for Cash Flow functions
+    def income() {
+        if(!session?.user) {
+            redirect (controller: 'login')
+            return
+        }  
+        
+        params.offset = params.offset ?: 0
+        params.max = params.max ?: 12
+        
+        def user = session?.user
+        def companyID = session?.company?.id
+        def company
+        
+        if(!user.isAttached()) {
+            user.attach()
+        }
+        
+        company = Business.get(companyID)
+        
+        def statements = PNLStatement.createCriteria().list(params) {
+            eq('company', company)
+            
+            and {
+                order('year')
+                order('dateFrom')
+                order('dateTill', 'desc')
+            }
+        }
+        
+        [
+            statements: statements,
+            totalCount: statements.totalCount,
+            params: params,
+            businessInstance: company
+        ]        
+    }
+    
+    /*
+     *  Navigation to Form for entering Parameters for new PNLStatement
+     *  generation; redirects to 'generateincome' when done.
+     */
+    def createincome() {
+        if(!session?.user) {
+            redirect (controller: 'login')
+            return
+        }
+        
+        [params: params, errMsg: params?.errMsg]
+    }
+    
+    def generateincome() {
+        if(!session?.user) {
+            redirect (controller: 'login')
+            return
+        } 
+        
+        params.offset = params.offset ?: 0
+        params.max = params.max ?: 12        
+        
+        def user = session?.user
+        def companyID = session?.company?.id
+        Business company
+        def errMsg
+        def year, yearPassed, yearPrev
+        def month, monthPassed, monthPrev
+        def transactions
+        def statements
+        def pnlStatement
+        
+        if(!user.isAttached()) {
+            user.attach()
+        }
+
+        company = Business.get(companyID)
+        
+        if(params.period_year) {
+            year = new Date().copyWith (
+                year:       new Integer(params.period_year),
+                month:      Calendar.JANUARY,
+                dayOfMonth: 1
+            )
+            
+            yearPassed = new Integer(params.period_year)
+        }
+        
+        if(params.month && params.month?.id != 'null') {
+            month       = Month.get(new Integer(params?.month?.id))
+            monthPassed = month.number
+        }
+        else {
+            monthPassed = 0 //  Full Year Statement
+        }
+        
+        //  Checking that PNL Statement for given Parameters does not exist
+        
+        statements = PNLStatement.createCriteria().list() {
+            eq('company', company)
+            eq('year', yearPassed)
+            eq('month', monthPassed)
+        }
+        
+        if(statements.size() > 0) {
+            errMsg = message(code: 'application.error.duplicated_cf_period')
+            render view: 'createincome', model: [errMsg: errMsg, max: params.max, offset: params.offset, params: params]
+            return             
+        }
+        
+        statements = null
+        
+        //  Checking whether any Transactions for a given Period exist
+        
+        transactions = incomeStatementService.getAllPNLTransactions(company, new Integer(params.period_year), monthPassed)
+            
+        if(transactions.size() == 0) {
+            errMsg = message(code: 'application.error.no_transactions')
+            render view: 'createincome', model: [errMsg: errMsg, max: params.max, offset: params.offset, monthInst: params.month]
+            return                  
+        }
+        
+        //  Creating new PNL Statement
+        
+        pnlStatement = incomeStatementService.create(company, yearPassed, monthPassed)
+        incomeStatementService.createSections(company, pnlStatement)
+        
+        println "New Statement: ${pnlStatement}"
+        println "Sections: ${pnlStatement.sections}"
+        
+        pnlStatement.sections.each {item ->
+            println "Section: ${item.group?.name} ${item.amountTotal}"
+            item.lines.each {line ->
+                println "--- Section Line: ${line?.type?.name_EN} ${line.amount}"
+            }
+        }
+        
+        redirect action: 'income', params: [params: params]
+    }
+    
+    def deleteincome() {
+        if(!session?.user) {
+            redirect (controller: 'login')
+            return
+        } 
+        
+        params.offset = params.offset ?: 0
+        params.max = params.max ?: 12
+        
+        def user = session?.user
+        def companyID = session?.company?.id
+        def company
+        
+        if(!user.isAttached()) {
+            user.attach()
+        }
+        
+        company = Business.get(companyID)
+        
+        def statements = PNLStatement.createCriteria().list(params) {
+            eq('company', company)
+        }
+        
+        statements.each {statement ->
+            company.removeFromPnlStatements(statement)
+            
+            statement.delete(flush: true)
+        }
+        
+        redirect action: 'income', params: [params: params]
     }
 }

@@ -17,7 +17,7 @@
                     <g:passwordField name="passw" class="text-input" style="width: 250px;"/>
                     <br/>
                     <label>&nbsp;</label>
-                    <input type="submit" value="<g:message code='actions.login.submit'/>" class="myButton" />
+                    <input type="submit" value="<g:message code='actions.login.submit'/>" class="myButton" style="color: #fff;"/>
                 </g:form>
                 <g:renderErrors bean="${loginCmd}"></g:renderErrors>
             </g:if>

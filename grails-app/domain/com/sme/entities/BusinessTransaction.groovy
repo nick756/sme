@@ -21,15 +21,16 @@ class BusinessTransaction {
     Integer             peer
     
     static belongsTo = [
-        company:    Business, 
-        statement:  CashFlowStatement
-        
+        company:        Business, 
+        statement:      CashFlowStatement,
+        pnlStatement:   PNLStatement
     ]
     
     static constraints = {
         transactionRemarks      nullable: false, blank: false
         operator                blank: false
         statement               nullable: true
+        pnlStatement            nullable: true
         cash                    nullable: true, blank: true  //  For compatibility
         peer                    nullable: true
         transactionAmount       nullable: false

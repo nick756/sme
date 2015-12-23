@@ -240,9 +240,16 @@ class SmehomeController {
             eq('month', monthTrans)
         }
         
-        println "${includedList} Size: ${includedList.size()}"
+        def includedIntoPNL = PNLStatement.createCriteria().list() {
+            eq('company', company)
+            eq('year', yearTrans)
+            eq('month', monthTrans)            
+        }
         
-        if(includedList.size() > 0) {
+        println "${includedList} Size: ${includedList.size()}"
+        println "${includedIntoPNL} Size: ${includedIntoPNL.size()}"
+        
+        if(includedList.size() > 0 || includedIntoPNL.size() > 0) {
             redirect(action: 'index', params: [
                     offset: params.offset, 
                     errMessage: message(code: 'businesstransaction.error.alreadyincf'),
@@ -347,6 +354,12 @@ class SmehomeController {
             eq('month', monthTrans)
         }
         
+        def includedPNL = PNLStatement.createCriteria().list() {
+            eq('company', company)
+            eq('year', yearTrans)
+            eq('month', monthTrans)
+        }        
+        
         if(peerID > 0) {
             peer = BusinessTransaction.get(peerID)
         }
@@ -358,7 +371,7 @@ class SmehomeController {
             println "${includedList} Size: ${includedList.size()}"
         }        
 
-        if(includedList.size() > 0) {
+        if(includedList.size() > 0 || includedPNL.size() > 0) {
             redirect(action: 'index', params: [
                     offset: params.offset, 
                     errMessage: message(code: 'businesstransaction.error.alreadyincf')

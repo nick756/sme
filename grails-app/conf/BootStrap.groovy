@@ -57,15 +57,44 @@ class BootStrap {
             println "Total ${CFGroup.count()} instances created"
         }
         
+        //  Added on 15/12/2015: All references during export are added to
+        //  the end of respective lines
+        
+        if(PNLSubGroup.list().size() == 0) {
+            println ''
+            println 'Creating PNL Sub Groups'
+            
+            new PNLSubGroup(code:  5, name: 'Purchase of Raw materials').save(flush: true)
+            new PNLSubGroup(code: 10, name: 'Production Wages').save(flush: true)
+            new PNLSubGroup(code: 15, name: 'Factory Overheads').save(flush: true)
+            
+            println "Total ${PNLSubGroup.count()} instances created"
+        }
+        
+        if(PNLGroup.list().size() == 0) {
+            println ''
+            println 'Creating PNL Main Groups'
+            
+            new PNLGroup(code:  1, name: 'Sales').save(flush: true)
+            new PNLGroup(code:  5, name: 'Cost of Sales').save(flush: true)
+            new PNLGroup(code: 10, name: 'Other Income').save(flush: true)
+            new PNLGroup(code: 15, name: 'Administrative and Operational Expenses').save(flush: true)
+            new PNLGroup(code: 20, name: 'Taxation').save(flush: true)
+            
+            println "Total ${PNLGroup.count()} instances created"
+        }
+        
         /***********************************************************************
          * Restoring list of GenericOperation from backup file
          **********************************************************************/
         if(GenericOperation.list().size() == 0) {
+            println ''
             println "******** IMPORT OF GENERIC OPERATION INSTANCES ***********"
  
             def path = "C:/export/operations.txt"
             def file = new File("${path}")
             def fileContent = file.text
+            def counter = 0
             
             println "File Size: ${file.length()} bytes"
             println '**********************************************************'
@@ -75,6 +104,11 @@ class BootStrap {
                 def group = CFGroup.findByCode(fields[2])
                 Integer cashCode
                 Integer bankCode
+                Integer pnlGroupCode
+                Integer pnlSubGroupCode
+                
+                PNLGroup pnlGroup = null
+                PNLSubGroup pnlSubGroup = null
                 
                 if(fields[8] != 'null') {
                     cashCode = new Integer(fields[8])
@@ -90,6 +124,22 @@ class BootStrap {
                     bankCode = 0
                 }
                 
+                try {
+                    if(fields[10] != 'null') {
+                        pnlGroupCode = new Integer(fields[10])
+                        pnlGroup = PNLGroup.findByCode(pnlGroupCode)
+                    }
+                
+                    if(fields[11] != 'null') {
+                        pnlSubGroupCode = new Integer(fields[11])
+                        pnlSubGroup = PNLSubGroup.findByCode(pnlSubGroupCode)
+                    }
+
+                }
+                catch (Exception e) {
+                    
+                }
+                
                 new GenericOperation(
                     code:           fields[0],
                     name:           fields[3],
@@ -100,7 +150,9 @@ class BootStrap {
                     mirrorCashCode: cashCode,
                     mirrorBankCode: bankCode,
                     accountType:    accountType,
-                    group:          group
+                    group:          group,
+                    pnlGroup:       pnlGroup,
+                    pnlSubGroup:    pnlSubGroup
                 ).save(flush: true)
             }
             
@@ -112,20 +164,23 @@ class BootStrap {
             }
             
             opList.each {operation ->
-                print "Processing ${operation.code}: ${operation.name_EN}"
+                //print "Processing ${operation.code}: ${operation.name_EN}"
                 
                 if(operation.mirrorCashCode > 0) {
                     def mirrorCash = GenericOperation.findByCode(operation.mirrorCashCode)
                     operation.mirrorCash = mirrorCash
-                    print " ... cash mirror added ${mirrorCash.code}"
+                    //print " ... cash mirror added ${mirrorCash.code}"
+                    counter++
                 }
                 if(operation.mirrorBankCode > 0) {
                     def mirrorBank = GenericOperation.findByCode(operation.mirrorBankCode)
                     operation.mirrorBank = mirrorBank
-                    print " ... bank mirror added ${mirrorBank.code}"
+                    //print " ... bank mirror added ${mirrorBank.code}"
+                    counter++
                 }
-                
             }
+            
+            println "Total ${counter} Peers reinstated"
         }
         
         //  Initiating list of States
@@ -290,7 +345,7 @@ class BootStrap {
                 registrationDate    = null
                 agency              = null
                 
-                System.out.print "Processing ${++count} Record: ${fields[3]}\r"
+                //System.out.print "Processing ${++count} Record: ${fields[3]}\r"
                 
                 try {
                     intID = new Integer(fields[0])
@@ -336,7 +391,7 @@ class BootStrap {
                 ).save(flush: true)
             }
             
-            println "Total instance imported: ${Business.list().size()}"        
+            println "Total Business instance imported: ${Business.list().size()}"        
         }
     }
     

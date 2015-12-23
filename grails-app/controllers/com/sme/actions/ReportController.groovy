@@ -62,4 +62,33 @@ class ReportController {
     def creditreport() {
         
     }
+    
+    /**
+     *  Generation of PNL Statement by instance of PNLStatement
+     */
+    def pnlstatement() {
+        def statement
+        def lines
+        def sections
+        
+        if(params?.id) {
+            statement = PNLStatement.get(new Integer(params?.id))
+        }
+        
+        sections = statement.sections.asList().sort{it.group.code}
+        
+        sections.each {sect ->
+            lines       = sect.lines.asList().sort{it.type.code}
+            sect.lines  = lines
+        }
+        
+        statement.sections = sections
+        
+        lines = null
+        sections = null
+        
+        [
+            statement: statement
+        ]
+    }
 }

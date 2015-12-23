@@ -42,6 +42,12 @@
                             <label class="edit-form mand"><g:message code="genericOperation.group.label"/></label>
                             <g:select class="select-list" name="group.id" from="${CFGroup.list()}" value="${genericOperationInstance?.group?.id}" optionKey="id"/>
                             <br/>
+                            <label class="edit-form mand"><g:message code="genericOperation.pnlGroup.label"/></label>
+                            <g:select class="select-list" name="pnlGroup.id" from="${PNLGroup.list()}" value="${genericOperationInstance?.pnlGroup?.id}" optionKey="id" noSelection="['':'']" default="none"/>
+                            <br/>     
+                            <label class="edit-form mand"><g:message code="genericOperation.pnlSubGroup.label"/></label>
+                            <g:select class="select-list" name="pnlSubGroup.id" from="${PNLSubGroup.list()}" value="${genericOperationInstance?.pnlSubGroup?.id}" optionKey="id" noSelection="['':'']" default="none"/>
+                            <br/>    
 
                             <label class="edit-form mand"><g:message code="genericOperation.mirrorCash.label"/></label>
                             <g:select class="select-list" name="mirrorCash.id" from="${Mirror}" value="${genericOperationInstance?.mirrorCash?.id}" optionKey="id" noSelection="['':'']" default="none"/>

@@ -28,6 +28,12 @@
                             <label class="edit-form mand"><g:message code="genericOperation.group.label"/></label>
                             <g:textField class="text-input" name="group.id" value="${genericOperationInstance?.group?.name}" readonly="readonly" />
                             <br/>
+                            <label class="edit-form"><g:message code="genericOperation.pnlGroup.label"/></label>
+                            <g:textField class="text-input" name="pnlGroup.id" value="${genericOperationInstance?.pnlGroup?.name}" readonly="readonly" />
+                            <br/>
+                            <label class="edit-form"><g:message code="genericOperation.pnlSubGroup.label"/></label>
+                            <g:textField class="text-input" name="pnlSubGroup.id" value="${genericOperationInstance?.pnlSubGroup?.name}" readonly="readonly" />
+                            <br/>
 
                         <label class="edit-form mand"><g:message code="genericOperation.mirrorCash.label"/></label>
                         <g:textField class="text-input" name="mirrorCash.id" value="${genericOperationInstance?.mirrorCash?.name}" readonly="readonly" />

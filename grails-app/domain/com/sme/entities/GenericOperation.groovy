@@ -32,6 +32,10 @@ class GenericOperation {
     AccountType accountType
     CFGroup     group
     
+    //  Field 'pnlSubGroup' has limited appllicability
+    PNLGroup    pnlGroup
+    PNLSubGroup pnlSubGroup
+    
     static hasMany = [profiles: ProfileLink]
     
     static constraints = {
@@ -44,6 +48,8 @@ class GenericOperation {
         mirrorCash  nullable: true
         mirrorBank  nullable: true
         actual      nullable: true, blank: true
+        pnlGroup    nullable: true, blank: true
+        pnlSubGroup nullable: true, blank: true
         
         mirrorCashCode  nullable: true
         mirrorBankCode  nullable: true

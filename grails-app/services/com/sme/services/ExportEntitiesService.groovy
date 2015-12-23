@@ -31,10 +31,12 @@ class ExportEntitiesService {
                 line += "${business.profile?.code}#"
                 line += "${business.industry?.code}#"
                 line += "${business.name}#"
-                line += "${business.accountNo}#${business.regNumber}#"
+                line += "${business.accountNo}#"
+                line += "${business.regNumber}#"
                 line += "${business?.incorpDate?.format('dd/MM/yyyy')}#"
                 line += "${business?.registrationDate?.format('dd/MM/yyyy')}#"
-                line += "${business.address}#${business.city}#"
+                line += "${business.address}#"
+                line += "${business.city}#"
                 
                 if(business.bank) {
                     line += "${business.bank?.code}"
@@ -175,6 +177,8 @@ class ExportEntitiesService {
             order('code')
         }
         
+        //  Updated on 15/12/2015 to accomodated PNLGroup and PNLSubGroup
+        //  references
         new File("${path}${fileName}").withWriter() {out ->
             operations.each {operation ->
                 line  = "${operation.code}#"
@@ -186,7 +190,9 @@ class ExportEntitiesService {
                 line += "${operation.outbound}#"
                 line += "${operation.actual}#"
                 line += "${operation.mirrorCash?.code}#"
-                line += "${operation.mirrorBank?.code}"
+                line += "${operation.mirrorBank?.code}#"
+                line += "${operation.pnlGroup?.code}#"
+                line += "${operation.pnlSubGroup?.code}"
                
                 out.println line
                 counter++
