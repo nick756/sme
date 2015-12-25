@@ -48,7 +48,7 @@
         HELP DESK : info@mysifar.com / +6010-226-2887
         <br/><br/>
         <b>KCOMMERCE (M) SDN BHD (867123-P)</b><br/>
-        32-1A, Kompleks Otomobil Shah Alam, Jalan Pahat J 15/J, Seksyen 15.<br/>40000 Shah Alam Selangor, MALAYSIA
+        30-1A, Kompleks Otomobil Shah Alam, Jalan Pahat J 15/J, Seksyen 15.<br/>40000 Shah Alam Selangor, MALAYSIA
         </div>
         </center>
     </body>
