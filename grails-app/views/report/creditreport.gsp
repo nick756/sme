@@ -86,6 +86,11 @@
                     <td class="centered header shaded">RM</td>
                 </tr>
 
+                <% 
+                    totalIn = 0
+                    totalOut = 0
+                %>
+
                 <g:each in="${transactions2}" status="index" var="transInstance">
 
                     <g:if test="${new Integer(params.offset) > 0}">
