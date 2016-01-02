@@ -5,6 +5,7 @@ import com.sme.util.*
 import java.text.*
 import grails.util.Environment
 import grails.transaction.Transactional
+import grails.converters.*
 
 class AdminHomeController {
 
@@ -92,9 +93,12 @@ class AdminHomeController {
             dateFrom = new Date().copyWith(year: yearPrev, month: it, dayOfMonth: 1)
             dateTill = new Date().copyWith(year: yearPrev, month: it, dayOfMonth: dateFrom.toCalendar().getActualMaximum(Calendar.DAY_OF_MONTH))
             
+            dateFrom.clearTime()
+            dateTill.clearTime()
+            
             entry.dateFrom = dateFrom
             entry.dateTill = dateTill
-            
+           
             statistics << entry
         }
         
@@ -105,15 +109,19 @@ class AdminHomeController {
             dateFrom = new Date().copyWith(year: yearCurr, month: it, dayOfMonth: 1)
             dateTill = new Date().copyWith(year: yearCurr, month: it, dayOfMonth: dateFrom.toCalendar().getActualMaximum(Calendar.DAY_OF_MONTH))
             
+            dateFrom.clearTime()
+            dateTill.clearTime()
+            
             entry.dateFrom = dateFrom
             entry.dateTill = dateTill
-            
+
             statistics << entry
         }
         
         //  Collecting actual Statistics
         
         statistics.each {period ->
+            
             dateFrom = period.dateFrom
             dateTill = period.dateTill
             
@@ -126,9 +134,9 @@ class AdminHomeController {
             period.value= found.size()
         }
         
-        //  Generating JSON object fro script
+        //  Generating JSON object for script
         
-        def jsOut = "points = [\n"
+        def jsOut = "[\n"
         def counter = 0
         
         statistics.each {record ->
@@ -145,11 +153,11 @@ class AdminHomeController {
         
         jsOut += "\n]"
         
-        println "Generated blank Statistics: "
-        println '---------------------------'
-        statistics.each {record ->
-            println record.toString()
-        }
+//        println "Generated blank Statistics: "
+//        println '---------------------------'
+//        statistics.each {record ->
+//            println record.toString()
+//        }
         
         [
             businessInstance: Business.get(new Integer(params?.id)), 

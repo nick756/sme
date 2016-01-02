@@ -13,7 +13,7 @@ class UsageData {
     String caption
     
     void createCaption() {
-        this.caption = String.format('%1$4s', this.year - 2000) + String.format('%1$2s', this.month).replace(' ', '0')
+        this.caption = "\"" + String.format('%1$2s', this.year - 2000) + "/" + String.format('%1$2s', this.month).replace(' ', '0') + "\""
     }
     
     String toString() {

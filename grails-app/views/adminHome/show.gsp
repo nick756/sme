@@ -4,21 +4,31 @@
     <head>
         <meta name="layout" content="adminpage"/>
         <title>SME</title>
-        
   <script type="text/javascript">
-      ${jsOut}
+      var points = ${raw(jsOut)}
+      var titleTxt = "Usage Statistics for ${businessInstance?.name}";
+      titleTxt = titleTxt.replace('&amp;', '&');
+      titleTxt = titleTxt.replace('&#39;', "'");
        
   window.onload = function () {
     var chart = new CanvasJS.Chart("chartContainer",
     {
       title:{
-        text: "Usage Statistics"
+        text: titleTxt
+      },
+      
+      axisX: {
+        title: "Period YY/MM"
+      },
+      axisY: {
+        title: "Transactions"
       },
       
       data: [
         {
-          type: "line",
-          color: "#454545",
+          type: "column",
+          color: "#526c85",
+          fontWeight: "normal",
           dataPoints: points
         }
       ]
@@ -26,6 +36,7 @@
 
     chart.render();
   }
+  
   </script>        
         
     </head>
@@ -74,6 +85,6 @@
         </div>
         
         <div id="chartContainer" style="height: 300px; width: 100%;"></div>
-  
+       
     </body>
 </html>
