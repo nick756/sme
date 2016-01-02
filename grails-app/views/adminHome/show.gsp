@@ -4,6 +4,30 @@
     <head>
         <meta name="layout" content="adminpage"/>
         <title>SME</title>
+        
+  <script type="text/javascript">
+      ${jsOut}
+       
+  window.onload = function () {
+    var chart = new CanvasJS.Chart("chartContainer",
+    {
+      title:{
+        text: "Usage Statistics"
+      },
+      
+      data: [
+        {
+          type: "line",
+          color: "#454545",
+          dataPoints: points
+        }
+      ]
+    });
+
+    chart.render();
+  }
+  </script>        
+        
     </head>
     <body>
         <div style="width: 100%; background: #D0E8F4; display: inline-block; text-align: right; border-bottom: 0px solid #6285C7; border-top: 0px solid #6285C7; padding: 5px 0;">
@@ -48,6 +72,8 @@
             <g:textField class="text-input" name="address" value="${businessInstance?.city}" readonly="true"/>                   
 
         </div>
-
+        
+        <div id="chartContainer" style="height: 300px; width: 100%;"></div>
+  
     </body>
 </html>
