@@ -1,9 +1,12 @@
 package com.sme.actions
 
 import com.sme.entities.*
+import com.sme.util.*
 
 class ReportController {
 
+    def incomeStatementService
+    
     def index() { }
     
     /**
@@ -125,8 +128,8 @@ class ReportController {
             }
             
             /*and {
-                order('transactionDate', 'desc')
-                order('id', 'desc')
+            order('transactionDate', 'desc')
+            order('id', 'desc')
             }*/
             order('operationType', 'desc')
             order('transactionDate')
@@ -158,8 +161,8 @@ class ReportController {
             }
             
             /*and {
-                order('transactionDate', 'desc')
-                order('id', 'desc')
+            order('transactionDate', 'desc')
+            order('id', 'desc')
             }*/
             order('operationType', 'desc')
             order('transactionDate')
@@ -183,7 +186,7 @@ class ReportController {
     }
     
     /**
-     *  Generation of PNL Statement by instance of PNLStatement
+     *  Generation of PNL Report by instance of PNLStatement
      */
     def pnlstatement() {
         def statement
@@ -208,6 +211,74 @@ class ReportController {
         
         [
             statement: statement
+        ]
+    }
+    
+    /**
+     *  Generation of Income Statements for all applicable companies
+     **/
+    def consolidatedincome() {
+        Integer year
+        Integer quarter
+        def statements = []
+        Date dateFrom = null
+        Date dateTill = null
+        def companies
+        IncomeSummary summary
+        
+        year = new Integer(params?.year)
+        
+        if(params.quarter) {
+            quarter = new Integer(params.quarter)
+        }
+        else {
+            quarter = 0
+        }
+        
+        companies = Business.createCriteria().list() {
+            not {
+                ilike("accountNo", "test%")
+            }
+            
+            order('name')
+        }
+        
+        companies.each{comp ->
+            if(incomeStatementService.getAllPNLTransactions(comp, year, 0).size() > 0) {
+                summary = new IncomeSummary(
+                    company:            comp.name,
+                    companyID:          comp.id,
+                    year:               year,
+                    quarter:            quarter,
+                    prefix:             'Q',
+                    month:              0,
+                    amountSales:        0,
+                    amountCost:         0,
+                    amountProfitGross:  0,
+                    amountIncome:       0,
+                    amountExpense:      0,
+                    amountTax:          0,
+                    amountProfitBT:     0,
+                    amountProfitAT:     0
+                )
+                
+                summary.assignPeriod()
+                summary.createCaption()
+                
+                incomeStatementService.calculateInMemory(summary, comp)
+                statements << summary
+                
+                if(!dateFrom) {
+                    dateFrom = summary.dateFrom
+                    dateTill = summary.dateTill
+                }
+            }
+        }
+        
+        [
+            dateFrom:   dateFrom,
+            dateTill:   dateTill,
+            statements: statements
         ]
     }
 }
