@@ -225,8 +225,12 @@ class ReportController {
         Date dateTill = null
         def companies
         IncomeSummary summary
+        def uptoDate = false
         
-        year = new Integer(params?.year)
+        year = new Integer(params?.period_year)
+        def yearCurr = new Date().year + 1900
+        
+        if(year == yearCurr) uptoDate = true
         
         if(params.quarter) {
             quarter = new Integer(params.quarter)
@@ -276,6 +280,7 @@ class ReportController {
         }
         
         [
+            uptoDate:   uptoDate,
             dateFrom:   dateFrom,
             dateTill:   dateTill,
             statements: statements

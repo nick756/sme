@@ -586,4 +586,15 @@ class AdminHomeController {
             history:   BackupHistory.list() 
         ]
     }
+    
+    /**
+     *  Filtering criteria for generation of Consolidated Performance Report,
+     *  for all applicable companies
+     **/
+    def reportsettings() {
+        if(!session?.user) {
+            redirect controller: 'login', action: 'index'
+            return
+        }        
+    }
 }
