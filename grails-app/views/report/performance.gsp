@@ -117,7 +117,7 @@
                 <td width="7%" class="centered">08</td>
                 <td width="7%" class="centered">09</td>
                 <td width="7%" class="centered">10</td>
-                <td width="7%" class="centered">10</td>
+                <td width="7%" class="centered">11</td>
                 <td width="7%" class="centered">12</td>
             </tr>
             <g:each in="${statements}" var="statement" status="i">
@@ -148,7 +148,7 @@
                 <td width="7%" class="centered">08</td>
                 <td width="7%" class="centered">09</td>
                 <td width="7%" class="centered">10</td>
-                <td width="7%" class="centered">10</td>
+                <td width="7%" class="centered">11</td>
                 <td width="7%" class="centered">12</td>
             </tr>
             <g:each in="${statements}" var="statement" status="i">
