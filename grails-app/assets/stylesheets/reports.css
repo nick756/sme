@@ -6,7 +6,7 @@
 h1.report-header    {font-family: monospace; font-size: 16pt; float: left; color: #333333; font-weight: normal; margin: 0 0 10px 0; display: inline-block; width: auto;}
 h1.report-header .full-width   {width: 100%; display: block;}
 h1.report-subheader {font-family: monospace; font-size: 14pt; float: left; color: #333333; font-weight: normal; margin: 10px 0 10px 0; display: inline-block; width: auto;}
-div.datetime        {font-family: monospace; font-size: 9px; color: #000; float: right; margin-top: -1; overflow: hidden; display: inline-block; width: auto;}
+div.datetime        {font-family: monospace; font-size: 9px; color: #000; float: right; margin-top: -1px; overflow: hidden; display: inline-block; width: auto;}
 
 div.left-panel  {width: 47%; float: left; overflow: hidden; margin: 5px;}
 div.right-panel {width: 50%; float: right; overflow: hidden; margin: 5px;}

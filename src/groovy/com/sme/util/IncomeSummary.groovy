@@ -39,7 +39,7 @@ class IncomeSummary {
             this.caption = "\"" + this.prefix  + String.format('%1$1s', this.quarter) + "\'" + String.format('%1$2s', this.year - 2000) + "\""
         }
         else {
-            this.caption = "\"" + String.format('%1$2s', this.year - 2000) + "/" + String.format('%1$2s', this.month) + "\""
+            this.caption = "\"" + String.format('%1$2s', this.year - 2000) + "/" + String.format('%1$2s', this.month).replace(' ', '0') + "\""
         }
     }
     
