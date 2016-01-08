@@ -295,6 +295,11 @@ class ReportController {
         Integer yearCurrent     = new Date().year + 1900
         Integer yearPrevious    = yearCurrent - 1
         def years = []
+        boolean cumulative = false
+        
+        if(params?.cumulative) {
+            cumulative = true
+        }
         
         years << yearPrevious
         years << yearCurrent
@@ -328,7 +333,7 @@ class ReportController {
                     amountProfitAT:     0            
                 )
             
-                summary.assignPeriod()
+                summary.assignPeriod(cumulative)
                 summary.createCaption()
                 incomeStatementService.calculateInMemory(summary, businessInstance)
             
@@ -379,11 +384,11 @@ class ReportController {
         statements << ["Operational Expenses": expensesData]
         statements << ["Net Profit before Tax": netProfitData]
         
-//        println "series01 = ${series01}"
-//        println series02
-//        println series03
-//        println series04
-//        println series05
+        //        println "series01 = ${series01}"
+        //        println series02
+        //        println series03
+        //        println series04
+        //        println series05
         
         [
             series01: series01,
@@ -393,7 +398,8 @@ class ReportController {
             series05: series05,
             businessInstance: businessInstance,
             statements: statements,
-            year: yearCurrent
+            year: yearCurrent,
+            cumulative: cumulative
         ]
     }
 }

@@ -100,7 +100,12 @@
     <body>
         <div class="datetime">Generated on:&nbsp;<g:formatDate format="dd/MM/yyyy HH:mm" date="${new Date()}"/></div>
         <h1 class="report-header" style="margin-bottom: 0;">${businessInstance?.name}</h1>
-        <h1 class="report-subheader" style="width: 100%; margin-bottom: 20px;">Performance evaluation</h1>
+        <h1 class="report-subheader" style="width: 100%; margin-bottom: 20px;">
+            Performance evaluation
+            <g:if test="${cumulative}">
+                (Cumulative Report)
+            </g:if>
+        </h1>
         <br/>
         <table style="width: 100%; margin-top: 15px;">
             <tr style="background: #fff;">
@@ -133,7 +138,7 @@
                     <td>${statement?.key}</td>
                     <g:each in="${statement?.value}" var="item" status="k">
                         <g:if test="${k < 12}">
-                        <td class="righted"><g:formatNumber format="#,##0.00" number="${item}"/></td>
+                            <td class="righted"><g:formatNumber format="#,##0.00" number="${item}"/></td>
                         </g:if>
                     </g:each>
                 </tr>
