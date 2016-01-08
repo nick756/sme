@@ -18,7 +18,7 @@
         <table class="righted-content">
             <caption><g:message code="business.caption"/></caption>
             <tr style="background: #d0d0d0;">
-                <td colspan="7" style="border: none; margin: 0; padding: 10px 0; background: #dadada;">
+                <td colspan="8" style="border: none; margin: 0; padding: 10px 0; background: #dadada;">
                     <g:form action="index" params="['offset': 0]">
                         <label class="edit-form"><g:message code="business.name.label"/></label>
                         <g:textField class="text-input" name="filterName" value="${params?.filterName}"/>
