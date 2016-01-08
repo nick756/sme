@@ -53,6 +53,10 @@ class LoginController {
                                     session.locale = locale
                                     redirect(controller: 'smehome')
                                     break
+                            case 3: session.bank = session?.user.bank
+                                    session.locale = locale
+                                    redirect(controller: 'bankhome')
+                                    break
                         }
                     }
                 }
