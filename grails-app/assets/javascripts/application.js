@@ -8,6 +8,7 @@
 //= require jquery
 //= require_tree .
 //= require_self
+//= require canvasjs.min
 
 if (typeof jQuery !== 'undefined') {
 	(function($) {

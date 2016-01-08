@@ -2,6 +2,7 @@ package com.sme.services
 
 import grails.transaction.Transactional
 import com.sme.entities.*
+import com.sme.util.*
 
 @Transactional(readOnly = true)
 class IncomeStatementService {
@@ -36,8 +37,8 @@ class IncomeStatementService {
             order('transactionDate')
         }
         
-        println 'IncomeStatementService.getAllPNLTransactions'
-        println "Year: ${year} Month: ${month} Count: ${transactions.size()}"
+//        println 'IncomeStatementService.getAllPNLTransactions'
+//        println "Year: ${year} Month: ${month} Count: ${transactions.size()}"
         
         return transactions        
     }
@@ -137,7 +138,7 @@ class IncomeStatementService {
     }
     
     /*
-     *  Creation of PNLSEction instances for a given PNLStatement
+     *  Creation of PNLSection instances for a given PNLStatement
      */
     def createSections(Business company, PNLStatement statement) {
         def groups = PNLGroup.list(sort: 'code')
@@ -248,7 +249,7 @@ class IncomeStatementService {
             }             
         }
         
-        //  Summurizing Results
+        //  Summarizing Results
         
         statement.grossProfit   = amountSal - amountCos
         statement.expenses      = amountCos + amountAdm
@@ -258,6 +259,65 @@ class IncomeStatementService {
         statement.netProfitAT   = amountSal + amountOth - amountCos - amountAdm - amountTax
 
         statement.save(flush: true)
+        
+        return true
+    }
+    
+    /***************************************************************************
+     *  Calculation of consolidated in-memory PNL Statement for a given
+     *  Business and given period
+     **************************************************************************/
+    def calculateInMemory(IncomeSummary statement, Business company) {
+        def groups = PNLGroup.list(sort: 'code')
+        def transactions = []
+        BigDecimal amount
+        
+        groups.each {group ->
+            transactions = BusinessTransaction.createCriteria().list() {
+                eq('company', company)
+                ge('transactionDate', statement.dateFrom)
+                le('transactionDate', statement.dateTill)
+            
+                operationType {
+                    eq('pnlGroup', group)
+                }                
+            }
+            
+            amount = 0
+            
+            transactions.each {item ->
+                amount += item.transactionAmount
+            }
+            
+            amount = amount.setScale(2, BigDecimal.ROUND_HALF_UP)
+            transactions = []           
+            
+            switch(group.code) {
+                case 1:     //  Sales   
+                    statement.amountSales = amount
+                    break
+                    
+                case 5:     //  Cost of Sales
+                    statement.amountCost = amount
+                    break
+                    
+                case 10:    //  Other Income
+                    statement.amountIncome = amount
+                    break
+                    
+                case 15:    //  Operational Expenses
+                    statement.amountExpense = amount
+                    break
+                    
+                case 20:    //  Taxation
+                    statement.amountTax = amount
+                    break
+            }
+        }
+        
+        statement.amountProfitGross = statement.amountSales - statement.amountCost
+        statement.amountProfitBT = statement.amountProfitGross + statement.amountIncome - statement.amountExpense
+        statement.amountProfitAT = statement.amountProfitBT - statement.amountTax
         
         return true
     }
