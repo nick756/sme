@@ -12,7 +12,7 @@ div.left-panel  {width: 47%; float: left; overflow: hidden; margin: 5px;}
 div.right-panel {width: 50%; float: right; overflow: hidden; margin: 5px;}
 
 table.report-content                        {width: 100%; color: #000;}
-table.report-content td                     {font-family: monospace; font-size: 10px; text-align: left; vertical-align: middle; padding: 0 4px 0 4px; border: 1px solid #333;}
+table.report-content td                     {font-family: monospace; font-size: 11px; text-align: left; vertical-align: middle; padding: 0 4px 0 4px; border: 1px solid #333;}
 table.report-content td.centered            {text-align: center;}
 table.report-content td.righted             {text-align: right;}
 table.report-content td.no-border           {border: none;}

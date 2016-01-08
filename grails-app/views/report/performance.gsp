@@ -26,7 +26,10 @@
             },
 
             axisX: {
-            title: "Period YY/MM"
+            title: "Period YY/MM",
+            //gridColor: 'lightblue',
+            //gridThickness: 1,
+            //interval: 2
             },
             axisY: {
             title: "Amount (RM)"
@@ -34,20 +37,23 @@
 
             data: [
             {
-            type: "line",
-            name: "Sales",
+            type: "column",
+            name: "Net Profit",
             markerType: "circle",
             showInLegend: true,
-            color: "#F08080",          
+            color: "#50ff50",    
+            lineThickness: 1,
+            markerSize: 10,
             toolTipContent: "{name}<br/>Period: {label}<br/>Amount: RM{y}",
-            dataPoints: points
-            },
+            dataPoints: series05
+            },         
             {
             type: "line",
             name: "Cost of Sales",
             markerType: "square",
             showInLegend: true,
-            color: "#20B2AA",    
+            color: "#20B2AA",  
+            lineThickness: 1,
             toolTipContent: "{name}<br/>Period: {label}<br/>Amount: RM{y}",
             dataPoints: series02
             },
@@ -57,6 +63,7 @@
             markerType: "circle",
             showInLegend: true,
             color: "#0000b0",
+            lineThickness: 1,
             toolTipContent: "{name}<br/>Period: {label}<br/>Amount: RM{y}",
             dataPoints: series03
             },
@@ -66,20 +73,21 @@
             markerType: "square",
             showInLegend: true,
             color: "#b00000",
+            lineThickness: 1,
             toolTipContent: "{name}<br/>Period: {label}<br/>Amount: RM{y}",
             dataPoints: series04
             },
             {
             type: "line",
-            name: "Net Profit",
+            name: "Sales",
             markerType: "circle",
             showInLegend: true,
-            color: "#00f000",    
-            lineThickness: 4,
-            markerSize: 10,
+            color: "#F08080",  
+            lineThickness: 1,
             toolTipContent: "{name}<br/>Period: {label}<br/>Amount: RM{y}",
-            dataPoints: series05
-            } 
+            dataPoints: points
+            }            
+
             ]
             });
 
