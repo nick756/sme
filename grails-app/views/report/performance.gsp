@@ -28,8 +28,9 @@
             axisX: {
             title: "Period YY/MM",
             //gridColor: 'lightblue',
+            labelAngle: -45,
             //gridThickness: 1,
-            //interval: 2
+            interval: 1
             },
             axisY: {
             title: "Amount (RM)"
@@ -38,15 +39,14 @@
             data: [
             {
             type: "column",
-            name: "Net Profit",
+            name: "Sales",
             markerType: "circle",
             showInLegend: true,
-            color: "#50ff50",    
+            color: "#FFA0A0",  
             lineThickness: 1,
-            markerSize: 10,
             toolTipContent: "{name}<br/>Period: {label}<br/>Amount: RM{y}",
-            dataPoints: series05
-            },         
+            dataPoints: points
+            },            
             {
             type: "line",
             name: "Cost of Sales",
@@ -79,15 +79,15 @@
             },
             {
             type: "line",
-            name: "Sales",
+            name: "Net Profit",
             markerType: "circle",
             showInLegend: true,
-            color: "#F08080",  
+            color: "#00B000",    
             lineThickness: 1,
+            markerSize: 10,
             toolTipContent: "{name}<br/>Period: {label}<br/>Amount: RM{y}",
-            dataPoints: points
+            dataPoints: series05
             }            
-
             ]
             });
 
