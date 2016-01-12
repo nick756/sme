@@ -24,6 +24,7 @@
         %>
         <div class="action-header">
             <g:link style="float: right; margin-right: 5px;" action="create" params="['max': params.max, 'offset': params.offset]"><img class="image-link" style="margin-left: 5px;" src="${resource(dir: 'images', file: 'add_record.png')}" title="<g:message code='actions.transaction.add'/>"/></g:link>
+            <g:link style="float: right;" target="_blank" controller="report" action="performance" params="['id': session?.company.id, 'cumulative': true]"><img class="image-link" style="margin-right: 5px;" src="${resource(dir: 'images', file: 'chart01.png')}" title="<g:message code='actions.business.performanceReport'/>"/></g:link>
         </div>
         <g:if test="${errMessage != null}">
             <div class="error-message">${errMessage}</div>
