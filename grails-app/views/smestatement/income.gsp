@@ -14,8 +14,8 @@
             </ul>
         </div>
         <div class="action-header">
-            <g:link style="float: right; margin-right: 5px;" action="deleteincome" params="['max': params.max, 'offset': params.offset]" onclick="return confirm('Are you sure?');"><img class="image-link" style="margin-left: 5px;" src="${resource(dir: 'images', file: 'data_delete.png')}" title="<g:message code='actions.delete'/>"/></g:link>
-            <g:link style="float: right; margin-right: 5px;" action="createincome" params="['max': params.max, 'offset': params.offset]"><img class="image-link" style="margin-left: 5px;" src="${resource(dir: 'images', file: 'add_record.png')}" title="<g:message code='actions.add'/>"/></g:link>
+            <g:link style="float: right;" action="deleteincome" params="['max': params.max, 'offset': params.offset]" onclick="return confirm('Are you sure?');"><img class="image-link" style="margin-right: 5px;" src="${resource(dir: 'images', file: 'data_delete.png')}" title="<g:message code='actions.delete'/>"/></g:link>
+            <g:link style="float: right;" action="createincome" params="['max': params.max, 'offset': params.offset]"><img class="image-link" style="margin-right: 5px;" src="${resource(dir: 'images', file: 'add_record.png')}" title="<g:message code='actions.add'/>"/></g:link>
         </div>
         <table class="righted-content">
             <caption><g:message code="pnlstatement.summary.label"/></caption>

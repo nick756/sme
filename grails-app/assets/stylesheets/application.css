@@ -302,12 +302,12 @@ table.righted-content th.lefted {
     text-decoration: underline;
 }
 .image-link {
-    border: 1px solid #526C85;
+    border: 0px solid #526C85;
     transition: all 0.7s;
 }
 .image-link:hover {
 /*    border: 3px solid #d0e8f4;*/
-    border: 1px solid #526C85;
+    border: 0px solid #526C85;
 /*    border-radius: 22px;*/
     opacity: 0.3;
     transition: all 0.7s;
