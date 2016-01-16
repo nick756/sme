@@ -170,4 +170,11 @@ class BankHomeController {
             jsOut: jsOut
         ]
     }
+    
+    def reportsettings() {
+        if(!session?.user) {
+            redirect controller: 'login', action: 'index'
+            return
+        }        
+    }
 }
