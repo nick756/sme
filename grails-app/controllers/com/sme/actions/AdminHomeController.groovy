@@ -328,16 +328,16 @@ class AdminHomeController {
      *  
      *  Passed from GSP Page:
      *  
-     *  params.period_year
-     *  params.month
-     *  params.generate (1/null)
+     *  @attr params.period_year
+     *  @attr params.month
+     *  @attr params.generate (1/null)
      *  
      *  Scenarios to handle:
-     *  
-     *  1   Statement does not exist, Transactions for the period are found
-     *  2   Statement does not exist, Transactions are NOT found
-     *  3   Statement already exists
-     *  
+     *  <ol>
+     *  <li>1. Statement does not exist, Transactions for the period are found</li>
+     *  <li>2. Statement does not exist, Transactions are NOT found</li>
+     *  <li>3. Statement already exists</li>
+     *  </ol>
      *  Must be banned:
      *  
      *  1   Preparing Statement out of sequence (no gaps are allowed)
@@ -560,6 +560,20 @@ class AdminHomeController {
         redirect action: 'listtransactions', params: ['id': businessInstance.id]
     }
     
+    /**
+     *  Displaying Backup History of current DB Instance
+     * */
+    def backuphistory() {
+        if(!session?.user) {
+            redirect controller: 'login', action: 'index'
+            return
+        }
+        
+        [
+            history: BackupHistory.list()
+        ]
+    }
+    
     //  Exporting entities in CSV format
 
     def export() {
@@ -571,20 +585,25 @@ class AdminHomeController {
         def agenCount = exportEntitiesService.exportAgencies()
         
         new BackupHistory(
-            backupDate: new Date(),
-            operator:   session.user?.name,
-            size:       exportEntitiesService.getBackupSize()
+            backupDate:         new Date(),
+            operator:           session.user?.name,
+            size:               exportEntitiesService.getBackupSize(),
+            numberUsers:        userCount,
+            numberCompanies:    busiCount,
+            numberTransactions: tranCount
         ).save(flush: true)
         
-        [
-            busiCount: busiCount,
-            userCount: userCount,
-            tranCount: tranCount,
-            profCount: profCount,
-            operCount: operCount,
-            agenCount: agenCount,
-            history:   BackupHistory.list() 
-        ]
+        redirect action: 'backuphistory'
+        
+//        [
+//            busiCount: busiCount,
+//            userCount: userCount,
+//            tranCount: tranCount,
+//            profCount: profCount,
+//            operCount: operCount,
+//            agenCount: agenCount,
+//            history:   BackupHistory.list() 
+//        ]
     }
     
     /**

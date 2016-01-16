@@ -5,6 +5,9 @@ class BackupHistory {
     Date    backupDate
     String  operator
     Long    size
+    Integer numberUsers
+    Integer numberCompanies
+    Integer numberTransactions
     
     static constraints = {
     }

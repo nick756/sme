@@ -56,10 +56,21 @@ class IncomeSummary {
         return true
     }
     
-    def assignPeriod() {
+    def assignPeriod(boolean cumulative = false) {
         def monthStart
         def monthStop
         Date lastMonth
+        Date yearBegin
+        Integer currentYear
+        
+        currentYear = new Date().year + 1900
+        
+        if(this.year == currentYear) {
+            yearBegin = new Date().copyWith(year: this.year - 1, month: 0, dayOfMonth: 1)
+        }
+        else {
+            yearBegin = new Date().copyWith(year: this.year, month: 0, dayOfMonth: 1)
+        }
         
         if(this.quarter > 0) {
             switch(this.quarter) {
@@ -93,7 +104,13 @@ class IncomeSummary {
             monthStop = 12
         }
         
-        this.dateFrom = new Date().copyWith(year: this.year, month: monthStart - 1, dayOfMonth: 1)
+        if(!cumulative) {
+            this.dateFrom = new Date().copyWith(year: this.year, month: monthStart - 1, dayOfMonth: 1)
+        }
+        else {
+            this.dateFrom = yearBegin
+        }
+        
         lastMonth = new Date().copyWith(year: this.year, month: monthStop - 1, dayOfMonth: 1)
         this.dateTill = new Date().copyWith(year: this.year, month: monthStop - 1, dayOfMonth: lastMonth.toCalendar().getActualMaximum(Calendar.DAY_OF_MONTH))
         
