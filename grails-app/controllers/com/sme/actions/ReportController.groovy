@@ -396,4 +396,51 @@ class ReportController {
             year: yearCurrent
         ]
     }
+    
+    def bankcompanieslist() {
+        def filterName      = ''
+        def filterAccount   = ''
+        def filterCity      = ''
+        
+        def bankID = session?.user.bank.id
+        def bank
+        
+        bank = Business.get(bankID)
+        
+        def result = []
+        
+        if(params?.filterName) {
+            filterName = params.filterName
+        }
+        
+        if(params?.filterAccount) {
+            filterAccount = params.filterAccount
+        }
+        
+        if(params?.filterCity) {
+            filterCity = params.filterCity
+        }
+        
+        result = Business.createCriteria().list() {
+            eq('bank', bank) 
+            
+            if(filterName != '') {
+                ilike('name', "%${filterName}%")
+            }
+            
+            if(filterAccount != '') {
+                ilike('accountNo', "${filterAccount}%")
+            }
+            
+            if(filterCity != '') {
+                ilike('city', "%${filterCity}%")
+            }
+            
+            order('name')
+        }
+        
+        [
+            businesslist: result
+        ]
+    }
 }
