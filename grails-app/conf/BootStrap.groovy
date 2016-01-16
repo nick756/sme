@@ -305,13 +305,23 @@ class BootStrap {
         if(!User.list()) {
             importUsers()
 
-            new User(
-                name: 'Bank Demp User',
-                login: 'user_bank',
-                passw: '1234',
-                role: UserRole.findByCode(3),
-                bank: LendingAgency.findByCode(1)            
-            ).save(flush: true)
+            if(!User.findByBank(LendingAgency.findByCode(1))) {
+                new User(
+                    name: 'Bank Demo User 1',
+                    login: 'user_bank',
+                    passw: '1234',
+                    role: UserRole.findByCode(3),
+                    bank: LendingAgency.findByCode(1)            
+                ).save(flush: true)
+                
+                new User(
+                    name: 'Bank Demo User 2',
+                    login: 'user_bank2',
+                    passw: '1234',
+                    role: UserRole.findByCode(3),
+                    bank: LendingAgency.findByCode(1)            
+                ).save(flush: true)                
+            }
         }
         
         if(BusinessTransaction.list().size() == 0) {

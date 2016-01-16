@@ -227,6 +227,12 @@ class ReportController {
         IncomeSummary summary
         def uptoDate = false
         
+        def bank = null
+        
+        if(params?.bankID) {
+            bank = LendingAgency.get(params?.bankID)
+        }
+        
         year = new Integer(params?.period_year)
         def yearCurr = new Date().year + 1900
         
@@ -240,12 +246,31 @@ class ReportController {
         }
         
         companies = Business.createCriteria().list() {
+            if(bank != null) {
+                eq('bank', bank)
+            }
+            
             not {
                 ilike("accountNo", "test%")
             }
             
             order('name')
         }
+
+        //  Data for Pie Chart generation
+        BigDecimal quantTotal
+        BigDecimal quantZero   = 0
+        BigDecimal quantPoor   = 0
+        BigDecimal quantNear   = 0
+        BigDecimal quantGood   = 0
+        
+        BigDecimal ratioTotal
+        BigDecimal ratioZero = 0
+        BigDecimal ratioPoor = 0
+        BigDecimal ratioNear = 0
+        BigDecimal ratioGood = 0
+        
+        quantTotal = companies.size()
         
         companies.each{comp ->
             if(incomeStatementService.getAllPNLTransactions(comp, year, 0).size() > 0) {
@@ -272,18 +297,54 @@ class ReportController {
                 incomeStatementService.calculateInMemory(summary, comp)
                 statements << summary
                 
+                if(summary.amountProfitBT <= 0) {
+                    quantPoor++
+                }
+                else if(summary.amountProfitBT < 1000) {
+                    quantNear++
+                }
+                else {
+                    quantGood++
+                }
+                
                 if(!dateFrom) {
                     dateFrom = summary.dateFrom
                     dateTill = summary.dateTill
                 }
             }
+            else {
+                quantZero++
+            }
         }
+        
+        //ratioZero = quantZero / quantTotal * 100.0
+
+        ratioZero = quantZero.divide(quantTotal, 5, BigDecimal.ROUND_HALF_UP).multiply(100.0 as BigDecimal).setScale(2, BigDecimal.ROUND_HALF_UP)
+        ratioPoor = quantPoor.divide(quantTotal, 5, BigDecimal.ROUND_HALF_UP).multiply(100.0 as BigDecimal).setScale(2, BigDecimal.ROUND_HALF_UP)
+        ratioNear = quantNear.divide(quantTotal, 5, BigDecimal.ROUND_HALF_UP).multiply(100.0 as BigDecimal).setScale(2, BigDecimal.ROUND_HALF_UP)
+        ratioGood = quantGood.divide(quantTotal, 5, BigDecimal.ROUND_HALF_UP).multiply(100.0 as BigDecimal).setScale(2, BigDecimal.ROUND_HALF_UP)        
+        
+        def points = "[\n"
+        points += "{y: ${ratioZero}, legendText: \"Businesses with no Data Entry\", label: \"No Data Entry\"},\n"
+        points += "{y: ${ratioPoor}, legendText: \"Businesses with Loss\", label: \"Businesses with Loss\", exploded: true},\n"
+        points += "{y: ${ratioNear}, legendText: \"Businesses with Poor Performance\", label: \"Poor Performing\"},\n"
+        points += "{y: ${ratioGood}, legendText: \"Profitable Businesses\", label: \"Profitable\"}\n"
+        points += "]\n"
+        
+        println ''
+        println 'Controller: report.consolidatedincome'
+        println "Total Businesses:          ${quantTotal}"
+        println "Records w/o data entries:  ${quantZero} - ${ratioZero}"
+        println "Business with losses:      ${quantPoor} - ${ratioPoor}"
+        println "Businesses near losses:    ${quantNear} - ${ratioNear}"
+        println "Good Performers:           ${quantGood} - ${ratioGood}"
         
         [
             uptoDate:   uptoDate,
             dateFrom:   dateFrom,
             dateTill:   dateTill,
-            statements: statements
+            statements: statements,
+            points: points
         ]
     }
     
