@@ -69,9 +69,9 @@ window.onload = function () {
         </h1>
         <br/>
         <table>
-            <tr>
-                <td style="padding: 0 0 0 0;">
-                    <div id="chartContainer" style="width: 100%; height:  350px; display: block;" border="1"></div>
+            <tr style="background: #fff;">
+                <td style="padding: 0 0 0 0; text-align: left;">
+                    <div id="chartContainer" style="width: 95%; height:  350px; display: block;"></div>
                 </td>
             </tr>
         </table>

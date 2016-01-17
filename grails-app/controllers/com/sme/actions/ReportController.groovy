@@ -317,12 +317,19 @@ class ReportController {
             }
         }
         
-        //ratioZero = quantZero / quantTotal * 100.0
+        ratioZero = quantZero / quantTotal * 100.0
+        ratioZero = ratioZero.setScale(2, BigDecimal.ROUND_HALF_UP)
+        ratioPoor = quantPoor / quantTotal * 100.0
+        ratioPoor = ratioPoor.setScale(2, BigDecimal.ROUND_HALF_UP)        
 
-        ratioZero = quantZero.divide(quantTotal, 5, BigDecimal.ROUND_HALF_UP).multiply(100.0 as BigDecimal).setScale(2, BigDecimal.ROUND_HALF_UP)
-        ratioPoor = quantPoor.divide(quantTotal, 5, BigDecimal.ROUND_HALF_UP).multiply(100.0 as BigDecimal).setScale(2, BigDecimal.ROUND_HALF_UP)
-        ratioNear = quantNear.divide(quantTotal, 5, BigDecimal.ROUND_HALF_UP).multiply(100.0 as BigDecimal).setScale(2, BigDecimal.ROUND_HALF_UP)
-        ratioGood = quantGood.divide(quantTotal, 5, BigDecimal.ROUND_HALF_UP).multiply(100.0 as BigDecimal).setScale(2, BigDecimal.ROUND_HALF_UP)        
+        //ratioZero = quantZero.divide(quantTotal, 6, BigDecimal.ROUND_HALF_UP).multiply(100.0 as BigDecimal).setScale(2, BigDecimal.ROUND_HALF_UP)
+        //ratioPoor = quantPoor.divide(quantTotal, 6, BigDecimal.ROUND_HALF_UP).multiply(100.0 as BigDecimal).setScale(2, BigDecimal.ROUND_HALF_UP)
+        ratioNear = quantNear.divide(quantTotal, 6, BigDecimal.ROUND_HALF_UP).multiply(100.0 as BigDecimal).setScale(2, BigDecimal.ROUND_HALF_UP)
+        ratioGood = quantGood.divide(quantTotal, 6, BigDecimal.ROUND_HALF_UP).multiply(100.0 as BigDecimal).setScale(2, BigDecimal.ROUND_HALF_UP)        
+        
+        BigDecimal diff = 100.0 - ratioZero - ratioPoor - ratioNear - ratioGood
+        
+        ratioZero = (ratioZero + diff).setScale(2, BigDecimal.ROUND_HALF_UP)
         
         def points = "[\n"
         points += "{y: ${ratioZero}, legendText: \"Businesses with no Data Entry\", label: \"No Data Entry\"},\n"
