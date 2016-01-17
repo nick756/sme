@@ -357,15 +357,15 @@ class SmestatementController {
         pnlStatement = incomeStatementService.create(company, yearPassed, monthPassed)
         incomeStatementService.createSections(company, pnlStatement)
         
-        println "New Statement: ${pnlStatement}"
-        println "Sections: ${pnlStatement.sections}"
-        
-        pnlStatement.sections.each {item ->
-            println "Section: ${item.group?.name} ${item.amountTotal}"
-            item.lines.each {line ->
-                println "--- Section Line: ${line?.type?.name_EN} ${line.amount}"
-            }
-        }
+//        println "New Statement: ${pnlStatement}"
+//        println "Sections: ${pnlStatement.sections}"
+//        
+//        pnlStatement.sections.each {item ->
+//            println "Section: ${item.group?.name} ${item.amountTotal}"
+//            item.lines.each {line ->
+//                println "--- Section Line: ${line?.type?.name_EN} ${line.amount}"
+//            }
+//        }
         
         redirect action: 'income', params: [params: params]
     }
