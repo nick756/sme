@@ -73,7 +73,7 @@
                         <td class="no-border">${transInstance?.transactionRemarks}</td>
                         <!--td class="no-border">${transInstance?.operator}</td-->
                         <td class="no-border centered">
-                            <g:link action="delete" params="['max': params.max, 'offset': params.offset, 'id': transInstance.id]" onclick="return confirm('Are you sure?')">
+                            <g:link action="delete" params="['max': params.max, 'offset': params.offset, 'id': transInstance.id, 'filterDateFrom': params?.filterDateFrom, 'filterDateTill': params?.filterDateTill, 'filterOperation.id': params?.filterOperation?.id]" onclick="return confirm('Are you sure?')">
                                 <img src="${resource(dir: 'images', file: 'icons/report_delete16x16.png')}" title="<g:message code='actions.transaction.delete'/>"/>
                             </g:link>
                         </td>

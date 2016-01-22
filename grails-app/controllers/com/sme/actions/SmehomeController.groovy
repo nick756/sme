@@ -13,6 +13,8 @@ class SmehomeController {
     
     def index() { 
         def transactions = []
+        Date filterDateFrom
+        Date filterDateTill
         
         if(!session.user) {
             redirect (controller: 'login', action: 'index')
@@ -23,8 +25,22 @@ class SmehomeController {
         def companyID = session?.company?.id
         def company
         
-        def filterDateFrom = params?.filterDateFrom ?: null
-        def filterDateTill = params?.filterDateTill ?: null
+        if(request.post) {
+            filterDateFrom = params?.filterDateFrom ?: null
+            filterDateTill = params?.filterDateTill ?: null
+        }
+        else {
+            if(params?.filterDateFrom) {
+                filterDateFrom = new Date().parse("EEE MMM dd HH:mm:ss zzz yyyy", params?.filterDateFrom)
+            }
+            
+            if(params?.filterDateTill) {
+                filterDateTill = new Date().parse("EEE MMM dd HH:mm:ss zzz yyyy", params?.filterDateTill)
+            }
+        }
+        
+        if(filterDateFrom) filterDateFrom.clearTime()
+        if(filterDateTill) filterDateTill.clearTime()
         
         def filterOperation = params?.filterOperationType
         
@@ -78,10 +94,11 @@ class SmehomeController {
         if(Environment.current == Environment.DEVELOPMENT) {
             println ''
             println "-- ${new Date().format("dd/MM/yyyy HH:mm:ss")} ${session.user.login}: Method smehome/index"
-            println "Counter : ${counter}"
-            println "filterDateFrom: ${filterDateFrom}"
+            println "Request Type     : ${request.post}"
+            println "Counter          : ${counter}"
+            println "filterDateFrom   : ${filterDateFrom}"
             println "${params}"
-            println "Operation Filter: ${filterOperationType} / ${params.filterOperationType?.id}"
+            println "Operation Filter : ${filterOperationType} / ${params.filterOperationType?.id}"
         }
         
         [
@@ -217,8 +234,19 @@ class SmehomeController {
         def company = session?.company
         def errMessage
         
+        Date filterDateFrom = null
+        Date filterDateTill = null
+        
+        if(params?.filterDateFrom) {
+            filterDateFrom = new Date().parse("EEE MMM dd HH:mm:ss zzz yyyy", params?.filterDateFrom)
+        }
+        
+        if(params?.filterDateTill) {
+            filterDateTill = new Date().parse("EEE MMM dd HH:mm:ss zzz yyyy", params?.filterDateTill)
+        }
+        
         if(!params.id_edit) {
-            redirect action: 'index', model: ['offset': params.offset]
+            redirect action: 'index', model: ['offset': params.offset, 'filterDateFrom': filterDateFrom, 'filterDateTill': filterDateTill]
             return
         }
         
@@ -253,9 +281,13 @@ class SmehomeController {
             redirect(action: 'index', params: [
                     offset: params.offset, 
                     errMessage: message(code: 'businesstransaction.error.alreadyincf'),
-                    'filterDateFrom': params?.filterDateFrom, 'filterDateTill': params?.filterDateTill, 'filterOperation.id': params?.filterOperation?.id
+                    filterDateFrom: filterDateFrom, 
+                    filterDateTill: filterDateTill,
+                    'filterOperation.id': params?.filterOperation?.id
                 ]
             )
+            
+            return
         }
         
         [
@@ -277,6 +309,20 @@ class SmehomeController {
         def company
         def successMessage
         def msgDetails
+        
+        //  Preserving filtering options if operation is performed on
+        //  filtered list
+        
+        Date filterDateFrom = null
+        Date filterDateTill = null
+        
+        if(params?.filterDateFrom) {
+            filterDateFrom = new Date().parse("EEE MMM dd HH:mm:ss zzz yyyy", params?.filterDateFrom)
+        }
+        
+        if(params?.filterDateTill) {
+            filterDateTill = new Date().parse("EEE MMM dd HH:mm:ss zzz yyyy", params?.filterDateTill)
+        }        
         
         if(companyID) {
             company = Business.get(companyID)
@@ -317,7 +363,14 @@ class SmehomeController {
         msgDetails += "${businessTransactionInstance.transactionRemarks} "
         msgDetails += "${new DecimalFormat('#,##0.00').format(businessTransactionInstance.transactionAmount)}"
         
-        redirect action: 'index', params: [offset: params.offset, successMsg: successMessage, msgDetails: msgDetails, 'filterDateFrom': params?.filterDateFrom, 'filterDateTill': params?.filterDateTill, 'filterOperation.id': params?.filterOperation?.id]
+        redirect action: 'index', params: [
+            offset:         params.offset, 
+            successMsg:     successMessage, 
+            msgDetails:     msgDetails, 
+            filterDateFrom: filterDateFrom, 
+            filterDateTill: params?.filterDateTill, 
+            'filterOperation.id': params?.filterOperation?.id
+        ]
     }
     
     /**
@@ -331,6 +384,20 @@ class SmehomeController {
         def company
         def successMessage
         def msgDetails
+        
+        //  Preserving filtering options if operation is performed on
+        //  filtered list
+        
+        Date filterDateFrom = null
+        Date filterDateTill = null
+        
+        if(params?.filterDateFrom) {
+            filterDateFrom = new Date().parse("EEE MMM dd HH:mm:ss zzz yyyy", params?.filterDateFrom)
+        }
+        
+        if(params?.filterDateTill) {
+            filterDateTill = new Date().parse("EEE MMM dd HH:mm:ss zzz yyyy", params?.filterDateTill)
+        }        
         
         if(companyID) {
             company = Business.get(companyID)
@@ -374,7 +441,10 @@ class SmehomeController {
         if(includedList.size() > 0 || includedPNL.size() > 0) {
             redirect(action: 'index', params: [
                     offset: params.offset, 
-                    errMessage: message(code: 'businesstransaction.error.alreadyincf')
+                    errMessage: message(code: 'businesstransaction.error.alreadyincf'),
+                    filterDateFrom: filterDateFrom,
+                    filterDateTill: filterDateTill,
+                    'filterOperation.id': params?.filterOperation?.id
                 ]
             )
             
