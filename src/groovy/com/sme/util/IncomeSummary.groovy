@@ -65,6 +65,9 @@ class IncomeSummary {
         
         currentYear = new Date().year + 1900
         
+        //  Handling cumulative cases, when balances for previous year is to
+        //  to be considered
+        
         if(this.year == currentYear) {
             yearBegin = new Date().copyWith(year: this.year - 1, month: 0, dayOfMonth: 1)
         }

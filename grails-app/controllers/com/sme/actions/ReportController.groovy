@@ -376,6 +376,7 @@ class ReportController {
         def salesData       = []
         def salesCostData   = []
         def profitGrossData = []
+        def otherIncomes    = []
         def expensesData    = []
         def incomeData      = []
         def netProfitData   = []
@@ -414,6 +415,7 @@ class ReportController {
                 salesData       << summary.amountSales
                 salesCostData   << summary.amountCost
                 profitGrossData << summary.amountProfitGross
+                otherIncomes    << summary.amountIncome
                 netProfitData   << summary.amountProfitBT
                 expensesData    << summary.amountExpense
                 captions        << summary.caption
@@ -455,6 +457,7 @@ class ReportController {
         statements << ["Sales": salesData]
         statements << ["Cost of Sales": salesCostData]
         statements << ["Gross Profit": profitGrossData]
+        statements << ["Other Income": otherIncomes]
         statements << ["Operational Expenses": expensesData]
         statements << ["Net Profit before Tax": netProfitData]
         

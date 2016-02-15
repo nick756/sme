@@ -76,6 +76,9 @@ class AdminHomeController {
         
         def businessInstance = Business.get(new Integer(params?.id))
         
+        //  Testing consolidated Statement
+        //cashFlowService.generateConsolidatedCashFlow(businessInstance, 2015)
+        
         //  Usage Statistics for current and previous Year (number of entered
         //  Transactions)
         

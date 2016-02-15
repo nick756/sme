@@ -128,4 +128,33 @@ class CashFlowService {
             }
         }
     }
+    
+    /**
+     *  Generation of Consolidated Cash Flow Statement for a given Company for
+     *  a give Year. In-memory only calculations are performed, Statement does
+     *  not persist.
+     **/
+    def generateConsolidatedCashFlow(Business company, Integer year) {
+        def report = [:]
+        def operations
+        
+        CFGroup.list().each{group -> report[(group)] = [:]}
+        
+        report.each{key, value ->
+            operations = GenericOperation.createCriteria().list() {
+                eq('group', key)
+            }
+            
+            operations.each{op ->
+                value[(op)] = [:]
+            }
+        }
+        
+        report.each{group, opers ->
+            println "\nCollected for ${group}"
+            opers.each{key, value ->
+                println "Operation: ${key.toString()}"
+            }
+        }
+    }
 }
