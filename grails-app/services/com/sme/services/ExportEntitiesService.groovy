@@ -27,23 +27,37 @@ class ExportEntitiesService {
         
         new File("${path}${fileName}").withWriter() {out ->
             businesses.each {business ->
-                line = "${business.internalID}#"
-                line += "${business.profile?.code}#"
-                line += "${business.industry?.code}#"
-                line += "${business.name}#"
-                line += "${business.accountNo}#"
-                line += "${business.regNumber}#"
-                line += "${business?.incorpDate?.format('dd/MM/yyyy')}#"
-                line += "${business?.registrationDate?.format('dd/MM/yyyy')}#"
-                line += "${business.address}#"
-                line += "${business.city}#"
+                line = "${business.internalID}#"                                //  00
+                line += "${business.profile?.code}#"                            //  01
+                line += "${business.industry?.code}#"                           //  02
+                line += "${business.name}#"                                     //  03
+                line += "${business.accountNo}#"                                //  04
+                line += "${business.regNumber}#"                                //  05
+                line += "${business?.incorpDate?.format('dd/MM/yyyy')}#"        //  06
+                line += "${business?.registrationDate?.format('dd/MM/yyyy')}#"  //  07
+                line += "${business.address}#"                                  //  08
+                line += "${business.city}#"                                     //  09
                 
                 if(business.bank) {
-                    line += "${business.bank?.code}"
+                    line += "${business.bank?.code}#"                           //  10
                 }
                 else {
-                    line += "0"
+                    line += "0#"
                 }
+                
+                //  Contact Information (added on 08/05/2016)
+                line += "${business?.contactPerson1 == null ? '*** NOT AVAILABLE' : business?.contactPerson1}#"  //  11
+                line += "${business?.contactNumber1 == null ? '*** NOT AVAILABLE' : business?.contactNumber1}#"  //  12
+                line += "${business?.contactPerson2}#"                          //  13
+                line += "${business?.contactNumber2}#"                          //  14
+                
+                //  Billing related Fields
+                line += "${business?.startBillingDate?.format('dd/MM/yyyy')}#"   //  15
+                line += "${business?.nextBillingDate?.format('dd/MM/yyyy')}#"    //  16
+                line += "${business?.billingType?.code}#"                       //  17
+                line += "${business?.rate}#"                                    //  18
+                line += "${business?.gracePeriod}#"                             //  19
+                line += "${business?.freeServices}"                             //  20
                 
                 line = line.replaceAll("\n", '')
                 line = line.replaceAll("\r", '')
@@ -212,7 +226,8 @@ class ExportEntitiesService {
             "users.txt",
             "operations.txt",
             "transactions.txt",
-            "agencies.txt"
+            "agencies.txt",
+            "bills.txt"
         ]
         
         files.each {fileName ->
@@ -243,6 +258,56 @@ class ExportEntitiesService {
                 line += "${agency.contactEmail}"
                 
                 out.println line
+            }
+        }
+        
+        return counter
+    }
+    
+    /**
+     *  Exporting Bills, if any, into file 'bills.txt'
+     */
+    def exportBills() {
+        def fileName = 'bills.txt'
+        def counter = 0
+        def line  
+        
+        def bills = Bill.list() 
+            
+        new File("${path}${fileName}").withWriter() {out ->
+            bills.each {record ->
+                line  = "${record.company.internalID}#"                     //  00
+                line += "${record.dateCreated?.format('dd/MM/yyyy')}#"      //  01
+                line += "${record.dueDate?.format('dd/MM/yyyy')}#"          //  02
+                line += "${record.periodFrom?.format('dd/MM/yyyy')}#"       //  03
+                line += "${record.periodTill?.format('dd/MM/yyyy')}#"       //  04
+                line += "${record.gracePeriodTill?.format('dd/MM/yyyy')}#"  //  05
+                line += "${record.paymentDate?.format('dd/MM/yyyy')}#"      //  06
+                line += "${record.confirmationDate?.format('dd/MM/yyyy')}#" //  07
+                line += "${record.updateDate?.format('dd/MM/yyyy')}#"       //  08
+                
+                line += "${record.invoiceNumber}#"                          //  09  
+                line += "${record.billingType?.code}#"                      //  10
+                line += "${record.amount}#"                                 //  11
+                line += "${record.amountPaid}#"                             //  12
+                line += "${record.paymentMode?.code}#"                      //  13
+                line += "${record.paymentReference}#"                       //  14
+                line += "${record.remarks}#"                                //  14
+                line += "${record.confirmationRemarks}#"                    //  16
+                line += "${record.paid}#"                                   //  17
+                line += "${record.outstanding}#"                            //  18
+                line += "${record.writtenOff}#"                             //  19
+                line += "${record.confirmed}#"                              //  20
+                line += "${record.createdBy}#"                              //  21
+                line += "${record.confirmedBy}#"                            //  22
+                line += "${record.updatedBy}"                               //  23
+                
+                line = line.replaceAll("\"", '')
+                line = line.replaceAll("\'", '')
+                line = line.replaceAll('\n', '')
+                
+                out.println line
+                counter++                
             }
         }
         

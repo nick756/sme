@@ -18,7 +18,7 @@
         <table class="righted-content">
             <caption><g:message code="business.caption"/></caption>
             <tr style="background: #d0d0d0;">
-                <td colspan="9" style="border: none; margin: 0; padding: 10px 0; background: #dadada;">
+                <td colspan="8" style="border: none; margin: 0; padding: 10px 0; background: #dadada;">
                     <g:form action="index" params="['offset': 0]">
                         <label class="edit-form"><g:message code="business.name.label"/></label>
                         <g:textField class="text-input" name="filterName" value="${params?.filterName}"/>
@@ -40,7 +40,7 @@
                 <th><g:message code="business.city.label"/></th>
                 <th><g:message code="business.userscount.label"/></th>
                 <th><g:message code="business.transcount.label"/></th>
-                <th colspan="2"></th>
+                <th></th>
             </tr>
 
             <g:each status="index" in="${businesses}" var="businessInstance">
@@ -70,14 +70,15 @@
                     <td class="no-border centered">${businessInstance?.users.asList().size()}</td>
                     <td class="no-border centered">${businessInstance?.businessTransactions.asList().size()}</td>
                     <td class="no-border centered">
-                        <g:link target="_blank" controller="report" action="performance" params="['id': businessInstance.id]">
-                            <img style="border: none; outline: none;" src="${resource(dir: 'images', file: 'icons/chart_small.png')}" title="<g:message code='actions.business.performanceReport'/>"/>
+                        <g:link style="text-decoration: none;" target="_blank" controller="report" action="performance" params="['id': businessInstance.id]">
+                            <img style="text-decoration: none; margin-right: 5px;" style="border: none; outline: none;" src="${resource(dir: 'images', file: 'icons/chart_small.png')}" title="<g:message code='actions.business.performanceReport'/>"/>
                         </g:link>
-                        </td>
-                        <td class="no-border centered">
-                        <g:link style="border: none; outline: none;" target="_blank" controller="report" action="performance" params="['id': businessInstance.id, 'cumulative': true]">
-                            <img src="${resource(dir: 'images', file: 'icons/chart_small_01.png')}" title="<g:message code='actions.business.performanceReportCum'/>"/>
-                        </g:link>   
+                        <g:link style="text-decoration: none;" target="_blank" controller="report" action="performance" params="['id': businessInstance.id, 'cumulative': true]">
+                            <img style="text-decoration: none; margin-right: 5px;" src="${resource(dir: 'images', file: 'icons/chart_small_01.png')}" title="<g:message code='actions.business.performanceReportCum'/>"/>
+                        </g:link>  
+                        <g:link style="text-decoration: none;"  action="showbills" params="['id': businessInstance.id]">
+                            <img style="text-decoration: none;" src="${resource(dir: 'images', file: 'icons/dollar16_16.png')}" title="<g:message code='actions.billing.label'/>"/>
+                        </g:link>
                     </td>
                     
                 </tr>

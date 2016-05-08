@@ -55,7 +55,7 @@
             </g:link> 
         </div>
         <div class="menu-pane-row">
-            <g:link controller="user" action="index" class="tile" style="color: white;">
+            <g:link controller="billing" action="index" class="tile" style="color: white;">
                 <img src="${resource(dir: 'images', file: 'bill.png')}">
                 <br/>
                 <g:message code="default.application.billing" default="Billing" />

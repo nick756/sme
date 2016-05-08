@@ -10,6 +10,8 @@ class Bill {
     Date periodTill
     Date gracePeriodTill
     Date paymentDate
+    Date confirmationDate
+    Date updateDate    
     
     String invoiceNumber
     BillingType billingType
@@ -19,16 +21,25 @@ class Bill {
     PaymentMode paymentMode
     String paymentReference
     String remarks
+    String confirmationRemarks
     
+    //  Closed = paid && confirmed
     boolean paid
     boolean outstanding
     boolean writtenOff
+    boolean confirmed       //  Confirmed by Admins
+    
+    String createdBy
+    String confirmedBy
+    String updatedBy
     
     static belongsTo = [
         company: Business
     ]
     
     static constraints = {
+        internalID          nullable: true
+        dateCreated         nullable: true
         paymentDate         nullable: true
         invoiceNumber       nullable: true
         paymentMode         nullable: true
@@ -37,6 +48,15 @@ class Bill {
         paid                nullable: true
         outstanding         nullable: true
         writtenOff          nullable: true
+        amountPaid          nullable: true
+        gracePeriodTill     nullable: true
+        confirmed           nullable: true
+        createdBy           nullable: true
+        confirmedBy         nullable: true
+        updatedBy           nullable: true
+        confirmationDate    nullable: true
+        updateDate          nullable: true
+        confirmationRemarks nullable: true
     }
     
     static mapping = {

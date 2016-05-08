@@ -18,6 +18,10 @@ body {
     left: 2%;
 }
 
+* {
+    box-sizing: border-box;
+}
+
 /*******************************************************************************
  *  Styles for logging in
  ******************************************************************************/
@@ -55,6 +59,7 @@ label {width: 200px; display: block; text-align: left; outline: #333333;}
     margin-bottom: 10px;
     font-family: 'Muli', sans-serif;
     font-size: 16px;
+    display: inline-block;
 }
 .text-input:focus {
 	background-color: #ffffff;
@@ -236,7 +241,7 @@ label.mand {
 }
 table.righted-content {
     width: 100%;
-    display: block;
+    /*display: block;*/
     float: right;
     margin-top: 0.5em;
     border-collapse: separate;

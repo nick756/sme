@@ -520,4 +520,102 @@ class ReportController {
             businesslist: result
         ]
     }
+    
+    /**
+     *  Generating Report for selected Bill instance (Invoice); method can be
+     *  called by SME and Admins Groups
+     */
+    def printinvoice(Bill bill) {
+        [
+            objectInstance: bill
+        ]
+    }
+    
+    /**
+     *  Generating Report for Pending Bills, subject to set Search Criteria
+     */
+    def pendingbills() {
+        
+        def searchData = [:]
+        
+        if(session.searchPendingBillsData) {
+            searchData = session.searchPendingBillsData
+        }
+        
+        def instancesList = Bill.createCriteria().list() {
+            eq('paid', false)
+            eq('outstanding', true)
+            
+            company {
+                not {
+                    ilike('accountNo', '%test%')
+                }
+            }
+            
+            if(searchData['searchDueDateFrom']) {
+                ge('dueDate', searchData['searchDueDateFrom'])
+            }
+            if(searchData['searchDueDateTill']) {
+                le('dueDate', searchData['searchDueDateTill'])
+            }
+            if(searchData['searchPendingCompany']) {
+                company {
+                    ilike('name', "%${searchData['searchPendingCompany']}%")
+                }
+            }
+            if(searchData['searchRegistrationFrom']) {
+                company {
+                    ge('registrationDate', searchData['searchRegistrationFrom'])
+                }
+            }
+            
+            order 'dueDate'
+        }
+        
+        [
+            instancesList:  instancesList,
+            searchData:     searchData
+        ]
+    }
+    
+    /**
+     *  Generating Report for Paid Bills, subject to Search Criteria
+     */
+    def paidbills() {
+        
+        def searchData = [:]
+        
+        if(session.searchPaidBillsData) {
+            searchData = session.searchPaidBillsData
+        }
+        
+        def instancesList = Bill.createCriteria().list() {
+            eq('paid', true)
+            eq('outstanding', false)
+            
+            if(searchData['searchDueDateFrom']) {
+                ge('dueDate', searchData['searchDueDateFrom'])
+            }
+            if(searchData['searchDueDateTill']) {
+                le('dueDate', searchData['searchDueDateTill'])
+            }
+            if(searchData['searchPaidCompany']) {
+                company {
+                    ilike('name', "%${searchData['searchPaidCompany']}%")
+                }
+            }
+            if(searchData['searchRegistrationFrom']) {
+                company {
+                    ge('registrationDate', searchData['searchRegistrationFrom'])
+                }
+            }
+            
+            order 'dueDate'
+        }
+        
+        [
+            instancesList:  instancesList,
+            searchData:     searchData
+        ]        
+    }
 }

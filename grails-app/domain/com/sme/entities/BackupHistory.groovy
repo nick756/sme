@@ -8,6 +8,7 @@ class BackupHistory {
     Integer numberUsers
     Integer numberCompanies
     Integer numberTransactions
+    Integer numberBills
     
     static constraints = {
     }

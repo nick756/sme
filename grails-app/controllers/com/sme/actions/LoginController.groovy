@@ -1,10 +1,13 @@
 package com.sme.actions
 
-import com.sme.entities.User
+import com.sme.entities.*
+import com.sme.services.*
 import org.springframework.web.servlet.support.RequestContextUtils as RCU
 
 class LoginController {
 
+    def billingService
+    
     def index = { 
         if(params.lang) {
             def newLocale = new Locale(params.lang)
@@ -21,6 +24,7 @@ class LoginController {
     
     def process = {LoginCommand cmd ->
         Locale locale
+        def business
         
         if(session?.user) {
             render(view: 'index')
@@ -46,17 +50,44 @@ class LoginController {
                         }
                         
                         switch (session?.user.role.code) {
-                            case 1: session.locale = locale
-                                    redirect(controller: 'adminHome')
-                                    break
-                            case 2: session.company = session?.user.company
-                                    session.locale = locale
-                                    redirect(controller: 'smehome')
-                                    break
-                            case 3: session.bank = session?.user.bank
-                                    session.locale = locale
-                                    redirect(controller: 'bankHome')
-                                    break
+                        case 1: session.locale = locale
+                            redirect(controller: 'adminHome')
+                            break
+                        case 2: session.company = session?.user.company
+                            session.locale = locale
+                            business = Business.get(session.company?.id)
+                            
+                            println ''
+                            println "Login Controller: ${business?.name}"
+                                    
+                            if(billingService.checkForOutstandingInvoices(business)) {
+                                
+                                println 'Outstanding Invoices detected'
+                                
+                                params.offset = 0
+                                params.max = 10                                
+                                
+                                def errorMessage = "You have Outstanding Invoices"
+                                def instancesList = Bill.createCriteria().list(params) {
+                                    eq('company', business)
+                                    order 'dueDate', 'desc'
+                                }
+                                
+                                render view: '/smebilling/index', model:  [
+                                    instancesList:  instancesList,
+                                    counter:        instancesList?.totalCount,
+                                    params:         params,
+                                    errMessage:     errorMessage
+                                ]
+                            }
+                            else {
+                                redirect(controller: 'smehome')
+                            }
+                            break
+                        case 3: session.bank = session?.user.bank
+                            session.locale = locale
+                            redirect(controller: 'bankHome')
+                            break
                         }
                     }
                 }

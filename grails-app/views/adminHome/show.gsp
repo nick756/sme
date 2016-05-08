@@ -5,7 +5,7 @@
         <meta name="layout" content="adminpage"/>
         <title>SME</title>
   <script type="text/javascript">
-      var points = ${raw(jsOut)}
+      var points = ${raw(jsOut)};
       var titleTxt = "Usage Statistics for ${businessInstance?.name}";
       titleTxt = titleTxt.replace('&amp;', '&');
       titleTxt = titleTxt.replace('&#39;', "'");
@@ -47,11 +47,11 @@
             <%-- <g:link action="index" params="['max': params.max, 'offset': params.offset]"><img class="image-link" src="${resource(dir: 'images', file: 'employee.png')}" title="<g:message code='actions.members'/>"/></g:link> --%>
             <% /* g:link action="index" params="['max': params.max, 'offset': params.offset]"><img class="image-link" src="${resource(dir: 'images', file: 'list.png')}" title="<g:message code='actions.profile'/>"/></g:link */ %>
             <g:link action="listtransactions" params="['max': params.max, 'offset': 0, 'id': businessInstance?.id]"><img class="image-link" style="margin-right: 5px;" src="${resource(dir: 'images', file: 'calculator.png')}" title="<g:message code='actions.transactions'/>"/></g:link>
-            </div>
+        </div>
 
         <h1 class="sub-title">${businessInstance?.name}</h1>
         <div class="edit-form-box">
-
+            <div id="chartContainer" style="height: 300px; width: 100%;"></div>
             <label class="edit-form"><g:message code="business.name.label"/></label>
             <g:textField class="text-input" name="name" value="${businessInstance?.name}" readonly="true"/>
             <br/>
@@ -81,10 +81,42 @@
             <br/>
             <label class="edit-form"><g:message code="business.city.label" default="City"/></label>
             <g:textField class="text-input" name="address" value="${businessInstance?.city}" readonly="true"/>                   
-
+            <br/>
+            
+            <label class="edit-form"><g:message code="business.contactPerson1.label" default="City"/></label>
+            <g:textField class="text-input" name="contactPerson1" value="${businessInstance?.contactPerson1}" readonly="true"/>                   
+            <br/>
+            <label class="edit-form"><g:message code="business.contactNumber1.label"/></label>
+            <g:textField class="text-input" name="contactNumber1" value="${businessInstance?.contactNumber1}" readonly="true"/>                   
+            <br/>
+            <label class="edit-form"><g:message code="business.contactPerson2.label"/></label>
+            <g:textField class="text-input" name="contactPerson2" value="${businessInstance?.contactPerson2}" readonly="true"/>                   
+            <br/>
+            <label class="edit-form"><g:message code="business.contactNumber2.label"/></label>
+            <g:textField class="text-input" name="contactNumber2" value="${businessInstance?.contactNumber2}" readonly="true"/>                   
+            <br/>
+            
+            <fieldset style="border: 1px solid #AFAFAF; margin-bottom: 5px; padding-top: 5px; background: #EFEFEF;">
+                <legend style="border: 1px solid #526C85; padding: 2px 8px; background: #526C85; color: #FFF;"><g:message code="messages.fieldset.billing.label"/></legend>
+                <br/>
+                <label class="edit-form"><g:message code="business.billingType.label"/></label>
+                <g:textField class="text-input" name="billingType?.id" value="${businessInstance?.billingType}" readonly="true"/>
+                <br/>
+                <label class="edit-form"><g:message code="business.freeServices.label"/></label>
+                <g:textField name="freeServices" value="${businessInstance?.freeServices ? 'Yes / Ya' : 'No / Tidak'}" readonly="true"/>
+                <br/>
+                <label class="edit-form"><g:message code="business.startBillingDate.label"/></label>
+                <g:textField class="text-input" name="startBillingDate" value="${formatDate(format: 'dd/MM/yyyy', date: businessInstance?.startBillingDate)}" readonly="true"/>
+                <br/>
+                <label class="edit-form"><g:message code="business.rate.label"/></label>
+                <g:textField class="text-input" name="rate" value="${formatNumber(format: '#,##0.00', number: businessInstance?.rate)}" readonly="true"/>
+                <br/>
+                <label class="edit-form"><g:message code="billingType.trialPeriod.label"/></label>
+                <g:textField class="text-input" name="trialPeriod" value="${businessInstance?.billingType?.trialPeriod}" readonly="true"/>                 
+                <br/>
+                <label class="edit-form"><g:message code="business.gracePeriod.label"/></label>
+                <g:textField class="text-input" name="gracePeriod" value="${businessInstance?.gracePeriod}" readonly="true"/>                
+            </fieldset>
         </div>
-        
-        <div id="chartContainer" style="height: 300px; width: 100%;"></div>
-       
     </body>
 </html>

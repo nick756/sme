@@ -80,7 +80,7 @@
         </div>
        
     </div>
-    <div style="float: right; width: 80%; display: inline-block;">
+    <div style="float: right; width: 80%; display: inline-block; overflow: hidden;">
         <g:layoutBody/>
     </div>
 </body>

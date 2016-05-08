@@ -9,6 +9,9 @@ class BillingType {
     String value_MS
     
     Integer billingPeriod   //  In Months, either 1 or 12
+    BigDecimal defaultAmount;
+    Integer gracePeriod
+    Integer trialPeriod
 
     static constraints = {
         code    unique: true

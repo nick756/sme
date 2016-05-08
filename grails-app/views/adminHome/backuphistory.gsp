@@ -18,23 +18,25 @@
                 <th rowspan="2" style="vertical-align: middle; width: 3%;">No</th>
                 <th rowspan="2" style="vertical-align: middle; width: 15%;">Date/Time</th>
                 <th rowspan="2" style="vertical-align: middle; width: 14%;">Size (Bytes)</th>
-                <th colspan="3" style="vertical-align: middle;">Exported</th>
-                <th rowspan="2"  style="vertical-align: middle;">Operator</th>
+                <th colspan="4" style="vertical-align: middle;">Exported</th>
+                <%--th rowspan="2" style="vertical-align: middle;">Operator</th --%>
             </tr>
             <tr>
                 <th>Users</th>
                 <th>Companies</th>
                 <th>Transactions</th>
+                <th>Bills</th>
             </tr>
             <g:each in="${history}" var="record" status="index">
-                <tr class="${(index % 2) == 0 ? 'even' : 'odd'}">
+                <tr class="${(index % 2) == 0 ? 'even' : 'odd'}" title="Backup performed by: ${record?.operator}">
                     <td class="no-border centered">${index + 1}</td>
                     <td class="no-border centered"><g:formatDate format="dd/MM/yyyy HH:mm" date="${record.backupDate}"/></td>
                     <td class="no-border centered"><g:formatNumber format="#,##0" number="${record.size}"/></td>
                     <td class="no-border centered" style="width: 15%;"><g:formatNumber format="#,##0" number="${record.numberUsers}"/></td>
                     <td class="no-border centered" style="width: 15%;"><g:formatNumber format="#,##0" number="${record.numberCompanies}"/></td>
                     <td class="no-border centered" style="width: 15%;"><g:formatNumber format="#,##0" number="${record.numberTransactions}"/></td>
-                    <td class="no-border">${record?.operator.take(20)}</td>
+                    <td class="no-border centered" style="width: 15%;"><g:formatNumber format="#,##0" number="${record.numberBills}"/></td>
+                    <%--td class="no-border">${record?.operator.take(20)}</td --%>
                 </tr>
             </g:each>
         </table>

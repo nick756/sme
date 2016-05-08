@@ -12,6 +12,7 @@ class AdminHomeController {
     def businessTransactionService
     def cashFlowService
     def exportEntitiesService
+    def billingService
     def messageSource
     
     def index(Integer max) {
@@ -190,6 +191,7 @@ class AdminHomeController {
             return
         }
         else {
+            billingService.initiateInvoicing(businessInstance)
             businessInstance.save(flush: true)
         }
         
@@ -586,6 +588,7 @@ class AdminHomeController {
         def profCount = exportEntitiesService.exportProfiles()
         def operCount = exportEntitiesService.exportOperations()
         def agenCount = exportEntitiesService.exportAgencies()
+        def billCount = exportEntitiesService.exportBills()
         
         new BackupHistory(
             backupDate:         new Date(),
@@ -593,7 +596,8 @@ class AdminHomeController {
             size:               exportEntitiesService.getBackupSize(),
             numberUsers:        userCount,
             numberCompanies:    busiCount,
-            numberTransactions: tranCount
+            numberTransactions: tranCount,
+            numberBills:        billCount
         ).save(flush: true)
         
         redirect action: 'backuphistory'
@@ -618,5 +622,26 @@ class AdminHomeController {
             redirect controller: 'login', action: 'index'
             return
         }        
+    }
+    
+    /**
+     *  Navigation to Billing Controller to display bills for selected Business
+     *  instance: all search Parameters are reset.
+     */
+    def showbills(Business company) {
+        if(!session?.user) {
+            redirect controller: 'login', action: 'index'
+            return
+        }
+        
+        session?.searchPendingBillsData = [:]
+        session?.searchPaidBillsData = [:]
+        session.pendingBillsOffset = null
+        session.paidBillsOffser = null
+        
+        session.searchPendingBillsData['searchPendingCompany'] = company?.name
+        session.searchPaidBillsData['searchPaidCompany'] = company?.name
+        
+        redirect controller: 'billing', action: 'index'
     }
 }

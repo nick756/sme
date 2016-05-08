@@ -17,14 +17,21 @@ class Business implements Serializable {
     Industry        industry
     GenericProfile  profile
     LendingAgency   bank
+    MarketingAgent  agent
     
     //  Billing Parameters
-    
     Date        startBillingDate    //  Auto-detected
-    BillingType billingType
+    Date        nextBillingDate     //  Changed automatically
+    BillingType billingType         //  Main indicator that Billing is initiated
     boolean     freeServices
     BigDecimal  rate
     Integer     gracePeriod
+    
+    //  Added on 06/05/2016
+    String contactPerson1
+    String contactNumber1
+    String contactPerson2
+    String contactNumber2
     
     static hasMany = [
         users:                  User,
@@ -60,6 +67,13 @@ class Business implements Serializable {
         rate                    nullable: true
         gracePeriod             nullable: true
         startBillingDate        nullable: true
+        nextBillingDate         nullable: true
+        agent                   nullable: true
+        
+        contactPerson1          nullable: true
+        contactNumber1          nullable: true
+        contactPerson2          nullable: true
+        contactNumber2          nullable: true
     }
     
     static mapping = {

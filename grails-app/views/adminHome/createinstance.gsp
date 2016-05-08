@@ -47,14 +47,25 @@
                 <g:datePicker class="select-list" name="incorpDate" value="${businessInstance?.incorpDate}" noSelection="${['': '--']}" default="none" precision="day"/>
                 <br/>
                 <label class="edit-form"><g:message code="business.registrationdate.label" default="Registration Date"/></label>
-                <g:datePicker class="select-list" name="registrationDate" value="${businessInstance?.registrationDate}" noSelection="${['': '--']}" default="none" precision="day"/>
+                <g:datePicker class="select-list" name="registrationDate" value="${businessInstance?.registrationDate}" noSelection="${['': '--']}" relativeYears="${[-2..0]}" default="none" precision="day"/>
                 <!--g:textField class="text-input" name="incorpDate" value="${formatDate(format:'dd/MM/yyyy', date:businessInstance?.incorpDate)}"/-->
                 <br/>                
                 <label class="edit-form"><g:message code="business.address.label" default="Address"/></label>
                 <g:textArea class="text-input" name="address" value="${businessInstance?.address}"/>
                 <br/>
                 <label class="edit-form"><g:message code="business.city.label" default="City"/></label>
-                <g:textField class="text-input" name="city" value="${businessInstance?.city}"/>                   
+                <g:textField class="text-input" name="city" value="${businessInstance?.city}"/>  
+                <%-- Billing Parameters --%>
+                <br/>
+                <fieldset style="border: 1px solid #AFAFAF; margin-bottom: 5px; padding-top: 5px; background: #EFEFEF;">
+                    <legend style="border: 1px solid #526C85; padding: 2px 8px; background: #526C85; color: #FFF;"><g:message code="messages.fieldset.billing.label"/></legend>
+                    <br/>
+                    <label class="edit-form mand"><g:message code="business.billingType.label"/></label>
+                    <g:select class="select-list" name="billingType?.id" from="${BillingType?.list()}" value="${businessInstance?.billingType?.id}" optionKey="id" noSelection="['':'']" default="none"/>
+                    <br/>
+                    <label class="edit-form mand"><g:message code="business.freeServices.label"/></label>
+                    <g:checkBox name="freeServices" value="${businessInstance?.freeServices}"/>
+                </fieldset>
                 <hr color="#9CC7F2" style="margin-bottom: 10px;"/>
                 <input type="submit" value="<g:message code='actions.login.submit'/>" class="myButton" />
             </g:form>

@@ -293,6 +293,33 @@ class BootStrap {
         }
         
         /***********************************************************************
+         *  Initializing Billing Parameters
+         * ********************************************************************/
+        if(!BillingType.list()) {
+            println ''
+            println '**************** Initializing Billing Types **************'
+            new BillingType(code: 10, billingPeriod: 0, defaultAmount: 0, gracePeriod: 0, trialPeriod: 0, value_EN: 'Free Services', value_MS: 'Perkhidmatan Percuma').save(flush: true)
+            new BillingType(code: 20, billingPeriod: 1, defaultAmount: 50, gracePeriod: 30, trialPeriod: 30,  value_EN: 'Monthly', value_MS: 'Bulanan').save(flush: true)
+            new BillingType(code: 30, billingPeriod: 12, defaultAmount: 500, gracePeriod: 30, trialPeriod: 0, value_EN: 'Annually', value_MS: 'Setiap Tahun').save(flush: true)
+            
+            println "Total instances created: ${BillingType.list().size()}"
+            println '**********************************************************'
+        }
+        
+        if(!PaymentMode.list()) {
+            println ''
+            println '************** Initializing Payment Modes ****************'
+            new PaymentMode(code: 10, value_EN: 'Bank Cheque/Draft', value_MS: 'Cek/Draf Bank').save(flush: true)
+            new PaymentMode(code: 20, value_EN: 'Bank Transfer', value_MS: 'Pemindahan Bank').save(flush: true)
+            new PaymentMode(code: 30, value_EN: 'Deposit through ATM', value_MS: 'Deposit melalui ATM').save(flush: true)
+            new PaymentMode(code: 40, value_EN: 'Cash Payment', value_MS: 'Pembayaran Tunai').save(flush: true)
+            new PaymentMode(code: 50, value_EN: 'Other Methods', value_MS: 'Kaedah Lain').save(flush: true)
+            
+            println "Total instances created: ${PaymentMode.list().size()}"
+            println '**********************************************************'
+        }
+        
+        /***********************************************************************
          *  Importing/Restoring Business instances
          * ********************************************************************/
         if(Business.list().size() == 0) {
@@ -328,7 +355,9 @@ class BootStrap {
             importTransactions()
         }
         
-        
+        if(Bill.list().size() == 0) {
+            importBills()
+        }
     }
 
     
@@ -348,10 +377,24 @@ class BootStrap {
             def profile     = null
             def agency      = null
             
+            def newBusiness
+            
             Date registrationDate   = null
             Date incorpDate         = null
             Integer count = 0
             Integer intID
+            
+            def contactPerson1
+            def contactNumber1
+            def contactPerson2
+            def contactNumber2
+            
+            Date startBillingDate   = null
+            Date nextBillingDate    = null
+            BillingType billingType = null
+            BigDecimal rate         = null
+            Integer gracePeriod     = null
+            Boolean freeServices    = false
             
             println ''
             println '******************* Import of Businesses *****************'
@@ -364,6 +407,18 @@ class BootStrap {
                 incorpDate          = null
                 registrationDate    = null
                 agency              = null
+                
+                contactPerson1 = null
+                contactNumber1 = null
+                contactPerson2 = null
+                contactNumber2 = null
+                
+                startBillingDate    = null
+                nextBillingDate     = null
+                billingType         = null
+                rate                = 0
+                gracePeriod         = 0
+                freeServices        = false                
                 
                 //System.out.print "Processing ${++count} Record: ${fields[3]}\r"
                 
@@ -396,7 +451,28 @@ class BootStrap {
                     agency = LendingAgency.findByCode(new Integer(fields[10]))
                 }
                 
-                new Business(
+                try {
+                    contactPerson1 = fields[11] == 'null' ? '':fields[11]
+                    contactNumber1 = fields[12] == 'null' ? '':fields[12]
+                    contactPerson2 = fields[13] == 'null' ? '':fields[13]
+                    contactNumber2 = fields[14] == 'null' ? '':fields[14]
+                    
+                    startBillingDate    = fields[15] == 'null' ? null : new Date().parse("dd/MM/yyyy", fields[15])
+                    nextBillingDate     = fields[16] == 'null' ? null : new Date().parse("dd/MM/yyyy", fields[16])
+                    billingType         = fields[17] == 'null' ? null : BillingType.findByCode(new Integer(fields[17]))
+                    rate                = fields[18] == 'null' ? 0 : new Double(fields[18])
+                    gracePeriod         = fields[19] == 'null' ? 0 : new Integer(fields[19])
+                    freeServices        = fields[20] 
+                }
+                catch (Exception e) {
+                    
+                }
+                
+                if(billingType == null || billingType?.code > 10) {
+                    freeServices = false
+                }
+                
+                newBusiness = new Business(
                     internalID:         intID,
                     name:               fields[3],
                     accountNo:          fields[4] == 'null' ? '':fields[4],
@@ -407,8 +483,31 @@ class BootStrap {
                     city:               fields[9] == 'null' ? '':fields[9],
                     industry:           industry,
                     profile:            profile,
-                    bank:               agency
-                ).save(flush: true)
+                    bank:               agency,
+                    
+                    //  08/05/2016: New Contact Details
+                    contactPerson1:     contactPerson1,
+                    contactNumber1:     contactNumber1,
+                    contactPerson2:     contactPerson2,
+                    contactNumber2:     contactNumber2,
+                    
+                    //  08/05/2016: New Billing Fields
+                    startBillingDate:   startBillingDate,
+                    nextBillingDate:    nextBillingDate,
+                    billingType:        billingType,
+                    rate:               rate,
+                    gracePeriod:        gracePeriod,
+                    freeServices:       freeServices
+                    
+                )
+                
+                if(!newBusiness.save()) {
+                    println ''
+                    println "Exception while adding : ${fields[3]}"
+                    newBusiness.errors.allErrors.each{
+                        println it
+                    }                     
+                }
             }
             
             println "Total Business instance imported: ${Business.list().size()}"        
@@ -504,6 +603,9 @@ class BootStrap {
         println ''
         println '****************** IMPORT OF TRANSACTIONS ********************'
         
+        Date momentStart = new Date()
+        Date momentStop
+        
         def path    = "C:/export/transactions.txt"
         def file    = new File("${path}")
         def content = file.text
@@ -516,6 +618,7 @@ class BootStrap {
         Integer count = 0
         
         println "File size: ${file.length()} bytes"
+        println "Restore starts: ${momentStart.format('HH:mm:ss')}"
         println '**************************************************************'
         
         content.splitEachLine('#') {fields ->
@@ -578,10 +681,115 @@ class BootStrap {
             else {
                 println "*** Zero Transaction at ${count} Line: ${fields[2]} - ${fields[3]} SKIPPED"
             }
+            
+            if(count % 500 == 0) {
+                println "--- Records restored so far: ${count}"
+            }
+        }
+        
+        momentStop = new Date()
+        println ''
+        println "Restore completed: ${momentStop.format("HH:mm:ss")}"
+        println "Transactions import completed: ${count} Records processed"
+    }
+    
+    /**
+     *  Import of backed up Bills Records
+     */
+    void importBills() {
+        println ''
+        println '********************* IMPORT OF BILLS ************************'
+        
+        def path = "C:/export/bills.txt"
+        def file
+        def content
+        def company  
+        def billingType
+        def paymentMode
+        def correct
+        Integer count = 0
+        
+        try {
+            file    = new File("${path}")
+            content = file.text
+        }
+        catch(Exception e) {
+            println "File ${path} not found, import of Bills skipped"
+            return            
+        }
+        
+        println "File size: ${file.length()} bytes"
+        println '**************************************************************'        
+        
+        content.splitEachLine('#') {fields -> 
+            company = null
+            billingType = null
+            paymentMode = null
+            correct = true
+            ++count
+            
+            try {
+                company = Business.findByInternalID(new Integer(fields[0]))
+            }
+            catch(Exception e) {
+                company = null
+                correct = false
+                println '******* Problem detected: Business not found *********'
+                println "Line ${count}: Business ID = ${fields[0]}"
+                println '***************** Skipped ****************************'
+            }
+            
+            try {
+                billingType = BillingType.findByCode(new Integer(fields[10]))
+            }
+            catch(Exception e) {
+                company = null
+                correct = false
+                println '***** Problem detected: Billing Type not found *******'
+                println "Line ${count}: Business ID = ${fields[0]} Billing Type Code: ${fields[10]}"
+                println '***************** Skipped ****************************'
+            }            
+            
+            if(fields[13] != 'null') {
+                paymentMode = PaymentMode.findByCode(new Integer(fields[13]))
+            }
+            
+            if(correct) {
+                new Bill(
+                    dateCreated:        fields[1] == 'null' ? null : new Date().parse("dd/MM/yyyy", fields[1]).clearTime(),
+                    dueDate:            fields[2] == 'null' ? null : new Date().parse("dd/MM/yyyy", fields[2]).clearTime(),
+                    periodFrom:         fields[3] == 'null' ? null : new Date().parse("dd/MM/yyyy", fields[3]).clearTime(),
+                    periodTill:         fields[4] == 'null' ? null : new Date().parse("dd/MM/yyyy", fields[4]).clearTime(),
+                    gracePeriodTill:    fields[5] == 'null' ? null : new Date().parse("dd/MM/yyyy", fields[5]).clearTime(),
+                    paymentDate:        fields[6] == 'null' ? null : new Date().parse("dd/MM/yyyy", fields[6]).clearTime(),
+                    confirmationDate:   fields[7] == 'null' ? null : new Date().parse("dd/MM/yyyy", fields[7]).clearTime(),
+                    updateDate:         fields[8] == 'null' ? null : new Date().parse("dd/MM/yyyy", fields[8]).clearTime(),
+                    invoiceNumber:      fields[9] == 'null' ? '' : fields[9],
+                    billingType:        billingType,
+                    amount:             fields[11] == 'null' ? 0 : new Double(fields[11]),
+                    amountPaid:         fields[12] == 'null' ? 0 : new Double(fields[12]),
+                    paymentMode:        paymentMode,
+                    paymentReference:   fields[14],
+                    remarks:            fields[15] == 'null' ? '' : fields[15],
+                    confirmationRemarks:    fields[16] == 'null' ? '' : feilds[16],
+                    paid:                   fields[17],
+                    outstanding:            fields[18],
+                    writtenOff:             fields[19],
+                    confirmed:              fields[20],
+                    createdBy:              fields[21],
+                    confirmedBy:            fields[22] == 'null' ? '' : fields[22],
+                    updatedBy:              fields[23] == 'null' ? '' : fields[23],
+                    company:                company
+                ).save(flush: true)
+            }
+            
+            if(count % 200 == 0) {
+                println "--- Records restored: ${count}"
+            }
         }
         
         println ''
-        println "Transactions import completed: ${count} Records processed"
+        println "Bills import completed: ${count} Records processed"        
     }
     
     /**
