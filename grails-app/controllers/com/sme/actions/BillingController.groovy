@@ -308,4 +308,29 @@ class BillingController {
         
         redirect action: 'paidbills', params: [params: params]        
     }
+    
+    /**
+     *  Deleting a Bill, updating Business instance if required with correct
+     *  nextBillingDate.
+     */
+    def delete(Bill objectInstance) {
+        
+        Business businessInstance
+        def infoMessage = []
+        
+        if(objectInstance) {
+            businessInstance = Business.get(objectInstance?.company?.id)
+        }
+        
+        infoMessage << "Invoice ${objectInstance?.invoiceNumber} for ${businessInstance.name}"
+        infoMessage << "has been permanently deleted from the Database"
+        
+        businessInstance.removeFromBills(objectInstance)
+        businessInstance.save()
+        objectInstance.delete(flush: true)
+        session.message = infoMessage
+        
+        
+        redirect action: 'index', params: ['message': infoMessage]
+    }
 }

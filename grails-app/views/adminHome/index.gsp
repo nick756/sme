@@ -36,7 +36,7 @@
                 <th>No</th>
                     <g:sortableColumn property="name" title="${message(code: 'business.name.label')}" params="['filterName': params?.filterName, 'filterAccount': params?.filterAccount, 'filterCity': params.filterCity]"/>
                     <g:sortableColumn property="accountNo" title="${message(code: 'business.accountno.label')}" params="['filterName': params?.filterName, 'filterAccount': params?.filterAccount, 'filterCity': params.filterCity]"/>
-                <th><g:message code="business.registrationdate.label"/></th>
+                    <g:sortableColumn property="registrationDate" title="${message(code: 'business.registrationdate.label')}" params="['filterName': params?.filterName, 'filterAccount': params?.filterAccount, 'filterCity': params.filterCity]"/>
                 <th><g:message code="business.city.label"/></th>
                 <th><g:message code="business.userscount.label"/></th>
                 <th><g:message code="business.transcount.label"/></th>

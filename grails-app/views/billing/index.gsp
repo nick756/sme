@@ -78,9 +78,12 @@
                     <td class="no-border righted"><g:formatNumber format="#,##0.00" number="${objectInstance?.amount}"/></td>
                     <td class="no-border centered"><g:formatDate format="dd/MM/yyyy" date="${objectInstance?.gracePeriodTill}"/></td>
                     <td class="no-border centered">
-                        <g:link target="_blank" controller="report" action="printinvoice" params="['id': objectInstance.id]">
+                        <g:link style="border: none; outline: none; text-decoration: none;" target="_blank" controller="report" action="printinvoice" params="['id': objectInstance.id]">
                             <img style="border: none; outline: none; text-decoration: none;" src="${resource(dir: 'images', file: 'icons/printer01_16x16.png')}" title="<g:message code='actions.print'/>"/>
                         </g:link>
+                        <g:link style="border: none; outline: none; text-decoration: none;" controller="billing" action="delete" params="['id': objectInstance.id]" onclick="return confirm('Are you sure?')">
+                            <img style="border: none; outline: none; text-decoration: none;" src="${resource(dir: 'images', file: 'icons/report_delete16x16.png')}" title="<g:message code='actions.delete'/>"/>
+                        </g:link>                        
                     </td>
                 </tr>
             </g:each>
