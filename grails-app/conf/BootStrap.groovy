@@ -771,7 +771,7 @@ class BootStrap {
                     paymentMode:        paymentMode,
                     paymentReference:   fields[14],
                     remarks:            fields[15] == 'null' ? '' : fields[15],
-                    confirmationRemarks:    fields[16] == 'null' ? '' : feilds[16],
+                    confirmationRemarks:    fields[16] == 'null' ? '' : fields[16],
                     paid:                   fields[17],
                     outstanding:            fields[18],
                     writtenOff:             fields[19],
