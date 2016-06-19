@@ -3,8 +3,8 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title><g:layoutTitle default="SME"/></title>
-        <link rel="shortcut icon" href="${assetPath(src: 'favicon_1.ico')}" type="image/x-icon">
+        <title><g:layoutTitle default="SiFAR"/></title>
+        <link rel="shortcut icon" href="${assetPath(src: 'favicon_2.ico')}" type="image/x-icon">
         <link rel="stylesheet" href="${resource(dir:'stylesheets',file:'application.css')}" />
         <asset:javascript src="application.js"/>
         <asset:javascript src="jquery-1.11.1.js"/>

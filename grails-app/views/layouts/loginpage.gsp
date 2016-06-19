@@ -9,7 +9,8 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title><g:layoutTitle default="SME"/></title>
+        <title><g:layoutTitle default="SiFAR"/></title>
+        <link rel="shortcut icon" href="${assetPath(src: 'favicon_2.ico')}" type="image/x-icon">
         <link rel="stylesheet" href="${resource(dir:'stylesheets',file:'application.css')}" />
         <link href='http://fonts.googleapis.com/css?family=Poiret+One|Muli|Economica|Quicksand|Jura|Orbitron' rel='stylesheet' type='text/css'>
         <g:layoutHead/>
@@ -32,7 +33,7 @@
             <center>
             <div style="width: 70%; display: table; margin-top: 15px;">
                     <div style="width: 40%; display: table-cell">
-                        <img style="width: 257px; height: 168px; display: inline-block;" src="${resource(dir: 'images', file: 'sifar_logo.png')}">
+                        <img style="width: 257px; height: 168px; display: inline-block;" src="${resource(dir: 'images', file: 'sifar_logo_new.png')}">
                     </div>
                     <div style="text-align: center; vertical-align: middle; display: table-cell;">
                         <h1 class="login-title" style="display: inline-block; margin-top: -30px;"><g:message code="default.application.title"/></h1>
