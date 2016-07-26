@@ -8,6 +8,7 @@ class BootStrap {
     def init = { servletContext ->
         
         def userRole
+        def verifyActivatedAccounts = true
         
         if(Month.list().size() == 0) {
             new Month(number:  1, name: 'JAN').save(flush: true)
@@ -353,6 +354,33 @@ class BootStrap {
         
         if(BusinessTransaction.list().size() == 0) {
             importTransactions()
+            
+            
+            //  Postprocessing and updating new Billing Fields
+            def counterActive = 0
+            def counterTotal = 0
+            
+            Business.list().each {business ->
+                ++counterTotal
+                
+                if(business?.businessTransactions?.size() > 0) {
+                    business.activated = true
+                    
+                    if(!business?.activationDate) {
+                        business.activationDate = business?.startBillingDate
+                    }
+                    
+                    ++counterActive
+                }
+                else {
+                    business.activated = false
+                    business.activationDate = null
+                }
+                
+                business.save(flush: true)
+            }
+            
+            println "Updating Billing Parameters: activated Records - ${counterActive}"            
         }
         
         if(Bill.list().size() == 0) {
@@ -396,6 +424,10 @@ class BootStrap {
             Integer gracePeriod     = null
             Boolean freeServices    = false
             
+            Date activationDate
+            Boolean activated
+            Boolean blocked
+            
             println ''
             println '******************* Import of Businesses *****************'
             println "File size: ${file.length()} bytes"
@@ -421,6 +453,7 @@ class BootStrap {
                 freeServices        = false                
                 
                 //System.out.print "Processing ${++count} Record: ${fields[3]}\r"
+                ++count
                 
                 try {
                     intID = new Integer(fields[0])
@@ -465,7 +498,21 @@ class BootStrap {
                     freeServices        = fields[20] 
                 }
                 catch (Exception e) {
-                    
+                    println "Error while processing Billing Info on line ${count}: ${field[3]}"
+                }
+                
+                //  New Billing Fields (24/07/2016)
+                activationDate = null
+                activated = true
+                blocked = false
+                
+                try {
+                    activationDate  = fields[21] == 'null' ? null : new Date().parse("dd/MM/yyyy", fields[21])
+                    activated       = fields[22] == 'null' ? false : fields[22]
+                    blocked         = fields[23] == 'null' ? false : fields[23]
+                }
+                catch (Exception e) {
+                    println "*** Missing new Billing Fields for ${fields[3]}/${count}"
                 }
                 
                 if(billingType == null || billingType?.code > 10) {
@@ -497,8 +544,12 @@ class BootStrap {
                     billingType:        billingType,
                     rate:               rate,
                     gracePeriod:        gracePeriod,
-                    freeServices:       freeServices
+                    freeServices:       freeServices,
                     
+                    //  26/07/2016: New Billing concept Fields
+                    activationDate:     activationDate,
+                    activated:          activated,
+                    blocked:            blocked
                 )
                 
                 if(!newBusiness.save()) {
@@ -683,7 +734,7 @@ class BootStrap {
             }
             
             if(count % 500 == 0) {
-                println "--- Records restored so far: ${count}"
+                println "--- ${new Date().format('HH:mm:ss')} Records restored so far: ${count}"
             }
         }
         

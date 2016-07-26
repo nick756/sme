@@ -57,7 +57,12 @@ class ExportEntitiesService {
                 line += "${business?.billingType?.code}#"                       //  17
                 line += "${business?.rate}#"                                    //  18
                 line += "${business?.gracePeriod}#"                             //  19
-                line += "${business?.freeServices}"                             //  20
+                line += "${business?.freeServices}#"                             //  20
+                
+                //  Additional Billing Fields (24/07/2016)
+                line += "${business?.activationDate?.format('dd/MM/yyyy')}#"    //  21
+                line += "${business?.activated}#"                               //  22
+                line += "${business?.blocked}"                                  //  23
                 
                 line = line.replaceAll("\n", '')
                 line = line.replaceAll("\r", '')

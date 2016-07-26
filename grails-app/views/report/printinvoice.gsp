@@ -4,12 +4,12 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta name="layout" content="reportpage"/>
-        <title>SIFAR</title>
+        <title>SiFAR</title>
     </head>
     <body>
         <div class="datetime">Generated on: <g:formatDate format="dd/MM/yyyy HH:mm" date="${new Date()}"/></div>
         <div style="display: block; vertical-align: middle;">
-            <img style="float: left; width: 14%; height: 9%; margin-right: 15px;" src="${resource(dir: 'images', file: 'sifar_logo.png')}"/>
+            <img style="float: left; width: 30%; height: 9%; margin-right: 15px;" src="${resource(dir: 'images', file: 'sifar_logo_3.png')}"/>
             <h1 class="report-header" style="margin-top: 30px;">BinaPavo Data Intelligence Sdn Bhd</h1>
         </div>
         <div style="width: 99%; margin-top: 10px; padding: 0; display: block; border-bottom: 1px solid #a0a0a0; overflow: hidden;">
@@ -70,7 +70,7 @@
             <tr style="background: white;">
                 <td class="no-border centered padded3_5">1</td>
                 <td class="no-border padded3_5">
-                    Sifar Services for the Period from <g:formatDate format="dd/MM/yyyy" date="${objectInstance?.periodFrom}"/>
+                    SiFAR Services for the Period from <g:formatDate format="dd/MM/yyyy" date="${objectInstance?.periodFrom}"/>
                     to <g:formatDate format="dd/MM/yyyy" date="${objectInstance?.periodTill}"/>
                 </td>
                 <td class="no-border righted padded3_5"><g:formatNumber format="#,##0.00" number="${objectInstance?.amount}"/></td>

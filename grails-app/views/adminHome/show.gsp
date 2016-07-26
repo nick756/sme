@@ -105,6 +105,14 @@
                 <label class="edit-form"><g:message code="business.freeServices.label"/></label>
                 <g:textField name="freeServices" value="${businessInstance?.freeServices ? 'Yes / Ya' : 'No / Tidak'}" readonly="true"/>
                 <br/>
+                
+                <label class="edit-form"><g:message code="business.activated.label"/></label>
+                <g:textField name="activated" value="${businessInstance?.activated ? 'Yes / Ya' : 'No / Tidak'}" readonly="true"/>
+                <br/>                
+                <label class="edit-form"><g:message code="business.activationDate.label"/></label>
+                <g:textField class="text-input" name="activationDate" value="${formatDate(format: 'dd/MM/yyyy', date: businessInstance?.activationDate)}" readonly="true"/>
+                <br/>                
+                
                 <label class="edit-form"><g:message code="business.startBillingDate.label"/></label>
                 <g:textField class="text-input" name="startBillingDate" value="${formatDate(format: 'dd/MM/yyyy', date: businessInstance?.startBillingDate)}" readonly="true"/>
                 <br/>

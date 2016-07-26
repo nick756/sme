@@ -20,6 +20,8 @@ class BillingService {
         def trialPeriod
         def defaultBilling = BillingType.findByCode(20)    //  Monthly Billing
         Date currentDate = new Date().clearTime()
+        
+        //  Billing starts from 01/05/2016
         Date cutOffDate = new Date().copyWith(year: 2016, month: 4, dayOfMonth: 1).clearTime()
         
         //println "initiateInvoicing: cutOffDate = ${cutOffDate}"
@@ -43,36 +45,55 @@ class BillingService {
             return false
         }
 
-        if(!company?.billingType) {
-            company.billingType = defaultBilling
-        }
+        if(company?.activated && company?.activationDate) {
+            if(!company?.billingType) {
+                company.billingType = defaultBilling
+            }
         
-        company.rate = company?.billingType?.defaultAmount
-        company.freeServices = false
-        company.gracePeriod = defaultBilling?.gracePeriod
+            company.rate = company?.billingType?.defaultAmount
+            company.freeServices = false
+            company.gracePeriod = defaultBilling?.gracePeriod
         
-        registrationDate = company?.registrationDate
-        trialPeriod = company?.billingType?.trialPeriod
-        startBillingDate = registrationDate + trialPeriod
+            registrationDate = company?.registrationDate
+            trialPeriod = company?.billingType?.trialPeriod
+            //startBillingDate = registrationDate + trialPeriod
+            startBillingDate = company?.activationDate + trialPeriod
         
-        if(startBillingDate < cutOffDate) {
-            startBillingDate = cutOffDate
-        }
+            if(startBillingDate < cutOffDate) {
+                startBillingDate = cutOffDate
+            }
         
-        if(startBillingDate.getAt(Calendar.DAY_OF_MONTH) != 1) {
-            def month = startBillingDate.month
-            def year = startBillingDate.year + 1900
+            if(startBillingDate.getAt(Calendar.DAY_OF_MONTH) != 1) {
+                def month = startBillingDate.month
+                def year = startBillingDate.year + 1900
 
-            def nextYear    = month == 11 ? year + 1 : year
-            def nextMonth   = month == 11 ? 0 : month + 1
+                def nextYear    = month == 11 ? year + 1 : year
+                def nextMonth   = month == 11 ? 0 : month + 1
             
-            startBillingDate = new Date().copyWith(year: nextYear, month: nextMonth, dayOfMonth: 1).clearTime()
+                startBillingDate = new Date().copyWith(year: nextYear, month: nextMonth, dayOfMonth: 1).clearTime()
+            }
+        
+            company.startBillingDate    = startBillingDate
+            company.nextBillingDate     = startBillingDate
+            company.save(flush: true)
+        }
+        return true
+    }
+    
+    /**
+     *  Activation of Company upon first detected login
+     */
+    def activateBusiness(Business businessInstance) {
+        if(!businessInstance) {
+            return false
         }
         
-        company.startBillingDate    = startBillingDate
-        company.nextBillingDate     = startBillingDate
-        company.save(flush: true)
-        return true
+        businessInstance?.activated = true
+        businessInstance?.blocked = false
+        businessInstance?.activationDate = new Date().clearTime()
+        businessInstance.save(flush: true)
+        
+        return this.initiateInvoicing(businessInstance)
     }
     
     def createNewInvoice(Business company, Date effectiveDate) {

@@ -10,8 +10,12 @@ class Business implements Serializable {
     String regNumber
     Date incorpDate
     Date registrationDate
+    Date activationDate     //  First Login Date
     String address
     String city
+    
+    boolean activated
+    boolean blocked
     
     State           state
     Industry        industry
@@ -68,12 +72,16 @@ class Business implements Serializable {
         gracePeriod             nullable: true
         startBillingDate        nullable: true
         nextBillingDate         nullable: true
+        activationDate          nullable: true
         agent                   nullable: true
         
         contactPerson1          nullable: true
         contactNumber1          nullable: true
         contactPerson2          nullable: true
         contactNumber2          nullable: true
+        
+        activated   nullable: true
+        blocked     nullable: true
     }
     
     static mapping = {

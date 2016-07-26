@@ -53,36 +53,49 @@ class LoginController {
                         case 1: session.locale = locale
                             redirect(controller: 'adminHome')
                             break
+                        
+                            //  SME Operators login
                         case 2: session.company = session?.user.company
                             session.locale = locale
                             business = Business.get(session.company?.id)
                             
                             println ''
-                            println "Login Controller: ${business?.name}"
-                                    
-                            if(billingService.checkForOutstandingInvoices(business)) {
+                            println "LOGIN: ${new Date().format("dd/MM/yyyy HH:mm")} User: ${session?.user?.name}/${session?.user.role.name}"
+                            println "Company: ${business?.name}"
+                               
+                            if(business?.activated) {
+                                if(billingService.checkForOutstandingInvoices(business)) {
                                 
-                                println 'Outstanding Invoices detected'
+                                    println 'Outstanding Invoices detected'
                                 
-                                params.offset = 0
-                                params.max = 10                                
+                                    params.offset = 0
+                                    params.max = 10                                
                                 
-                                def errorMessage = "You have Outstanding Invoices"
-                                def instancesList = Bill.createCriteria().list(params) {
-                                    eq('company', business)
-                                    order 'dueDate', 'desc'
+                                    def errorMessage = "You have Outstanding Invoices"
+                                    def instancesList = Bill.createCriteria().list(params) {
+                                        eq('company', business)
+                                        order 'dueDate', 'desc'
+                                    }
+                                
+                                    render view: '/smebilling/index', model:  [
+                                        instancesList:  instancesList,
+                                        counter:        instancesList?.totalCount,
+                                        params:         params,
+                                        errMessage:     errorMessage
+                                    ]
                                 }
-                                
-                                render view: '/smebilling/index', model:  [
-                                    instancesList:  instancesList,
-                                    counter:        instancesList?.totalCount,
-                                    params:         params,
-                                    errMessage:     errorMessage
-                                ]
+                                else {
+                                    redirect(controller: 'smehome')
+                                }                                
                             }
                             else {
-                                redirect(controller: 'smehome')
+                                billingService.activateBusiness(business)
+                                
+                                println "Account activated: Billing starts from ${business?.startBillingDate?.format('dd/MM/yyyy')}"
+                                
+                                redirect controller: 'smehome'
                             }
+
                             break
                         case 3: session.bank = session?.user.bank
                             session.locale = locale

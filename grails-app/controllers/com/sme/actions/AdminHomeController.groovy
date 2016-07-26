@@ -185,13 +185,16 @@ class AdminHomeController {
     def save() {
         def businessInstance = new Business(params)
         
+        businessInstance?.activated = false
+        businessInstance?.blocked = false
+        
         if(!businessInstance.validate()) {
             respond businessInstance.errors, view: 'createinstance'
             println "New Business: errors"
             return
         }
         else {
-            billingService.initiateInvoicing(businessInstance)
+            //billingService.initiateInvoicing(businessInstance)
             businessInstance.save(flush: true)
         }
         
