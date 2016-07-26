@@ -360,10 +360,12 @@ class BootStrap {
             def counterActive = 0
             def counterTotal = 0
             
-            Business.list().each {business ->
+            def businesses = Business.list() 
+            
+            businesses.each {business ->
                 ++counterTotal
                 
-                if(business?.businessTransactions?.size() > 0) {
+                if(BusinessTransaction.findByCompany(business)) {
                     business.activated = true
                     
                     if(!business?.activationDate) {
@@ -371,16 +373,29 @@ class BootStrap {
                     }
                     
                     ++counterActive
+                    println "--- Current active: ${business.name}"                    
                 }
                 else {
                     business.activated = false
-                    business.activationDate = null
+                    business.activationDate = null                    
                 }
                 
                 business.save(flush: true)
             }
             
-            println "Updating Billing Parameters: activated Records - ${counterActive}"            
+            println "Updating Billing Parameters: activated Records - ${counterActive} from ${counterTotal}" 
+            
+            def listActive = Business.createCriteria().list() {
+                eq('activated', true)
+            }
+            
+            def listInactive = Business.createCriteria().list() {
+                not {
+                    eq('activated', true)
+                }
+            }
+            
+            println "Statistics: activated - ${listActive.size()}; inactive - ${listInactive.size()}"
         }
         
         if(Bill.list().size() == 0) {
@@ -503,13 +518,13 @@ class BootStrap {
                 
                 //  New Billing Fields (24/07/2016)
                 activationDate = null
-                activated = true
+                activated = false
                 blocked = false
                 
                 try {
                     activationDate  = fields[21] == 'null' ? null : new Date().parse("dd/MM/yyyy", fields[21])
-                    activated       = fields[22] == 'null' ? false : fields[22]
-                    blocked         = fields[23] == 'null' ? false : fields[23]
+                    activated       = fields[22] == 'false' ? false : true
+                    blocked         = fields[23] == 'false' ? false : true
                 }
                 catch (Exception e) {
                     println "*** Missing new Billing Fields for ${fields[3]}/${count}"

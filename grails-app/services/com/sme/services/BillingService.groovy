@@ -133,7 +133,8 @@ class BillingService {
                 ++counterInstantiated
             }
             
-            if(business?.billingType && business?.startBillingDate <= evaluationDate) {
+            //  26/07/2016 Only activated Comanies are processed
+            if(business?.activated && business?.billingType && business?.startBillingDate <= evaluationDate) {
                 if(business?.nextBillingDate <= evaluationDate && !business.freeServices) {
                     
                     amountDue       = business?.rate
